@@ -13,7 +13,7 @@ Looking for a modular approach to simplify functionality and avoid single points
 ### Directory structure
 Each module has its own `main` and `Makefile` in order to run "sandboxed" tests with hypothetical inputs.
 Only the Makefile at the root of the project is intended for the full compilation of the final project.
-
+```
 .
 ├── README.md
 └── webserv
@@ -52,7 +52,7 @@ Only the Makefile at the root of the project is intended for the full compilatio
     │   ├── Webserv.cpp
     │   └── Webserv.hpp
     └── Makefile
-
+```
 ## Production
 Explain design choices after finishing the project
 
