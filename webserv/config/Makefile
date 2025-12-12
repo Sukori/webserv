@@ -1,13 +1,13 @@
-NAME	= test_parser
+NAME	= test_conf
 
 CPP		= c++ -std=c++98
 
 FLAGS	= -I. -Wall -Wextra -Werror
 
-HDRS	= ConfParser
+HDRS	= Configuration
 
-SRCS	= ConfParser \
-		test_confParser
+SRCS	= Configuration \
+		main
 
 HDR		= $(addsuffix .hpp , $(HDRS))
 SRC		= $(addsuffix .cpp , $(SRCS))

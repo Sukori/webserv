@@ -1,33 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ConfParser.cpp                                     :+:      :+:    :+:   */
+/*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/12/12 16:58:43 by pberset           #+#    #+#             */
-/*   Updated: 2025/12/12 17:41:24 by pberset          ###   Lausanne.ch       */
+/*   Created: 2025/12/12 17:24:08 by pberset           #+#    #+#             */
+/*   Updated: 2025/12/12 18:55:17 by pberset          ###   Lausanne.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ConfParser.hpp"
+#include <Configuration.hpp>
 
-void	ConfParser::configureServer(const std::string& file) {
-	
-	std::ifstream	fs(file.c_str());
-	std::string		config;
+int	main(int argc, char* argv[]) {
 
-	if (!fs) {
-		fs.clear();
-		std::cerr << "file does not exist: " << file << std::endl;
-		return ;
+if (argc != 2) {
+		std::cerr << "input: need exactly one config file";
+		return (1);
 	}
-	
-	if (!(fs >> config)) {
-	    std::cerr << "Failed to read from file: " << file << std::endl;
-		return ;
-	}
-
-	std::cout << config << std::endl;
+	Configuration	conf;
+	conf.openConfiguration(argv[1]);
+	return (0);
 }
 
