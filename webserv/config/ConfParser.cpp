@@ -1,27 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ConfParser.hpp                                     :+:      :+:    :+:   */
+/*   ConfParser.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/12/12 17:04:11 by pberset           #+#    #+#             */
-/*   Updated: 2025/12/12 17:37:32 by pberset          ###   Lausanne.ch       */
+/*   Created: 2025/12/12 16:58:43 by pberset           #+#    #+#             */
+/*   Updated: 2025/12/12 17:41:24 by pberset          ###   Lausanne.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CONFPARSER_HPP
-# define CONFPARSER_HPP
+#include "ConfParser.hpp"
 
-# include <iostream>
-# include <fstream>
-# include <string>
+void	ConfParser::configureServer(const std::string& file) {
+	
+	std::ifstream	fs(file.c_str());
+	std::string		config;
 
-class ConfParser {
-	public:
-		static void	configureServer(const std::string& file);
+	if (!fs) {
+		fs.clear();
+		std::cerr << "file does not exist: " << file << std::endl;
+		return ;
+	}
+	
+	if (!(fs >> config)) {
+	    std::cerr << "Failed to read from file: " << file << std::endl;
+		return ;
+	}
 
-};
-
-#endif
+	std::cout << config << std::endl;
+}
 
