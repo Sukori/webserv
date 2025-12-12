@@ -27,6 +27,7 @@ How modules interact with each other
 
 ## Production
 Documenting the progression and next steps here in addition from the Issues / Kanban from github
+- PBE server start + config parsing
 
 ## Usage
 ```bash
