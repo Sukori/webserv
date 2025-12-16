@@ -47,3 +47,4 @@ Helpful documentation we used
 * [Beej's Guide to Network Programming](https://beej.us/guide/bgnet/html/)
 * [Hypertext Transfer Protocol -- HTTP/1.1](https://www.rfc-editor.org/rfc/rfc2616)
 * [cppReference](https://en.cppreference.com/w/)
+* [mozilla http reference (headers list, request methods and response status)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference)
