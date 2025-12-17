@@ -3,13 +3,15 @@
 server {
 
     # --- Base Block ---
+	
     listen 127.0.0.1:8080; # and 8081, 8082, 8083 for instance
 
-    root /www;
+    root /www/;
 
     index index.html index.htm index.php;
 
-    access_log /core/logs/logfiles/info.log;
+    access_log /core/logs/logfiles/access.log;
+	error_log /core/logs/logfiles/error.log
 
     client_max_body_size 10m; # 10 megabytes
 
@@ -19,21 +21,29 @@ server {
     # --- Location Blocks (Routing Rules) ---
     location / {
         limit_except GET POST;
-
-        autoindex on;
+        
+		autoindex on;
     }
 
     location /old_stuff/ {
-        rewrite ^/old_stuff/(.*)$ /new_stuff/$1 permanent;
+        # return 301 /new_page.html; # permanent redirect
+		# return 403; # return error on forbidden action
     }
 
     location /upload/ {
         limit_except POST;
 
+		root /uploads/;
+
+		alias /uploads/;
+
         upload_path /uploads;
+
+		try_files $uri $uri/ /www/index.html;
     }
 
     location ~ /core/cgi/\.py$ {
+		cgi_param SCRIPT_FILENAME /core/cgi/script.py; # What env to pass
         cgi_pass /usr/bin/python3; # The interpreter to use
     }
 }
