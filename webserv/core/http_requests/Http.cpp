@@ -6,32 +6,32 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 16:27:00 by pberset           #+#    #+#             */
-/*   Updated: 2025/12/16 17:22:09 by ylabussi         ###   ########.fr       */
+/*   Updated: 2025/12/17 15:33:22 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Http.hpp"
 
 Http::Http(void) {
-    std::cout << "Default Http constructor" << std::endl;
+	std::cout << "Default Http constructor" << std::endl;
 }
 Http::Http(const Http &other) {
-    std::cout << "Copy Http constructor" << std::endl;
-    //this = &other;
+	std::cout << "Copy Http constructor" << std::endl;
+	//this = &other;
 	(void)other;
 }
 
 Http::~Http(void) {
-    std::cout << "Http destructor" << std::endl;
+	std::cout << "Http destructor" << std::endl;
 }
 
-Http    &Http::operator=(const Http &other) {
+Http	&Http::operator=(const Http &other) {
 	std::cout << "Http assignation operator" << std::endl;
 	if (this != &other) {
 		(void)other;
-    // TODO: members
-   }
-   return (*this);
+	// TODO: members
+	}
+	return (*this);
 };
 
 
@@ -43,8 +43,22 @@ Http    &Http::operator=(const Http &other) {
 
 
 const std::string&			HttpMessage::getStartLine(void) const {return _start_line;}
-const HttpMessage::header&	HttpMessage::getHeaders(void) const {return _headers;}
+const HttpMessage::header&	HttpMessage::getHeader(void) const {return _headers;}
 const std::string&			HttpMessage::getBody(void) const {return _body;}
+
+HttpMessage::MessageType	HttpMessage::getMessageType(void) const {
+	if (_start_line.compare(0, 4, "HTTP") == 0)
+		return RESPONSE;
+	else if (_start_line.length() > 0)
+		return REQUEST;
+	else
+		return UNDEFINED;
+}
+
+bool	HttpMessage::operator==(MessageType type) const {return getMessageType() == type;}
+
+void	HttpMessage::setStartLine(const std::string& line) {_start_line = line;}
+void	HttpMessage::setBody(const std::string& body) {_body = body;}
 
 HttpMessage::HttpMessage(void) {}
 HttpMessage::HttpMessage(const HttpMessage& other): _start_line(other._start_line), _headers(other._headers), _body(other._body) {}
@@ -53,8 +67,11 @@ HttpMessage::HttpMessage(const std::string& raw) {
 	std::string::const_iterator	end = raw.end();
 	std::string::const_iterator	tmp;
 
+	/* put first line in _start_line */
 	tmp = std::find(it, end, '\n');
 	_start_line = std::string(it, tmp);
+
+	/* parse header lines until empty line or end of raw input */
 	while (tmp != end)
 	{
 		it = tmp + 1;
@@ -63,6 +80,8 @@ HttpMessage::HttpMessage(const std::string& raw) {
 			break;
 		add_header_field(std::string(it, tmp));
 	}
+
+	/* put the remaining lines in the message body */
 	if (tmp != end)
 		_body = std::string(tmp + 1, end);
 	
@@ -83,20 +102,20 @@ HttpMessage&	HttpMessage::operator=(const HttpMessage& other) {
 void	HttpMessage::add_header_field(const std::string& line) {
 	std::string::const_iterator	it = line.begin();
 	std::string::const_iterator	end = line.end();
-	std::string::const_iterator sep = std::find(it, end, ':');
+	std::string::const_iterator	sep = std::find(it, end, ':');
+	std::string					key (it, sep);
 	if (sep == end)
 		throw (std::invalid_argument("headers and body MUST be separated by an empty line"));
-	if (*(sep + 1) != ' ')
-		throw (std::invalid_argument("missing space on line: " + line));
-	add_header_field(std::string(it, sep), std::string(sep + 2, end));
-	/* TODO												   ^^^
-	should check in the standard to see if there is
-	a forced space after the ':' in "key: value" headers
-	*/
+	/* skip whitespaces per RFC standard definition */
+	sep++;
+	while (isspace(*sep))
+		sep++;
+	add_header_field(key, std::string(sep, end));
 }
 
 void	HttpMessage::add_header_field(const std::string& key, const std::string& val) {
 	std::string key_copy (key);
+	/* keys are case insensitive, thus forcing them to lowercase will take care of that */
 	std::transform(key.begin(), key.end(), key_copy.begin(), tolower);
 	if (_headers.count(key) > 0)
 		throw (std::invalid_argument("duplicate header -> " + key));
@@ -106,9 +125,9 @@ void	HttpMessage::add_header_field(const std::string& key, const std::string& va
 
 std::ostream&	operator<<(std::ostream& os, const HttpMessage& message) {
 	os << message.getStartLine() << '\n';
-	const HttpMessage::header& header = message.getHeaders();
+	const HttpMessage::header& header = message.getHeader();
 	for (HttpMessage::header::const_iterator it = header.begin(); it != header.end();it++)
-		os << '\t' << it->first << ": " << it->second << '\n';
-	os << message.getBody() << '\n';
+		os << it->first << ": " << it->second << '\n';
+	os << '\n' << message.getBody() << '\n';
 	return os;
 }

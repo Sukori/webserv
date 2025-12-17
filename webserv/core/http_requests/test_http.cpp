@@ -12,6 +12,20 @@ int	main(int argc, char *argv[]) {
 	HttpMessage m1(raw);
 	std::cout << "raw: \n" << raw << "\n\n";
 	std::cout << "parsed: \n" << m1;
+
+	std::cout << "message is ";
+	switch (m1.getMessageType())
+	{
+	case HttpMessage::REQUEST:
+		std::cout << "a request\n";
+		break;
+	case HttpMessage::RESPONSE:
+		std::cout << "a response\n";
+		break;
+	default:
+		std::cout << "undefined\n";
+		break;
+	}
 	return (0);
 }
 
