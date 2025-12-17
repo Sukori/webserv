@@ -48,3 +48,6 @@ Helpful documentation we used
 * [Beej's Guide to Network Programming](https://beej.us/guide/bgnet/html/)
 * [Hypertext Transfer Protocol -- HTTP/1.1](https://www.rfc-editor.org/rfc/rfc2616)
 * [cppReference](https://en.cppreference.com/w/)
+* [CGI - Wikipedia](https://en.wikipedia.org/wiki/Common_Gateway_Interface)
+* [nginx documentation - config](https://nginx.org/en/docs/example.html)
+
