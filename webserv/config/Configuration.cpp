@@ -6,62 +6,24 @@
 /*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/12 18:23:28 by pberset           #+#    #+#             */
-/*   Updated: 2025/12/17 12:53:15 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2025/12/17 18:07:49 by pberset          ###   Lausanne.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Configuration.hpp"
+#include <Configuration.hpp>
 
-Configuration::Configuration(void) {
-    std::cout << "Default Configuration constructor" << std::endl;
+Location::Location(const struct s_location location): _route(), _root_path(), _alias(), _limit_except(), _autoindex(), _upload_path(), _cgi_param(), _cgi_pass() {
 }
 
-//Configuration::Configuration(const Configuration &other) {
-//    std::cout << "Copy Configuration constructor" << std::endl;
-//    this = &other;
-//}
+Location::~Location(void) {}
 
-Configuration::~Configuration(void) {
-    std::cout << "Configuration destructor" << std::endl;
+Server::Server(const struct s_server server, const std::vector<Location> locations): _listen(), _root(), _index(), _access_logs(), _error_logs(), _client_max_body_size(), _error_pages(), _locations() {
 }
 
-//Configuration	&Configuration::operator=(const Configuration &other) {
-//	std::cout << "Configuration assignation operator" << std::endl;
-//	if (this != &other) {
-//    // TODO: members
-//   }
-//   return (*this);
-//};
-//
-//Configuration	&Configuration::operator<<(const Configuration &rhs) {
-//	//TODO: print members
-//}
+Server::~Server(void) {}
 
-int	Configuration::openConfiguration(const std::string& file) {
-	std::ifstream	fs(file.c_str());
-	int				errParse;
-
-	if (!fs) {
-		fs.clear();
-		std::cerr << file << ": file does not exist" << std::endl;
-		return (1);
-	} else if (!fs.good()) {
-		fs.clear();
-		std::cerr << file << ": input stream failed" << std::endl;
-		return (2);
-	} else {
-		errParse = parseConfiguration(fs);
-	}
-	
-	return (0);
+Configuration::Configuration(const std::vector<Server> servers): _servers() {
 }
 
-int			parseConfiguration(const std::ifstream& data) {
-
-	std::string	buffer;
-	
-	data >> buffer;
-	std::cout << buffer << std::endl;	
-	return (0);
-}
+Configuration::~Configuration(void) {}
 
