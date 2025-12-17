@@ -6,7 +6,7 @@
 /*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/12 18:23:28 by pberset           #+#    #+#             */
-/*   Updated: 2025/12/12 18:57:32 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2025/12/17 12:53:15 by pberset          ###   Lausanne.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ Configuration::~Configuration(void) {
 //   return (*this);
 //};
 //
-//Configuration	&Configuration::operator<<(const Configuration &other) {
+//Configuration	&Configuration::operator<<(const Configuration &rhs) {
 //	//TODO: print members
 //}
 
