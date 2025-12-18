@@ -13,6 +13,7 @@ class HttpRequest: public HttpMessage
 		HttpRequest(const HttpRequest&);
 		~HttpRequest(void);
 		HttpRequest&	operator=(const HttpMessage&);
+		HttpRequest&	operator=(const HttpRequest&);
 
 		std::string	getMethod(void) const;
 		std::string	getPath(void) const;

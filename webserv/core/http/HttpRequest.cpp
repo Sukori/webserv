@@ -7,6 +7,7 @@ HttpRequest::HttpRequest(const HttpMessage& msg, const std::set<std::string>& al
 	if (msg != REQUEST)
 		throw (MessageIsNotRequest());
 }
+
 HttpRequest::HttpRequest(const HttpRequest& other): HttpMessage(other), _allowed_methods(other._allowed_methods) {}
 HttpRequest::~HttpRequest(void) {}
 HttpRequest&	HttpRequest::operator=(const HttpMessage& msg) {
@@ -17,6 +18,16 @@ HttpRequest&	HttpRequest::operator=(const HttpMessage& msg) {
 		_start_line = msg.getStartLine();
 		_headers = msg.getHeader();
 		_body = msg.getBody();
+	}
+	return *this;
+}
+
+HttpRequest&	HttpRequest::operator=(const HttpRequest& other) {
+	if (this != &other)
+	{
+		_start_line = other.getStartLine();
+		_headers = other.getHeader();
+		_body = other.getBody();
 	}
 	return *this;
 }
