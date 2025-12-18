@@ -6,8 +6,7 @@ FLAGS	= -I. -Wall -Wextra -Werror
 
 HDRS	= Configuration
 
-SRCS	= Configuration \
-		main
+SRCS	= main
 
 HDR		= $(addsuffix .hpp , $(HDRS))
 SRC		= $(addsuffix .cpp , $(SRCS))
@@ -16,6 +15,9 @@ all: $(NAME) | $(HDR)
 
 $(NAME): $(SRC)
 	$(CPP) $(FLAGS) $^ -o $@
+
+clean:
+	rm -rf $(NAME)
 
 .PHONY: all
 

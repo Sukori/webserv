@@ -6,7 +6,7 @@
 /*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/12 18:22:45 by pberset           #+#    #+#             */
-/*   Updated: 2025/12/17 18:09:49 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2025/12/18 15:31:19 by pberset          ###   Lausanne.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 # include <string>
 # include <vector>
 # include <map>
-
+# include <helperConfig.hpp>
 
 class Location {
 	public:

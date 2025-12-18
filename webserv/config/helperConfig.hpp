@@ -6,7 +6,7 @@
 /*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/17 17:55:02 by pberset           #+#    #+#             */
-/*   Updated: 2025/12/17 18:24:52 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2025/12/18 16:04:56 by pberset          ###   Lausanne.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,9 @@
 # include <iostream>
 # include <fstream>
 # include <string>
+# include <sstream>
 # include <vector>
 # include <map>
-# include <Configuration.hpp>
 
 struct s_location {
 	std::string							route; // location "/dir/" {     for instance
@@ -49,8 +49,7 @@ struct s_server {
 	std::map<int, std::string>	error_pages; // {error_code<int>, path_to_page<string>}, {404, "/www/error_pages/404.html"}
 };
 
-void	openFile(std::string);
-void	readFile(std::fstream fs);
+std::string	readFile(const char* file);
 
 // TODO fonctions de parsing
 
