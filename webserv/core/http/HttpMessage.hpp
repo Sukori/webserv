@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Http.hpp                                           :+:      :+:    :+:   */
+/*   HttpMessage.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 16:26:44 by pberset           #+#    #+#             */
-/*   Updated: 2025/12/17 15:21:06 by ylabussi         ###   ########.fr       */
+/*   Updated: 2025/12/18 15:35:21 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ class HttpMessage {
 
 		MessageType			getMessageType(void) const;
 		bool				operator==(MessageType) const;
+		bool				operator!=(MessageType) const;
 
 		void				setStartLine(const std::string&);
 		void				setBody(const std::string&);
@@ -64,7 +65,7 @@ class HttpMessage {
 		void	add_header_field(const std::string&);
 		void	add_header_field(const std::string&, const std::string&);
 
-	private:
+	protected:
 		std::string							_start_line;
 		std::map<std::string, std::string>	_headers;
 		std::string							_body;
@@ -72,14 +73,4 @@ class HttpMessage {
 
 std::ostream&	operator<<(std::ostream&, const HttpMessage&);
 
-class Http {
-	public:
-		Http(void);
-		Http(const Http &other);
-		~Http(void);
-		Http    &operator=(const Http &other);
-
-	private:
-    // TODO: members
-};
 #endif

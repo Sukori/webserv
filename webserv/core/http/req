@@ -1,4 +1,4 @@
-GET / HTTP/3
+GET /dir1/dir2/index.html HTTP/3
 Host: example.com
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:145.0) Gecko/20100101 Firefox/145.0
 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
@@ -15,5 +15,3 @@ If-Modified-Since: Thu, 09 Oct 2025 16:42:02 GMT
 If-None-Match: "bc2473a18e003bdb249eba5ce893033f:1760028122.592274"
 Priority: u=0, i
 TE: trailers
-
-* body contents here *

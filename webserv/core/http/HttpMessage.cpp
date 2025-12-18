@@ -1,53 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Http.cpp                                           :+:      :+:    :+:   */
+/*   HttpMessage.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 16:27:00 by pberset           #+#    #+#             */
-/*   Updated: 2025/12/17 15:33:22 by ylabussi         ###   ########.fr       */
+/*   Updated: 2025/12/18 15:34:55 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Http.hpp"
-
-Http::Http(void) {
-	std::cout << "Default Http constructor" << std::endl;
-}
-Http::Http(const Http &other) {
-	std::cout << "Copy Http constructor" << std::endl;
-	//this = &other;
-	(void)other;
-}
-
-Http::~Http(void) {
-	std::cout << "Http destructor" << std::endl;
-}
-
-Http	&Http::operator=(const Http &other) {
-	std::cout << "Http assignation operator" << std::endl;
-	if (this != &other) {
-		(void)other;
-	// TODO: members
-	}
-	return (*this);
-};
-
-
-
-
-
-
-
-
+#include "HttpMessage.hpp"
 
 const std::string&			HttpMessage::getStartLine(void) const {return _start_line;}
 const HttpMessage::header&	HttpMessage::getHeader(void) const {return _headers;}
 const std::string&			HttpMessage::getBody(void) const {return _body;}
 
 HttpMessage::MessageType	HttpMessage::getMessageType(void) const {
-	if (_start_line.compare(0, 4, "HTTP") == 0)
+	if (_start_line.compare(0, 5, "HTTP/") == 0)
 		return RESPONSE;
 	else if (_start_line.length() > 0)
 		return REQUEST;
@@ -56,6 +26,7 @@ HttpMessage::MessageType	HttpMessage::getMessageType(void) const {
 }
 
 bool	HttpMessage::operator==(MessageType type) const {return getMessageType() == type;}
+bool	HttpMessage::operator!=(MessageType type) const {return getMessageType() != type;}
 
 void	HttpMessage::setStartLine(const std::string& line) {_start_line = line;}
 void	HttpMessage::setBody(const std::string& body) {_body = body;}
@@ -84,7 +55,6 @@ HttpMessage::HttpMessage(const std::string& raw) {
 	/* put the remaining lines in the message body */
 	if (tmp != end)
 		_body = std::string(tmp + 1, end);
-	
 }
 
 HttpMessage::~HttpMessage(void) {}
