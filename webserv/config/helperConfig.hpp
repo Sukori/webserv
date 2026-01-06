@@ -6,7 +6,7 @@
 /*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/17 17:55:02 by pberset           #+#    #+#             */
-/*   Updated: 2025/12/18 16:04:56 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/01/06 18:04:37 by pberset          ###   Lausanne.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <sstream>
 # include <vector>
 # include <map>
+# include <cctype>
 
 struct s_location {
 	std::string							route; // location "/dir/" {     for instance
@@ -50,6 +51,8 @@ struct s_server {
 };
 
 std::string	readFile(const char* file);
+std::string	filterComments(std::string& str);
+std::string	filterSpaces(std::string& str);
 
 // TODO fonctions de parsing
 
