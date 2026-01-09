@@ -5,15 +5,22 @@ CFLAGS = -Wall -Wextra -Werror -std=c++98
 NAME	= http
 
 SRC = test_http.cpp HttpMessage.cpp HttpRequest.cpp HttpResponse.cpp
+OBJ = $(SRC:.cpp=.o)
 
 RM = rm -f
 
 all: $(NAME) target
 
-$(NAME): $(SRC)
-	$(CC) $(SRC) $(CFLAGS) -o $(NAME)
+$(NAME): $(OBJ)
+	$(CC) $(OBJ) -o $(NAME)
 
-fclean:
+%.o: %.cpp
+	$(CC) $< $(CFLAGS) -c -o $@
+
+clean:
+	$(RM) $(OBJ)
+
+fclean: clean
 	$(RM) $(NAME)
 
 re: fclean all
@@ -22,4 +29,4 @@ target:
 	$(info $(NAME))
 
 .PHONY:
-	all fclean re target
+	all clean fclean re target

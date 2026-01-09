@@ -35,7 +35,7 @@ HttpRequest&	HttpRequest::operator=(const HttpRequest& other) {
 std::string		HttpRequest::getMethod(void) const {
 	if (_start_line == "")
 		return "";
-	size_t i = _start_line.find_first_of("\t \n");
+	size_t i = _start_line.find_first_of("\t ");
 	std::string	sub = _start_line.substr(0, i);
 	if (_allowed_methods.find(sub) != _allowed_methods.end())
 		return sub;
@@ -47,6 +47,6 @@ std::string		HttpRequest::getPath(void) const {
 	if (_start_line == "")
 		return "";
 	size_t start = _start_line.find('/');
-	size_t end = _start_line.find_first_of("\t \n", start);
+	size_t end = _start_line.find_first_of("\t ", start);
 	return _start_line.substr(start, end - start);
 }

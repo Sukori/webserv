@@ -6,7 +6,7 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 16:27:00 by pberset           #+#    #+#             */
-/*   Updated: 2025/12/18 15:34:55 by ylabussi         ###   ########.fr       */
+/*   Updated: 2026/01/06 17:15:40 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,11 +93,17 @@ void	HttpMessage::add_header_field(const std::string& key, const std::string& va
 		_headers.insert(std::make_pair(key,val));
 }
 
+std::string	HttpMessage::toString(void) const
+{
+	std::string s;
+	s += _start_line + '\n';
+	for (HttpMessage::header::const_iterator it = _headers.begin(); it != _headers.end();it++)
+		s += it->first + ": " + it->second + '\n';
+	if (_body.length() > 0)
+		s += '\n' + _body + '\n';
+	return s;
+}
+
 std::ostream&	operator<<(std::ostream& os, const HttpMessage& message) {
-	os << message.getStartLine() << '\n';
-	const HttpMessage::header& header = message.getHeader();
-	for (HttpMessage::header::const_iterator it = header.begin(); it != header.end();it++)
-		os << it->first << ": " << it->second << '\n';
-	os << '\n' << message.getBody() << '\n';
-	return os;
+	return os << message.toString();
 }

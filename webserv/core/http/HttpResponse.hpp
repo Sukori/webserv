@@ -11,6 +11,11 @@ class HttpResponse: public HttpMessage
 		HttpResponse(const HttpResponse&);
 		~HttpResponse(void);
 
+		HttpResponse&	operator=(const HttpMessage&);
+		HttpResponse&	operator=(const HttpResponse&);
+
+		int		getStatusCode(void) const;
+
 		class MessageIsNotResponse: public std::exception
 		{
 			public:
