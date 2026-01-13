@@ -6,7 +6,7 @@
 /*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/13 11:08:49 by pberset           #+#    #+#             */
-/*   Updated: 2026/01/13 14:40:34 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/01/13 17:36:33 by pberset          ###   Lausanne.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,13 @@ void	exitWithError(const std::string& message) {
 MiniServer::MiniServer(std::string ipAddr, int port) : _ipAddr(ipAddr), _port(port), _socket(), _newSocket(), _messageIn(), _socketAddress(), _socketAddrLen(sizeof(_socketAddress)), _messageServer(buildResponse()) {
     std::cout << "Default MiniServer constructor" << std::endl;
 
-	_socketAddress.sinFamily = AF_INET;
-	_socketAddress.sinPort = htons(_port);
-	_socketAddress.inAddr.s_addr = inet_addr(_ipAddr.c_str());
+	_socketAddress.sin_family = AF_INET;
+	_socketAddress.sin_port = htons(_port);
+	_socketAddress.sin_addr.s_addr = inet_addr(_ipAddr.c_str());
+
 	if (startServer() != 0) {
 		std::ostringstream ss;
-		ss << "failed to start server with PORT: " << ntohs(_socketAddress.sinPort);
+		ss << "failed to start server with PORT: " << ntohs(_socketAddress.sin_port);
 		putLog(ss.str());
 	}
 }
@@ -64,8 +65,8 @@ void	MiniServer::startListen(void) {
 		exitWithError("socket listen failed");
 	}
 	std::ostringstream ss;
-	ss << "Listening on ADDRESS: " << inet_ntoa(_socketAddress.inAddr)
-	<< " PORT: " << ntohs(_socketAddress.sinport);
+	ss << "Listening on ADDRESS: " << inet_ntoa(_socketAddress.sin_addr)
+	<< " PORT: " << ntohs(_socketAddress.sin_port);
 	putLog(ss.str());
 
 	int bytesReceived;
@@ -93,22 +94,22 @@ void	MiniServer::acceptConnection(int& new_socket) {
 	new_socket = accept(_socket, (sockaddr *)&_socketAddress, &_socketAddrLen);
 	if (new_socket < 0) {
 		std::ostringstream ss;
-		ss << "server failed to accept incoming connection from ADDRESS: " << inet_ntoa(_socketAddress.inAddr)
-		<< " PORT: " << ntohs(_socketAddress.sinport);
+		ss << "server failed to accept incoming connection from ADDRESS: " << inet_ntoa(_socketAddress.sin_addr)
+		<< " PORT: " << ntohs(_socketAddress.sin_port);
 		exitWithError(ss.str());
 	}
 }
 
 std::string	MiniServer::buildResponse(void) {
-	std::string	htmlFile = "<h1>HELLO WORLD</h1>"
+	std::string	htmlFile = "<h1>HELLO WORLD</h1>";
 	std::ostringstream ss;
-	ss << "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: " << htmlFile.size() << \n << htmlFile;
+	ss << "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: " << htmlFile.size() << "\n" << htmlFile;
 
 	return (ss.str());
 }
 
 void	MiniServer::sendResponse(void) {
-	long	bytesSend;
+	long unsigned int	bytesSend;
 
 	bytesSend = write(_newSocket, _messageServer.c_str(), _messageServer.size());
 

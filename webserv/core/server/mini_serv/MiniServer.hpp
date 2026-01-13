@@ -6,7 +6,7 @@
 /*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/13 11:07:46 by pberset           #+#    #+#             */
-/*   Updated: 2026/01/13 14:36:03 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/01/13 17:34:30 by pberset          ###   Lausanne.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,16 +23,6 @@
 
 # define BUFFER_SIZE 30720
 
-struct s_inAddr {
-	unsigned long	s_addr;
-};
-
-struct s_sockAddrIn {
-	short			sinFamily;
-	unsigned short	sinPort;
-	struct s_inAddr	inAddr;
-};
-
 class MiniServer {
 public:
     MiniServer(std::string ipAddr, int port);
@@ -46,7 +36,7 @@ private:
 	int					_socket;
 	int					_newSocket;
 	long				_messageIn;
-	struct s_sockAddrIn	_socketAddress;
+	struct sockaddr_in	_socketAddress;
 	unsigned int		_socketAddrLen;
 	std::string			_messageServer;
 
