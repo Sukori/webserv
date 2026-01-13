@@ -47,4 +47,5 @@ Helpful documentation we used
 * [C++ Application Architecture - A Mini-Series (by The Cherno)](https://www.youtube.com/watch?v=rUxZ5N77M5E)
 * [Beej's Guide to Network Programming](https://beej.us/guide/bgnet/html/)
 * [Hypertext Transfer Protocol -- HTTP/1.1](https://www.rfc-editor.org/rfc/rfc2616)
-* [cppReference](https://en.cppreference.com/w/)
+* [cppReference](https://en.cppreference.com/w/)$
+* [Building an http server from scratch in c++](https://osasazamegbe.medium.com/showing-building-an-http-server-from-scratch-in-c-2da7c0db6cb7)
