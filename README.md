@@ -48,4 +48,7 @@ Helpful documentation we used
 * [Beej's Guide to Network Programming](https://beej.us/guide/bgnet/html/)
 * [Hypertext Transfer Protocol -- HTTP/1.1](https://www.rfc-editor.org/rfc/rfc2616)
 * [cppReference](https://en.cppreference.com/w/)
-* [mozilla http reference (headers list, request methods and response status)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference)
+* [Building an http server from scratch in c++](https://osasazamegbe.medium.com/showing-building-an-http-server-from-scratch-in-c-2da7c0db6cb7)
+* [CGI environment variables list](https://www6.uniovi.es/~antonio/ncsa_httpd/cgi/env.html)
+* [CGI example programm (in c, it's clearer what's being done)](https://www.ibm.com/support/pages/system/files/inline-files/$FILE/samplec_0.txt)
+* [CGI rfc specification](https://datatracker.ietf.org/doc/html/rfc3875)
