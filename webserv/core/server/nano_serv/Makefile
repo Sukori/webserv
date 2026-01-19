@@ -4,9 +4,11 @@ CPP		= c++ -std=c++98
 
 FLAGS	= -I. -Wall -Wextra -Werror
 
-HDRS	= NanoServer
+HDRS	= NanoServer \
+		Client
 
 SRCS	= NanoServer \
+		Client \
 		run
 
 HDR		= $(addsuffix .hpp , $(HDRS))

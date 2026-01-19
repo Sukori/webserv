@@ -15,21 +15,28 @@
 
 # include <iostream>
 # include <string>
+# include <sys/socket.h>
 
 class Client {
-public:
-    Client(int socket);
-    ~Client(void);
+	public:
+		Client(int socket);
+		~Client(void);
 
-	int	readRequest(void);
+		int	readMessage(void);
 
-private:
-	std::string			_requestIn;
-	std::string			_responseOut;
-	long unsigned int	_messageSize;
-	bool				_messageComplete;
-	int					_socket;
+		std::string		getRequestIn(void);
+		std::string		getResponseOut(void);
+		ssize_t			getMessageSize(void);
+		bool			isMessageComplete(void);
+		int				getSocketStatus(void);
+
+	private:
+		Client(void);
+		std::string		_requestIn;
+		std::string		_responseOut;
+		ssize_t			_messageSize;
+		bool			_messageComplete;
+		int				_socket;
 };
 
 #endif
-
