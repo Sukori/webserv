@@ -51,7 +51,6 @@ Helpful documentation we used
 * [CGI - Wikipedia](https://en.wikipedia.org/wiki/Common_Gateway_Interface)
 * [nginx documentation - config](https://nginx.org/en/docs/example.html)
 * [ipv4 - ipv6 converter](https://dnschecker.org/ipv4-to-ipv6.php)
-
 * [Building an http server from scratch in c++](https://osasazamegbe.medium.com/showing-building-an-http-server-from-scratch-in-c-2da7c0db6cb7)
 * [CGI environment variables list](https://www6.uniovi.es/~antonio/ncsa_httpd/cgi/env.html)
 * [CGI example programm (in c, it's clearer what's being done)](https://www.ibm.com/support/pages/system/files/inline-files/$FILE/samplec_0.txt)
