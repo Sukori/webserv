@@ -6,7 +6,7 @@
 /*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/12 18:22:45 by pberset           #+#    #+#             */
-/*   Updated: 2025/12/18 15:31:19 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/01/22 11:15:50 by pberset          ###   Lausanne.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,10 +36,10 @@ class Location {
 		const std::string							_cgi_pass;
 };
 
-class Server {
+class ServerConfig {
 	public:
-		Server(const struct s_server server, const std::vector<Location> locations);
-		~Server(void);
+		ServerConfig(const struct s_server server, const std::vector<Location> locations);
+		~ServerConfig(void);
 
 	private:
 		const std::vector<s_listen>			_listen;
@@ -54,13 +54,13 @@ class Server {
 
 class Configuration {
 	public:
-		Configuration(const std::vector<Server> servers);
+		Configuration(const std::vector<ServerConfig> servers);
 		~Configuration(void);
 
 		//getters
 
 	private:
-		const std::vector<Server>	_servers;
+		const std::vector<ServerConfig>	_servers;
 };
 
 //std::ostream&	operator<<(std::ostream& os, const Configuration& config);
