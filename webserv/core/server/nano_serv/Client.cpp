@@ -28,34 +28,51 @@ std::string	Client::getResponseOut(void) {
     return (_responseOut);
 }
 
-long unsigned int	Client::getMessageSize(void) {
-    return (_messageSize);
+ssize_t	Client::getRequestSize(void) {
+    return (_requestSize);
 }
 
-bool    Client::isMessageComplete(void) {
-    return (_messageComplete);
+bool    Client::isRequestComplete(void) {
+    return (_requestComplete);
 }
 
 int	Client::getSocketStatus(void) {
     return (_socket);
 }
 
-int	Client::readMessage(void) {
+int	Client::readRequest(void) {
     char    temp_buffer[4096] = {0};
-    ssize_t status;
+    ssize_t bytes_read;
 
-    status = recv(_socket, temp_buffer, 4096, 0);
-    if (status < 0) {
+    bytes_read = recv(_socket, temp_buffer, 4096, 0);
+    if (bytes_read < 0) {
         std::cout << "recv read error" << std::endl;
-    } else if (status == 0) {
+    } else if (bytes_read == 0) {
         std::cout << "client closed the connection" << std::endl;
     } else {
-        std::cout << "read " << status << "bytes" << std::endl;
-        _requestIn.append(temp_buffer, status);
-        _messageSize += status;
+        std::cout << "read " << bytes_read << "bytes" << std::endl; // debug
+        _requestIn.append(temp_buffer, bytes_read);
+        _requestSize += bytes_read;
         if (_requestIn.find("\r\n\r\n") != std::string::npos) {
-           _messageComplete = true;
+           _requestComplete = true;
         }
     }
-    return ((int)status);
+    return ((int)bytes_read);
+}
+
+bool	Client::writeResponse(void) {
+	if (_responseOut.empty()) {
+		return (false);
+	}
+
+	ssize_t	bytes_sent = send(_socket, _responseOut.c_str(), _responseOut.size(), 0);
+	if (bytes_sent < 0 ) {
+		std::cout << "send error" << std::endl;
+	} else if (bytes_sent == 0) {
+		std::cout << "client has closed the connection" << std::endl;
+	} else {
+		std::cout << "write " << bytes_sent << "bytes" << std::endl; //debug
+		_responseOut.erase(0, bytes_sent);
+	}
+	return (_responseOut.empty());
 }

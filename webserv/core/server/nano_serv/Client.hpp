@@ -22,20 +22,21 @@ class Client {
 		Client(int socket);
 		~Client(void);
 
-		int	readMessage(void);
+		int				readRequest(void);
+		bool			writeResponse(void);
 
 		std::string		getRequestIn(void);
 		std::string		getResponseOut(void);
-		ssize_t			getMessageSize(void);
-		bool			isMessageComplete(void);
+		ssize_t			getRequestSize(void);
+		bool			isRequestComplete(void);
 		int				getSocketStatus(void);
 
 	private:
 		Client(void);
 		std::string		_requestIn;
 		std::string		_responseOut;
-		ssize_t			_messageSize;
-		bool			_messageComplete;
+		ssize_t			_requestSize;
+		bool			_requestComplete;
 		int				_socket;
 };
 
