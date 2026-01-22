@@ -40,11 +40,11 @@ int	Client::getSocketStatus(void) {
     return (_socket);
 }
 
-int	Client::readRequest(void) {
-    char    temp_buffer[4096] = {0};
+ssize_t	Client::readRequest(void) {
+    char    temp_buffer[BUFFER_SIZE] = {0};
     ssize_t bytes_read;
 
-    bytes_read = recv(_socket, temp_buffer, 4096, 0);
+    bytes_read = recv(_socket, temp_buffer, BUFFER_SIZE, 0);
     if (bytes_read < 0) {
         std::cout << "recv read error" << std::endl;
     } else if (bytes_read == 0) {
@@ -57,7 +57,7 @@ int	Client::readRequest(void) {
            _requestComplete = true;
         }
     }
-    return ((int)bytes_read);
+    return (bytes_read);
 }
 
 bool	Client::writeResponse(void) {

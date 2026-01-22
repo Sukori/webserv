@@ -4,10 +4,10 @@ CPP		= c++ -std=c++98
 
 FLAGS	= -I. -Wall -Wextra -Werror
 
-HDRS	= NanoServer \
+HDRS	= WebServ \
 		Client
 
-SRCS	= NanoServer \
+SRCS	= WebServ \
 		Client \
 		run
 

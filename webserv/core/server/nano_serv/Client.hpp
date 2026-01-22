@@ -17,12 +17,14 @@
 # include <string>
 # include <sys/socket.h>
 
+# define BUFFER_SIZE 4096
+
 class Client {
 	public:
 		Client(int socket);
 		~Client(void);
 
-		int				readRequest(void);
+		ssize_t			readRequest(void);
 		bool			writeResponse(void);
 
 		std::string		getRequestIn(void);
