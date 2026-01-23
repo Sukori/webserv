@@ -63,41 +63,49 @@ int	WebServer::_closeServer(void) {
 
 void	WebServer::run(void) {
 
-	if (listen(_socket, 20) < 0) {
-		exitWithError("run", "listen failed");
+	int	ctrlno;
+
+	ctrlno = listen(_socket, BACKLOG);
+	if (ctrlno < 0) {
+		exitWithError("listen", strerror(errno));
 	}
-	std::ostringstream ss;
-	ss << "Listening on ADDRESS: " << inet_ntoa(_socketAddress.sin_addr) //not allowed must fnd alt
-	<< " | PORT: " << ntohs(_socketAddress.sin_port);
-	putLog(ss.str());
 
-	_fds[0].fd = _socket;
-	_fds[0].events = POLLIN;
-	int	timeout = 3 * 60 * 1000;
-	ssize_t	bytesReceived;
+	_fds.clear();
+	struct pollfd	pfd;
+	pfd.fd = _socket;
+	pfd.events = POLLIN;
+	pfd.revents = 0;
+	_fds.push_back(pfd);
 
-	do {
-		putLog("=====LISTENING=====");
-		_acceptConnection(_newSocket);
-		Client	client(_newSocket);
-		_clients.insert(std::pair<int,Client>(_newSocket,client));
+	while (true) {
+		ctrlno = poll(&_fds[0], _fds.size(), -1);
+		if (ctrlno < 0) {
+			exitWithError("poll", strerror(errno));
+		} else if (ctrlno == 0) {
+			continue ;
+		}
 
-		char	buffer[BUFFER_SIZE] = {0};
-
-		bytesReceived = _clients[0].readRequest();
-	} while (_newSocket != -1)
+		for (int i = 0; i < _fds.size(); i++) {
+			if (_fds[i].revents == 0) {
+				continue ;
+			}
+			if (_fds[i].fd == _socket) {
+				_acceptConnection(_newSocket);
+			} else {
+				//client.readRequest();
+				std::cout << "existing client is reading" << std::endl;
+			}
+		}
+	}
 }
 
 void	WebServer::_acceptConnection(int& newSocket) {
 	newSocket = accept(_socket, (sockaddr *)&_socketAddress, (socklen_t *)sizeof(_socketAddress));
 	if (newSocket < 0) {
-		std::ostringstream oss;
-
-		oss << "server failed to accept connection on ADDRESS: " << inet_ntoa(_socketAddress.sin_addr) //not allowed must fnd alt
-		<< " | PORT: " << ntohs(_socketAddress.sin_port);
-		exitWithError("acceptConnection", oss.str());
+		putLog("accept: " + std::string(strerror(errno)));
+		return ;
 	}
 }
 
-int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
-int poll(struct pollfd *fds, nfds_t nfds, int timeout);
+//int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
+//int poll(struct pollfd *fds, nfds_t nfds, int timeout);

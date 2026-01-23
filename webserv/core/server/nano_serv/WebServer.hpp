@@ -16,8 +16,10 @@
 # include <iostream>
 # include <sstream>
 # include <string>
+# include <cstring>
 # include <vector>
 # include <map>
+# include <cerrno>
 # include <poll.h>
 # include <sys/socket.h>
 # include <arpa/inet.h>
@@ -27,6 +29,7 @@
 # include "Client.hpp"
 
 # define BUFFER_SIZE 4096
+# define BACKLOG 1024
 
 class WebServer {
 	public:
