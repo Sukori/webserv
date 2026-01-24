@@ -4,11 +4,13 @@ CPP		= c++ -std=c++98
 
 FLAGS	= -I. -Wall -Wextra -Werror
 
-HDRS	= WebServ \
+HDRS	= WebServer \
+		Configuration \
 		Client
 
-SRCS	= WebServ \
+SRCS	= WebServer \
 		Client \
+		Configuration \
 		run
 
 HDR		= $(addsuffix .hpp , $(HDRS))

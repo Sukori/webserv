@@ -6,7 +6,7 @@
 /*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 14:11:31 by pberset           #+#    #+#             */
-/*   Updated: 2026/01/19 14:11:37 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/01/24 15:51:44 by pberset          ###   Lausanne.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,10 @@ bool    Client::isRequestComplete(void) {
 
 int	Client::getSocketStatus(void) {
     return (_socket);
+}
+
+void	Client::setResponse(const std::string& response) {
+	_responseOut = response;
 }
 
 ssize_t	Client::readRequest(void) {

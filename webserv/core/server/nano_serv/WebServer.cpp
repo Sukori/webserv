@@ -1,18 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   WebServer.cpp                                     :+:      :+:    :+:   */
+/*   WebServer.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 14:11:12 by pberset           #+#    #+#             */
-/*   Updated: 2026/01/19 14:11:19 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/01/24 16:41:48 by pberset          ###   Lausanne.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
-//_clients.insert(std::make_pair(new_socket_fd, Client(new_socket_fd)));
 #include "WebServer.hpp"
-#include "../../../config/Configuration.hpp" 
+#include "Configuration.hpp" 
 
 void	putLog(const std::string& message) {
 	std::cout << message << std::endl;
@@ -27,8 +26,8 @@ WebServer::WebServer(const Configuration& config) : _config(config) {
     std::cout << "Config WebServer constructor" << std::endl;
 	
 	_socketAddress.sin_family = AF_INET;
-	_socketAddress.sin_port = htons(_config._servers[0]._listen[0].port);
-	_socketAddress.sin_addr.s_addr = inet_addr(_config._servers[0]._listen[0].ip.c_str()); //not allowed, must find alt
+	_socketAddress.sin_port = htons(_config.getServers().front().getListens().front().port);
+	_socketAddress.sin_addr.s_addr = inet_addr(_config.getServers().front().getListens().front()); //not allowed, must find alt
 
 	if (_initServer() != 0) {
 		std::ostringstream ss;
@@ -57,8 +56,24 @@ int	WebServer::_initServer(void) {
 
 int	WebServer::_closeServer(void) {
 	close(_socket);
-	close(_newSocket);
 	exit(0);
+}
+
+void	WebServer::_handleRequest(Client& client) {
+	//parse request in
+	// check config, file, cgi
+	
+	// for now: hello world
+	std::string	body = "<html><body><h1>Hello from Poll Server!</h1></body></html>";
+
+	std::ostringstream	oss;
+	oss << "HTTP/1.1 200 OK\r\n"
+	<< "Content-Type: text/html\r\n"
+	<< "Content-Length: " << body.size() << "\r\n"
+	<< "\r\n" //!! CR LF !! RFC 2.2, 4.1 - 19.3 tolerant only, but server doesn't know
+	<< body;
+
+	client.setResponse(oss.str());
 }
 
 void	WebServer::run(void) {
@@ -85,27 +100,77 @@ void	WebServer::run(void) {
 			continue ;
 		}
 
-		for (int i = 0; i < _fds.size(); i++) {
+		for (size_t i = 0; i < _fds.size(); i++) {
 			if (_fds[i].revents == 0) {
 				continue ;
 			}
 			if (_fds[i].fd == _socket) {
-				_acceptConnection(_newSocket);
+				int newSocket = _acceptConnection();
+				if (newSocket > 0) {
+					_clients.insert(std::make_pair(newSocket, Client(newSocket)));
+					struct pollfd	npfd;
+					npfd.fd = newSocket;
+					npfd.events = POLLIN;
+					npfd.revents = 0;
+					_fds.push_back(npfd);
+
+					putLog("New client");
+				} else {
+					continue ;
+				}
 			} else {
-				//client.readRequest();
-				std::cout << "existing client is reading" << std::endl;
+				std::map<int, Client>::iterator	it = _clients.find(_fds[i].fd);
+
+				if (it != _clients.end()) {
+					if (_fds[i].revents & POLLIN) {
+						ssize_t read_bytes = it->second.readRequest();
+	
+							if (read_bytes <= 0) {
+								close(_fds[i].fd);
+								_clients.erase(it);
+								_fds.erase(_fds.begin() + i);
+								i--;
+								continue ;
+							}
+	
+							if (it->second.isRequestComplete()) {
+								_handleRequest(it->second);
+								_fds[i].events = POLLOUT;
+							}
+
+					} else if (_fds[i].revents & POLLOUT) {
+						if (it->second.writeResponse()) { //for now, we close
+							close(_fds[i].fd);
+							_clients.erase(it);
+							_fds.erase(_fds.begin() + i);
+							i--;
+							/*personal assumption
+							 * it->second.events = POLLIN;
+							 * clear the read write containers*/
+						}
+					}
+				}
 			}
 		}
 	}
 }
 
-void	WebServer::_acceptConnection(int& newSocket) {
-	newSocket = accept(_socket, (sockaddr *)&_socketAddress, (socklen_t *)sizeof(_socketAddress));
+int	WebServer::_acceptConnection(void) {
+
+	socklen_t	addrLen = sizeof(_socketAddress);
+
+	int newSocket = accept(_socket, (sockaddr *)&_socketAddress, &addrLen);
 	if (newSocket < 0) {
 		putLog("accept: " + std::string(strerror(errno)));
-		return ;
+		return (-1);
 	}
+	
+	int	ctrlno = fcntl(newSocket, F_SETFL, O_NONBLOCK);
+	if (ctrlno < 0) {
+		putLog("fcntl: " + std::string(strerror(errno)));
+		close(newSocket);
+		return (-2);
+	}
+	return (newSocket);
 }
 
-//int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
-//int poll(struct pollfd *fds, nfds_t nfds, int timeout);

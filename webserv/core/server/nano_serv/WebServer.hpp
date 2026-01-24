@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   WebServer.hpp                                     :+:      :+:    :+:   */
+/*   WebServer.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 14:10:51 by pberset           #+#    #+#             */
-/*   Updated: 2026/01/19 14:10:59 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/01/24 16:37:25 by pberset          ###   Lausanne.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,14 @@
 # include <vector>
 # include <map>
 # include <cerrno>
+# include <cstdlib>
+# include <fcntl.h>
 # include <poll.h>
 # include <sys/socket.h>
 # include <arpa/inet.h>
 # include <unistd.h>
 # include <sys/time.h>
-# include "../../../config/Configuration.hpp" 
+# include "Configuration.hpp" 
 # include "Client.hpp"
 
 # define BUFFER_SIZE 4096
@@ -44,14 +46,14 @@ class WebServer {
 		std::vector<pollfd>		_fds;
 		std::map<int, Client>	_clients;
 		int						_socket;
-		int						_newSocket;
-		const Server*			_findBestConfig(std::string host, int port); //rename ServerConfig when merge with config branch
 
 		struct sockaddr_in		_socketAddress;
 
 		int						_initServer(void);
 		int						_closeServer(void);
-		void					_acceptConnection(int& newSocket);
+		int						_acceptConnection(void);
+		void					_handleRequest(Client& client);
+		const Server*			_findBestConfig(std::string host, int port); //rename ServerConfig when merge with config branch
 };
 
 void	putLog(const std::string& message);

@@ -6,7 +6,7 @@
 /*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 16:12:29 by pberset           #+#    #+#             */
-/*   Updated: 2026/01/14 16:38:14 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/01/24 15:50:38 by pberset          ###   Lausanne.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,8 @@ class Client {
 		bool			isRequestComplete(void);
 		int				getSocketStatus(void);
 
+		void			setResponse(const std::string& response);
+
 	private:
 		Client(void);
 		std::string		_requestIn;
@@ -43,3 +45,4 @@ class Client {
 };
 
 #endif
+
