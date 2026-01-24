@@ -6,7 +6,7 @@
 /*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/12 18:23:28 by pberset           #+#    #+#             */
-/*   Updated: 2025/12/17 18:07:49 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/01/24 16:27:12 by pberset          ###   Lausanne.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,16 @@ Server::Server(const struct s_server server, const std::vector<Location> locatio
 
 Server::~Server(void) {}
 
+std::vector<s_listen>&	Server::getListens(void) {
+	return (_listen);
+}
+
 Configuration::Configuration(const std::vector<Server> servers): _servers() {
 }
 
 Configuration::~Configuration(void) {}
+
+std::vector<Server>&	Configuration::getServers(void) {
+	return (_servers);
+}
 

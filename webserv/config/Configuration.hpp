@@ -6,7 +6,7 @@
 /*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/12 18:22:45 by pberset           #+#    #+#             */
-/*   Updated: 2025/12/18 15:31:19 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/01/24 16:39:41 by pberset          ###   Lausanne.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,9 @@ class Server {
 		Server(const struct s_server server, const std::vector<Location> locations);
 		~Server(void);
 
+		//getters
+		std::vector<s_listen>&	getListens(void) const;
+
 	private:
 		const std::vector<s_listen>			_listen;
 		const std::string					_root;
@@ -58,6 +61,7 @@ class Configuration {
 		~Configuration(void);
 
 		//getters
+		std::vector<Server>&	getServers(void) const;
 
 	private:
 		const std::vector<Server>	_servers;
