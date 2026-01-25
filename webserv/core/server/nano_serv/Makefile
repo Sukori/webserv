@@ -6,11 +6,13 @@ FLAGS	= -I. -Wall -Wextra -Werror
 
 HDRS	= WebServer \
 		Configuration \
+		helperConfig \
 		Client
 
 SRCS	= WebServer \
 		Client \
 		Configuration \
+		helperConfig \
 		run
 
 HDR		= $(addsuffix .hpp , $(HDRS))

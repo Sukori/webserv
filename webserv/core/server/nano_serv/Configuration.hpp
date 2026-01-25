@@ -6,7 +6,7 @@
 /*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/12 18:22:45 by pberset           #+#    #+#             */
-/*   Updated: 2026/01/24 16:39:41 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/01/25 15:10:01 by pberset          ###   Lausanne.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,10 @@ class Server {
 		~Server(void);
 
 		//getters
-		std::vector<s_listen>&	getListens(void) const;
+		std::vector<s_listen>&	getListens(void);
 
 	private:
-		const std::vector<s_listen>			_listen;
+		std::vector<s_listen>			_listen;
 		const std::string					_root;
 		const std::vector<std::string>		_index;
 		const std::string					_access_logs;
@@ -61,10 +61,10 @@ class Configuration {
 		~Configuration(void);
 
 		//getters
-		std::vector<Server>&	getServers(void) const;
+		std::vector<Server>&	getServers(void);
 
 	private:
-		const std::vector<Server>	_servers;
+		std::vector<Server>	_servers;
 };
 
 //std::ostream&	operator<<(std::ostream& os, const Configuration& config);

@@ -6,7 +6,7 @@
 /*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 14:11:12 by pberset           #+#    #+#             */
-/*   Updated: 2026/01/24 16:41:48 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/01/25 15:17:15 by pberset          ###   Lausanne.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,14 @@ WebServer::WebServer(const Configuration& config) : _config(config) {
 	
 	_socketAddress.sin_family = AF_INET;
 	_socketAddress.sin_port = htons(_config.getServers().front().getListens().front().port);
-	_socketAddress.sin_addr.s_addr = inet_addr(_config.getServers().front().getListens().front()); //not allowed, must find alt
+	_socketAddress.sin_addr.s_addr = inet_addr(_config.getServers().front().getListens().front().ip.c_str()); //not allowed, must find alt
 
 	if (_initServer() != 0) {
 		std::ostringstream ss;
 		ss << "failed to initialize server with PORT: " << ntohs(_socketAddress.sin_port);
 		putLog(ss.str());
 	}
+    std::cout << "Initialized server with IP: " <<_config.getServers().front().getListens().front().ip << " | PORT: " << _config.getServers().front().getListens().front().port << std::endl;
 }
 
 WebServer::~WebServer(void) {
@@ -42,6 +43,7 @@ WebServer::~WebServer(void) {
 }
 
 int	WebServer::_initServer(void) {
+    std::cout << "initServer" << std::endl;
 	_socket = socket(AF_INET, SOCK_STREAM, 0);
 	if (_socket < 0) {
 		exitWithError("_initServer", "create socket failed");
@@ -78,6 +80,7 @@ void	WebServer::_handleRequest(Client& client) {
 
 void	WebServer::run(void) {
 
+    std::cout << "run" << std::endl;
 	int	ctrlno;
 
 	ctrlno = listen(_socket, BACKLOG);
@@ -93,6 +96,7 @@ void	WebServer::run(void) {
 	_fds.push_back(pfd);
 
 	while (true) {
+    std::cout << "===== Listening =====" << std::endl;
 		ctrlno = poll(&_fds[0], _fds.size(), -1);
 		if (ctrlno < 0) {
 			exitWithError("poll", strerror(errno));

@@ -6,7 +6,7 @@
 /*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 14:10:51 by pberset           #+#    #+#             */
-/*   Updated: 2026/01/24 16:37:25 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/01/25 15:09:11 by pberset          ###   Lausanne.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ class WebServer {
 	
 	private:
 		WebServer(void); 
-		const Configuration&	_config;
+		Configuration			_config;
 		std::vector<pollfd>		_fds;
 		std::map<int, Client>	_clients;
 		int						_socket;
