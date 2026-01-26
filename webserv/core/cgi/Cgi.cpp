@@ -6,7 +6,7 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 16:17:33 by pberset           #+#    #+#             */
-/*   Updated: 2026/01/20 17:16:52 by ylabussi         ###   ########.fr       */
+/*   Updated: 2026/01/26 17:30:37 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,9 +56,6 @@ CONTENT_LENGTH      - from request
 
 */
 
-std::string getQueryString(const std::string& path);
-std::string getPathInfo(const std::string& path);
-
 /*
 returns -1 if failed fork, child status otherwise
 make sure first field of all env is full UPPER_SNAKE_CASE instead of lower-kebab-case
@@ -87,9 +84,5 @@ int exec_cgi(const std::string& exe, const std::string& path, const std::map<std
         dup2(sockets[1], 1);
         execve(argv[0], argv, envp);
         exit(1);
-        (void)sockets;
     }
 }
-
-
-
