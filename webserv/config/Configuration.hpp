@@ -6,7 +6,7 @@
 /*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/12 18:22:45 by pberset           #+#    #+#             */
-/*   Updated: 2026/01/22 11:15:50 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/01/25 15:10:01 by pberset          ###   Lausanne.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 # include <string>
 # include <vector>
 # include <map>
-# include <helperConfig.hpp>
+# include "helperConfig.hpp"
 
 class Location {
 	public:
@@ -36,13 +36,16 @@ class Location {
 		const std::string							_cgi_pass;
 };
 
-class ServerConfig {
+class Server {
 	public:
-		ServerConfig(const struct s_server server, const std::vector<Location> locations);
-		~ServerConfig(void);
+		Server(const struct s_server server, const std::vector<Location> locations);
+		~Server(void);
+
+		//getters
+		std::vector<s_listen>&	getListens(void);
 
 	private:
-		const std::vector<s_listen>			_listen;
+		std::vector<s_listen>			_listen;
 		const std::string					_root;
 		const std::vector<std::string>		_index;
 		const std::string					_access_logs;
@@ -54,13 +57,14 @@ class ServerConfig {
 
 class Configuration {
 	public:
-		Configuration(const std::vector<ServerConfig> servers);
+		Configuration(const std::vector<Server> servers);
 		~Configuration(void);
 
 		//getters
+		std::vector<Server>&	getServers(void);
 
 	private:
-		const std::vector<ServerConfig>	_servers;
+		std::vector<Server>	_servers;
 };
 
 //std::ostream&	operator<<(std::ostream& os, const Configuration& config);
