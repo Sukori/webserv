@@ -1,4 +1,4 @@
-#include "WebServer.hpp"
+#include "core/server/WebServer.hpp"
 
 int	main() {
 	struct s_location	s_loca;

@@ -10,14 +10,16 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <Configuration.hpp>
+#include "Configuration.hpp"
 
 Location::Location(const struct s_location location): _route(location.route), _root_path(location.root_path), _alias(location.alias), _limit_except(location.limit_except), _autoindex(location.autoindex), _upload_path(location.upload_path), _cgi_param(location.cgi_param), _cgi_pass(location.cgi_pass) {
+	(void)_autoindex;
 }
 
 Location::~Location(void) {}
 
 Server::Server(const struct s_server server, const std::vector<Location> locations): _listen(server.listen), _root(server.root), _index(server.index), _access_logs(server.access_logs), _error_logs(server.error_logs), _client_max_body_size(server.client_max_body_size), _error_pages(server.error_pages), _locations(locations) {
+	(void)_client_max_body_size;
 }
 
 Server::~Server(void) {}

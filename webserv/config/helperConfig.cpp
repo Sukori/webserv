@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <helperConfig.hpp>
+#include "helperConfig.hpp"
 
 std::string	readFile(const char* file) {
 	std::ifstream	fs(file);

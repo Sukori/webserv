@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "WebServer.hpp"
-#include "Configuration.hpp" 
 
 void	putLog(const std::string& message) {
 	std::cout << message << std::endl;

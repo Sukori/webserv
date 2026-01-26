@@ -27,8 +27,8 @@
 # include <arpa/inet.h>
 # include <unistd.h>
 # include <sys/time.h>
-# include "Configuration.hpp" 
-# include "Client.hpp"
+# include "../../config/Configuration.hpp" 
+# include "../client/Client.hpp"
 
 # define BUFFER_SIZE 4096
 # define BACKLOG 1024
