@@ -4,7 +4,7 @@ CFLAGS = -Wall -Wextra -Werror -std=c++98
 
 NAME	= http
 
-SRC = test_http.cpp HttpMessage.cpp HttpRequest.cpp HttpResponse.cpp
+SRC = test_http.cpp Http.cpp
 OBJ = $(SRC:.cpp=.o)
 
 RM = rm -f
