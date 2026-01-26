@@ -1,41 +1,49 @@
-NAME	= webServ_0-1
+NAME		= webServ_0-1
 
-CPP		= c++ -std=c++98
+CXX			= c++
+CXXFLAGS	= -Wall -Wextra -Werror
 
-FLAGS	= -Wall -Wextra -Werror
+CXX			+= -std=c++98
 
-ODIR	= obj/
 
-WEBDIR	= core/server/
-CNFDIR	= config/
-CLIDIR	= core/client/
+ODIR		= obj/
 
-HDRS	= $(WEBDIR)WebServer \
-		$(CNFDIR)Configuration \
-		$(CNFDIR)helperConfig \
-		$(CLIDIR)Client
+WEBDIR		= core/server/
+CNFDIR		= config/
+CLIDIR		= core/client/
 
-SRCS	= $(WEBDIR)WebServer \
-		$(CNFDIR)Configuration \
-		$(CNFDIR)helperConfig \
-		$(CLIDIR)Client \
-		run
+HDRS		= $(WEBDIR)WebServer \
+			$(CNFDIR)Configuration \
+			$(CNFDIR)helperConfig \
+			$(CLIDIR)Client
 
-HDR		= $(addsuffix .hpp, $(HDRS))
-SRC		= $(addsuffix .cpp, $(SRCS))
-OBJ		= $(addsuffix .o, )
+SRCS		= $(WEBDIR)WebServer \
+			$(CNFDIR)Configuration \
+			$(CNFDIR)helperConfig \
+			$(CLIDIR)Client \
+			run
 
-all: $(NAME) | $(HDR)
+HDR			= $(addsuffix .hpp, $(HDRS))
+SRC			= $(addsuffix .cpp, $(SRCS))
+OBJ			= $(addsuffix .o, $(SRCS))
 
-$(NAME): $(SRC)
-	$(CPP) $(FLAGS) $^ -o $@
+all: $(NAME)
+
+$(NAME): $(OBJ)
+	$(CXX) $(CXXFLAGS) $^ -o $@
+
+$(ODIR)%.o: $(WEBDIR)%.cpp $(CNFDIR)%.cpp $(CLIDIR)%.cpp $(HDR) | $(ODIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(ODIR):
+	mkdir -p $(ODIR)
 
 clean:
-	rm -rf $(NAME)
-
-fclean: clean
 	rm -rf $(ODIR)
 
+fclean: clean	
+	rm -rf $(NAME)
 
-.PHONY: all
+re: fclean all
 
+.PHONY: all clean fclean re
