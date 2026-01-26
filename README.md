@@ -51,4 +51,4 @@ Helpful documentation we used
 * [CGI - Wikipedia](https://en.wikipedia.org/wiki/Common_Gateway_Interface)
 * [nginx documentation - config](https://nginx.org/en/docs/example.html)
 * [ipv4 - ipv6 converter](https://dnschecker.org/ipv4-to-ipv6.php)
-
+* [mozilla http reference (headers list, request methods and response status)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference)
