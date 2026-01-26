@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <helperConfig.hpp>
+#include "helperConfig.hpp"
 
 std::string	readFile(const char* file) {
 	std::ifstream	fs(file);
@@ -31,8 +31,8 @@ std::string	filterComments(std::string& str) {
 	std::string			output;
 	std::istringstream	is(str);
 	std::string			line;
+
 	while (std::getline(is, line)) {
-		std::cout << line << std::endl;
 
 		for (unsigned int i = 0; i < line.size(); i++) {
 			if (line[i] != '#') {
@@ -47,12 +47,19 @@ std::string	filterComments(std::string& str) {
 	return (output);
 }
 
-std::string	filterSpaces(std::string& str) {
+std::string	insertSpaces(std::string& str) {
 	std::string	output;
+	
 	for (unsigned int i = 0; i < str.size(); i++) {
-		if (!std::isspace(str[i]))
+		if (str[i] == '{' || str[i] == '}' || str[i] == ';') {
+				output += " ";
 				output += str[i];
+				output += " ";
+		} else {
+			output += str[i];
+		}
 	}
+
 	return (output);
 }
 

@@ -52,7 +52,7 @@ struct s_server {
 
 std::string	readFile(const char* file);
 std::string	filterComments(std::string& str);
-std::string	filterSpaces(std::string& str);
+std::string	insertSpaces(std::string& str);
 
 // TODO fonctions de parsing
 
