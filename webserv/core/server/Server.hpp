@@ -6,7 +6,7 @@
 /*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 16:22:28 by pberset           #+#    #+#             */
-/*   Updated: 2025/11/23 16:22:33 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/01/09 16:24:17 by pberset          ###   Lausanne.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,12 @@
 
 # include <iostream>
 # include <string>
+# include <unistd.h>
+# include <sys/socket.h>
+# include <cstring>
+# include <arpa/inet.h>
+# include <fstream>
+# include <sstream>
 
 class Server {
 	public:
@@ -26,5 +32,8 @@ class Server {
 	private:
     // TODO: members
 };
+
+int start_server(void);
+
 #endif
 
