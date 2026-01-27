@@ -6,33 +6,14 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 16:17:33 by pberset           #+#    #+#             */
-/*   Updated: 2026/01/26 17:30:37 by ylabussi         ###   ########.fr       */
+/*   Updated: 2026/01/27 16:22:02 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Cgi.hpp"
-/*
-Cgi::Cgi(void) {
-    std::cout << "Default Cgi constructor" << std::endl;
-}
-Cgi::Cgi(const Cgi &other) {
-    std::cout << "Copy Cgi constructor" << std::endl;
-    this = &other;
-}
 
-Cgi::~Cgi(void) {
-    std::cout << "Cgi destructor" << std::endl;
-}
-Cgi    &Cgi::operator=(const Cgi &other) {
-	std::cout << "Cgi assignation operator" << std::endl;
-	if (this != &other) {
-    // TODO: members
-   }
-   return (*this);
-};*/
 /*
 cgi env variables
-
 
 SERVER_SOFTWARE     - const
 SERVER_NAME         - from server
@@ -53,24 +34,35 @@ CONTENT_TYPE        - from request?
 CONTENT_LENGTH      - from request
 
 + headers
-
 */
+
+std::string read_all(int fd) {
+    char c;
+    std::string ret;
+    while (read(fd, &c, 1) > 0)
+        ret += c;
+    return ret;
+}
 
 /*
 returns -1 if failed fork, child status otherwise
 make sure first field of all env is full UPPER_SNAKE_CASE instead of lower-kebab-case
 */
-int exec_cgi(const std::string& exe, const std::string& path, const std::map<std::string, std::string>& env, int sockets[2]) {
+std::string exec_cgi(const std::string& exe, const std::string& path, const std::map<std::string, std::string>& env, int socket) {
     typedef std::map<std::string, std::string> env_map;
-    int     status;
+    int     pfds[2];
+    if (pipe(pfds))
+        return "";
     pid_t   cpid = fork();
     if (cpid < 0)
-        return -1;
+        return close(pfds[0]), close(pfds[1]), "";
     else if (cpid > 0)
     {
         /* parent */
-        waitpid(cpid, &status, 0);
-        return status;
+        close(pfds[1]);
+        std::string response = read_all(pfds[0]);
+        close(pfds[0]);
+        return response;
     }
     else
     {
@@ -80,9 +72,10 @@ int exec_cgi(const std::string& exe, const std::string& path, const std::map<std
         envp[env.size()] = NULL;
         for (env_map::const_iterator it = env.begin(); it != env.end(); it++)
             envp[std::distance(env.begin(), it)] = strdup((it->first + '=' + it->second).c_str());
-        dup2(sockets[0], 0);
-        dup2(sockets[1], 1);
+        dup2(socket, 0);
+        dup2(pfds[1], 1);
+        close(pfds[0]);
         execve(argv[0], argv, envp);
-        exit(1);
+        exit(2);
     }
 }

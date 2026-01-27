@@ -6,7 +6,7 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 16:17:49 by pberset           #+#    #+#             */
-/*   Updated: 2026/01/20 17:23:35 by ylabussi         ###   ########.fr       */
+/*   Updated: 2026/01/27 16:42:23 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,8 @@ class Cgi {
     // TODO: members
 };
 
-int exec_cgi(const std::string& exe, const std::string& path, const std::map<std::string, std::string>& env, int sockets[2]);
+/* forks, executes the specified binary with the specified env and returns the message-body of the reponse */
+std::string exec_cgi(const std::string& exe, const std::string& path, const std::map<std::string, std::string>& env, int socket);
 
 #endif
 
