@@ -12,6 +12,24 @@
 
 #include "helperConfig.hpp"
 
+HelperConfig::HelperConfig(void) {}
+
+HelperConfig::~HelperConfig(void) {}
+
+void	HelperConfig::initParser(void) {
+	//in case, otherwise just a step
+	parseServer();
+}
+
+void	HelperConfig::parseServer(void) {
+	//token
+	parseLocation();
+}
+
+void	HelperConfig::parseLocation(void) {
+	//token
+}
+
 std::string	readFile(const char* file) {
 	std::ifstream	fs(file);
 	if (!fs.is_open()) {

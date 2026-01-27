@@ -33,16 +33,11 @@ int	main(int argc, char* argv[]) {
 	if (noComments.empty())
 		return (2);
 	
-	std::string	oneLine = filterSpaces(noComments);
-	if (oneLine.empty())
-		return (3);
+	std::string	safeLine = insertSpaces(noComments);
+
+	// parse and populate structs
 	
-	std::cout << "File extract-------------" << std::endl;
-	std::cout << configStr << std::endl;
-	std::cout << "FilterComments-----------" << std::endl;
-	std::cout << noComments << std::endl;
-	std::cout << "FilterSpace-----------" << std::endl;
-	std::cout << oneLine << std::endl;
+
 	return (0);
 }
 
