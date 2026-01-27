@@ -24,10 +24,12 @@ void	HelperConfig::initParser(void) {
 void	HelperConfig::parseServer(void) {
 	//token
 	parseLocation();
+	//once done parsing one server, push back in Configuration::_servers
 }
 
 void	HelperConfig::parseLocation(void) {
 	//token
+	//Once done parsing one location, puch_back in Server::_locations
 }
 
 std::string	readFile(const char* file) {

@@ -64,7 +64,9 @@ public:
 	void	parseLocation(void);
 
 private:
-	std::stringstream	_ss;
+	std::stringstream		_ss;
+	std::vector<s_location>	_locations;
+	std::vector<s_server>	_servers;
 };
 
 #endif
