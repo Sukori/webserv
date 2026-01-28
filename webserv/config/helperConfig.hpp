@@ -54,20 +54,5 @@ std::string	readFile(const char* file);
 std::string	filterComments(std::string& str);
 std::string	insertSpaces(std::string& str);
 
-class HelperConfig {
-public:
-	HelperConfig(void);
-	~HelperConfig(void);
-
-	void	initParser(void);
-	void	parseServer(void);
-	void	parseLocation(void);
-
-private:
-	std::stringstream		_ss;
-	std::vector<s_location>	_locations;
-	std::vector<s_server>	_servers;
-};
-
 #endif
 

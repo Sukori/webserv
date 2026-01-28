@@ -12,26 +12,6 @@
 
 #include "helperConfig.hpp"
 
-HelperConfig::HelperConfig(void) {}
-
-HelperConfig::~HelperConfig(void) {}
-
-void	HelperConfig::initParser(void) {
-	//in case, otherwise just a step
-	parseServer();
-}
-
-void	HelperConfig::parseServer(void) {
-	//token
-	parseLocation();
-	//once done parsing one server, push back in Configuration::_servers
-}
-
-void	HelperConfig::parseLocation(void) {
-	//token
-	//Once done parsing one location, puch_back in Server::_locations
-}
-
 std::string	readFile(const char* file) {
 	std::ifstream	fs(file);
 	if (!fs.is_open()) {
