@@ -10,25 +10,48 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "Parser.hpp"
 
-Parser::Parser(void) {}
+Parser::Parser(const std::string data): _ss(data) {}
 
 Parser::~Parser(void) {}
 
-void	Parser::initParser(void) {
-	//in case, otherwise just a step
-	parseServer();
+std::vector<Server> Parser::initParser(void) {
+    std::vector<Server> output;
+
+	//while _ss >> token //(_ss.good())
+	//if token is "server"
+	output.push_back(parseServer());
+	//else error handling
+
+	return (output);
 }
 
-void	Parser::parseServer(void) {
-	//token
-	parseLocation();
-	//once done parsing one server, push back in Configuration::_servers
+Server	Parser::parseServer(void) {
+	struct s_server			servStruct;
+	std::vector<Location>	locs;
+
+	//if opening token is '{' - else error handling
+	//while token != '}' or eof - error handling if eof
+	//if token is a server token - else error handling
+	//populate struct
+	//if token is "location"
+	locs.push_back(parseLocation());
+	//if location is not empty or has minimal necessary - else error handling
+	Server	output(servStruct, locs);
+
+	return (output);
 }
 
-void	Parser::parseLocation(void) {
-	//token
-	//Once done parsing one location, puch_back in Server::_locations
+Location	Parser::parseLocation(void) {
+	struct s_location	locStruct;
+
+	//if token is here valid /path/ - else error handling
+	//if token if '{' - else error handling
+	//while token != '}' or eof - error handling if eof
+	//if token is a location token - else error handling
+	//populate struct
+
+	Location	output(locStruct);
+	return (output);
 }

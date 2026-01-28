@@ -10,29 +10,29 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #ifndef PARSER_HPP
 # define PARSER_HPP
 
 # include <iostream>
+# include <string>
 # include <sstream>
 # include <vector>
 # include "Configuration.hpp"
 
 class Parser {
 public:
-	Parser(void);
+	Parser(const std::string data);
 	~Parser(void);
 
-	void	initParser(void);
-	void	parseServer(void);
-	void	parseLocation(void);
+	std::vector<Server>	initParser(void);
+	Server				parseServer(void);
+	Location			parseLocation(void);
 
 private:
+	Parser(void);
 	std::stringstream		_ss;
 	std::vector<s_location>	_locations;
 	std::vector<s_server>	_servers;
 };
 
 #endif
-
