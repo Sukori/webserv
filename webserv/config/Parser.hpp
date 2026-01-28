@@ -27,6 +27,7 @@ public:
 	std::vector<Server>	initParser(void);
 	Server				parseServer(void);
 	Location			parseLocation(void);
+	struct s_listen		parseListen(void);
 
 private:
 	Parser(void);

@@ -10,7 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <Configuration.hpp>
+#include "Configuration.hpp"
+#include "Parser.hpp"
 
 int	main(int argc, char* argv[]) {
 
@@ -35,8 +36,10 @@ int	main(int argc, char* argv[]) {
 	
 	std::string	safeLine = insertSpaces(noComments);
 
-	// parse and populate structs
-	
+	Parser			parser(safeLine);
+	Configuration*	config = new Configuration(parser.initParser()); // will be used repeatedly, so better fix it into memory, instead of keeping on stack
+
+	//at this point, config is valid, or we handle error
 
 	return (0);
 }

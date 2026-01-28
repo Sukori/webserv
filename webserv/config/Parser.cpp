@@ -17,29 +17,73 @@ Parser::Parser(const std::string data): _ss(data) {}
 Parser::~Parser(void) {}
 
 std::vector<Server> Parser::initParser(void) {
-    std::vector<Server> output;
+    std::vector<Server> output = {};
+	std::string			token;
 
-	//while _ss >> token //(_ss.good())
-	//if token is "server"
-	output.push_back(parseServer());
-	//else error handling
+	while (_ss >> token) { //will stop at !_ss.good()
+		if (token == "server") {
+			output.push_back(parseServer());
+		} else {
+			std::cerr << "config file: unexpected token at root level: " << token << std::endl;
+			//set a custom errno and return?
+			break ;
+		}
+	}
+	
+	if (output.empty()) {
+		std::cerr << "config file: no server definition found" << std::endl;
+		//set a custom errno?
+	}
 
 	return (output);
 }
 
 Server	Parser::parseServer(void) {
-	struct s_server			servStruct;
-	std::vector<Location>	locs;
+	struct s_server			servStruct = {};
+	std::vector<Location>	locs = {};
+	std::string				token;
+	std::string				serverAllowed[] = {"server_name", "root", "index", "access_logs", "error_logs", "client_max_body_size", "error"};
 
-	//if opening token is '{' - else error handling
-	//while token != '}' or eof - error handling if eof
-	//if token is a server token - else error handling
-	//populate struct
-	//if token is "location"
-	locs.push_back(parseLocation());
-	//if location is not empty or has minimal necessary - else error handling
+	_ss >> token;
+	if (token != "{") {
+		std::cerr << "server configuration: unexpected token: " << token << std::endl;
+		//set a custom errno?
+		return (Server(servStruct,locs));
+	}
+
+	do {
+		_ss >> token;
+
+		if (token == "listen") {
+			servStruct.listen.push_back(parseListen());
+			continue ;
+		}
+
+		if (token == "location") {
+			locs.push_back(parseLocation());
+			continue ;
+		}
+
+		
+
+	} while (token != "}" && _ss.good());
+	
+
+	//if locs & listen are not empty - else error handling
 	Server	output(servStruct, locs);
 
+	return (output);
+}
+
+struct s_listen	parseListen(void) {
+	struct s_listen	output;
+	//ip and port are the only data.
+	//for simplicity, ip is assumed to be 0.0.0.0 and is not written in config
+	output.ip = "0.0.0.0";
+	//first int for port - else error handling
+	//output.port = token;
+	//then protocol - if token == ';' - then default protocol to 'HTTP'
+	//output.protocol = token;
 	return (output);
 }
 
