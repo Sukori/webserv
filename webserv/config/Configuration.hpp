@@ -46,6 +46,7 @@ class Server {
 
 	private:
 		std::vector<s_listen>				_listen;
+		const std::string					_serverName;
 		const std::string					_root;
 		const std::vector<std::string>		_index;
 		const std::string					_access_logs;
