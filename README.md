@@ -50,5 +50,6 @@ Helpful documentation we used
 * [cppReference](https://en.cppreference.com/w/)
 * [CGI - Wikipedia](https://en.wikipedia.org/wiki/Common_Gateway_Interface)
 * [nginx documentation - config](https://nginx.org/en/docs/example.html)
+* [nginx documentation - HTTP CORE MODULE](https://nginx.org/en/docs/http/ngx_http_core_module.html)
 * [ipv4 - ipv6 converter](https://dnschecker.org/ipv4-to-ipv6.php)
 
