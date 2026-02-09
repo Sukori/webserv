@@ -31,6 +31,26 @@ static int	ft_stoui(std::string& token) {
 	return (output);
 }
 
+static void	ft_toLower(std::string& str) {
+	for (int i = 0; (unsigned int)i < str.size(); i++) {
+		if (str.at(i) > 64 && str.at(i) < 91) {
+			str.at(i) += 32;
+		}
+	}
+}
+
+static bool	ft_stob(std::string& token) {
+	ft_toLower(token);
+	if (token == "true") {
+		return (true);
+	} else if (token == "false") {
+		return (false);
+	} else {
+		std::cerr << "ft_stob: invalid token " << token << std::endl;
+		return (false);
+	}
+}
+
 std::vector<Server> Parser::initParser(void) {
     std::vector<Server> output = {};
 	std::string			token;
@@ -59,6 +79,7 @@ Server	Parser::parseServer(void) {
 	std::string				token;
 	std::string				serverAllowed[] = {"server_name", "root", "index", "access_logs", "error_logs", "client_max_body_size", "error"};
 
+	servStruct.error_pages.insert(std::make_pair(404, "/www/error_pages/404.html"));
 	_ss >> token;
 	if (token != "{") {
 		std::cerr << "parseServer: unexpected token " << token << std::endl;
@@ -79,8 +100,9 @@ Server	Parser::parseServer(void) {
 			continue ;
 		}
 
-		
-
+		/*
+			set the other allowed things
+		*/
 	} while (token != "}" && _ss.good());
 	
 
@@ -90,8 +112,8 @@ Server	Parser::parseServer(void) {
 	return (output);
 }
 
-struct s_listen	parseListen(void) {
-	struct s_listen	output;
+struct s_listen	Parser::parseListen(void) {
+	struct s_listen	output = {};
 	std::string		token;
 	int				port;
 	//ip and port are the only data.
@@ -105,9 +127,9 @@ struct s_listen	parseListen(void) {
 		return (output);
 	}
 	//first int for port - else error handling
-	output.port = token;
+	output.port = port;
 	_ss >> token;
-	if (token != ';') {
+	if (token.front() != ';') {
 		std::cerr << "parseListen: unexpected token " << token << std::endl;
 		//set a custom errno ?
 		output.port = -1;
@@ -118,12 +140,86 @@ struct s_listen	parseListen(void) {
 
 Location	Parser::parseLocation(void) {
 	struct s_location	locStruct;
+	std::string			token;
+	std::string			locationAllowed[] = {"route", "root_path", "alias", "limit_except", "autoindex", "upload_path", "cgi_param", "cgi_pass"};
+
+	locStruct.autoindex = true;
+	locStruct.root_path = "/";
+	locStruct.upload_path = "/uploads/";
+	//locStrunc.error_path is missing?
 
 	//if token is here valid /path/ - else error handling
-	//if token if '{' - else error handling
+	_ss >> token;
+	if (token.at(0) != '/') {
+		std::cerr << "parseLocation: path not starting from root " << token << std::endl;
+		Location	error(locStruct);
+		return (error);
+	}
+	locStruct.route = token;
+	_ss >> token;
+
+	//if token is '{' - else error handling
+	if (token.at(0) != '{') {
+		std::cerr << "parseLocation: unexpected token after route " << token << std::endl;
+		Location	error(locStruct);
+		return (error);
+	}
+
 	//while token != '}' or eof - error handling if eof
 	//if token is a location token - else error handling
 	//populate struct
+	int	i;
+	do {
+		_ss >> token;
+
+		// for loop through the allowed location flags
+		for (i = 0; (unsigned int)i < locationAllowed->size(); i++) {
+			if (token == locationAllowed[i]) {
+				// store the index
+				break ;
+			}
+		}
+		switch (i)
+		{
+		case 0:
+			locStruct.route = token;
+			break;
+
+		case 1:
+		locStruct.root_path = token;
+			break;
+
+		case 2:
+			locStruct.alias = token;
+			break;
+
+		case 3:
+			locStruct.limit_except = token; // horror
+			//https://nginx.org/en/docs/http/ngx_http_core_module.html#limit_except
+			break;
+
+		case 4:
+			locStruct.autoindex = ft_stob(token);
+			break;
+
+		case 5:
+			locStruct.upload_path = token;
+			break;
+
+		case 6:
+			locStruct.cgi_param = token; // script name , script location
+			break;
+
+		case 7:
+			locStruct.cgi_pass = token;
+			break;
+
+		default:
+			//error
+			break;
+		}
+		//use index in a switch case for assignment
+	} while (token != "}" && _ss.good());
 
 	Location	output(locStruct);
 	return (output);

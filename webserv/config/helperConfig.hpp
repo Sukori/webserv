@@ -42,13 +42,13 @@ struct s_listen {
 
 struct s_server {
 	std::vector<s_listen>		listen = {};
-	std::string					serverName = "";
+	std::string					serverName = "webserv";
 	std::string					root = "/";
 	std::vector<std::string>	index = {};
-	std::string					access_logs = "";
-	std::string					error_logs = "";
+	std::string					access_logs = "/logs/logfiles/access.log";
+	std::string					error_logs = "/logs/logfiles/error.log";
 	long						client_max_body_size = 1024; // convert "10m" or "10M" in bits (10000000)
-	std::map<int, std::string>	error_pages = {0, std::string("")}; // {error_code<int>, path_to_page<string>}, {404, "/www/error_pages/404.html"}
+	std::map<int, std::string>	error_pages; // {error_code<int>, path_to_page<string>}, {404, "/www/error_pages/404.html"}
 };
 
 std::string	readFile(const char* file);
