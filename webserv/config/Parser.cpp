@@ -6,7 +6,7 @@
 /*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 14:36:34 by pberset           #+#    #+#             */
-/*   Updated: 2026/02/02 19:54:25 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/02/14 10:18:35 by pberset          ###   Lausanne.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,16 +169,16 @@ Location	Parser::parseLocation(void) {
 	//if token is a location token - else error handling
 	//populate struct
 	int	i;
-	do {
+	do { //warning, this shit loop does not handle ";" appropriately
 		_ss >> token;
 
-		// for loop through the allowed location flags
 		for (i = 0; (unsigned int)i < locationAllowed->size(); i++) {
 			if (token == locationAllowed[i]) {
-				// store the index
 				break ;
 			}
 		}
+		// This switch statement should then check for ";" end line and handle errors
+		// Maybe a return (handle location error) that returns an empty struct would be good
 		switch (i)
 		{
 		case 0:
@@ -207,7 +207,10 @@ Location	Parser::parseLocation(void) {
 			break;
 
 		case 6:
-			locStruct.cgi_param = token; // script name , script location
+			_ss >> token;
+			std::string	tmp = token;
+			_ss >> token;
+			locStruct.cgi_param = std::make_pair(tmp, token); // script name , script location
 			break;
 
 		case 7:
@@ -215,10 +218,9 @@ Location	Parser::parseLocation(void) {
 			break;
 
 		default:
-			//error
-			break;
+			Location	output(locStruct);
+			return (output);
 		}
-		//use index in a switch case for assignment
 	} while (token != "}" && _ss.good());
 
 	Location	output(locStruct);
