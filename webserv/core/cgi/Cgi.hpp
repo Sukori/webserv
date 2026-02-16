@@ -6,7 +6,7 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 16:17:49 by pberset           #+#    #+#             */
-/*   Updated: 2026/01/27 16:42:23 by ylabussi         ###   ########.fr       */
+/*   Updated: 2026/02/12 15:45:27 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,19 +22,21 @@
 # include <map>
 # include <algorithm>
 
+#include "../http/Http.hpp"
+
 class Cgi {
 	public:
 		Cgi(void);
 		Cgi(const Cgi &other);
 		~Cgi(void);
-		Cgi    &operator=(const Cgi &other);
+		Cgi	&operator=(const Cgi &other);
 
 	private:
-    // TODO: members
+	// TODO: members
 };
 
+void add_cgi_env(std::map<std::string, std::string>& env, const Http::StartLine& startLine);
 /* forks, executes the specified binary with the specified env and returns the message-body of the reponse */
 std::string exec_cgi(const std::string& exe, const std::string& path, const std::map<std::string, std::string>& env, int socket);
 
 #endif
-
