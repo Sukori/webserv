@@ -24,7 +24,7 @@ Server::Server(const struct s_server server, const std::vector<Location> locatio
 
 Server::~Server(void) {}
 
-std::vector<s_listen>&	Server::getListens(void) {
+s_listen&	Server::getListens(void) {
 	return (_listen);
 }
 

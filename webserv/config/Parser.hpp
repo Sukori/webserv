@@ -27,8 +27,10 @@ public:
 
 	std::vector<Server>					initParser(void);
 	Server								parseServer(void);
+	std::vector<std::string>			parseIndex(void);
+	unsigned int						parseBodySize(void);
 	Location							parseLocation(void);
-	struct s_listen						parseListen(void);
+	struct s_listen						parseListen(std::string token);
 	std::vector<std::string>			parseLimitExcept(std::string token);
 	std::map<std::string, std::string>	parseCgiParam(std::string& token);
 

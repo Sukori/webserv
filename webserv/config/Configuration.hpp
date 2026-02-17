@@ -42,16 +42,16 @@ class Server {
 		~Server(void);
 
 		//getters
-		std::vector<s_listen>&	getListens(void);
+		s_listen&	getListens(void);
 
 	private:
-		std::vector<s_listen>				_listen;
+		s_listen							_listen;
 		const std::string					_serverName;
 		const std::string					_root;
 		const std::vector<std::string>		_index;
 		const std::string					_access_logs;
 		const std::string					_error_logs;
-		const long							_client_max_body_size;
+		const unsigned int					_client_max_body_size;
 		const std::map<int, std::string>	_error_pages;
 		const std::vector<Location>			_locations;
 };

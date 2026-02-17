@@ -26,7 +26,7 @@ struct s_location {
 	std::string							route = "/"; // location "/dir/"     for instance
 	std::string							root_path = "/"; // root "/var/www"; for instance
 	std::string							alias = "/";
-	std::vector<std::string>			limit_except = {};
+	std::vector<std::string>			limit_except;
 	bool								autoindex = true;
 	std::string							upload_path = "/uploads/";
 	std::map<std::string, std::string>	cgi_param = {std::string(""), std::string("")};
@@ -35,19 +35,19 @@ struct s_location {
 
 
 struct s_listen {
-	std::string	ip = "0.0.0.0"; //allways broadcast for this project
-	int			port = 0; // 8080++ for this project
-	std::string	protocol = "HTTP"; //HTTP, TCP, SSL, SSH ...
+	std::string	ip; //allways broadcast for this project
+	int			port; // 8080++ for this project
+	std::string	protocol; //HTTP, TCP, SSL, SSH ...
 };
 
 struct s_server {
-	std::vector<s_listen>		listen = {};
 	std::string					serverName = "webserv";
+	s_listen					listen;
 	std::string					root = "/";
-	std::vector<std::string>	index = {};
+	std::vector<std::string>	index;
 	std::string					access_logs = "/logs/logfiles/access.log";
 	std::string					error_logs = "/logs/logfiles/error.log";
-	long						client_max_body_size = 1024; // convert "10m" or "10M" in bits (10000000)
+	unsigned int				client_max_body_size = 1024; // convert "10m" or "10M" in bits (10000000)
 	std::map<int, std::string>	error_pages; // {error_code<int>, path_to_page<string>}, {404, "/www/error_pages/404.html"}
 };
 
