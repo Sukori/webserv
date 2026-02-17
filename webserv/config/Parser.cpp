@@ -127,14 +127,67 @@ struct s_listen	Parser::parseListen(void) {
 		return (output);
 	}
 	//first int for port - else error handling
-	output.port = port;
-	_ss >> token;
-	if (token.front() != ';') {
+	if (token.at(token.size() - 1) != ';') {
 		std::cerr << "parseListen: unexpected token " << token << std::endl;
 		//set a custom errno ?
 		output.port = -1;
 	}
+	output.port = port;
+	_ss >> token;
 	//output.protocol = token; //actually, we don't accept anything else than "http"
+	return (output);
+}
+
+//Single line declaration of all allowed methods only, terminated by semicolon
+std::vector<std::string>	Parser::parseLimitExcept(std::string token) {
+	std::vector<std::string>	output;
+
+	while (token.at(token.size() - 1) != ';') {
+		if (!_ss.good()) {
+			std::cerr << "parseLimitExcept: unexpected end of line " << token << std::endl;
+			output.insert(output.begin(), std::string("ERROR"));
+			return (output);
+		}
+		output.push_back(token);
+		_ss >> token;
+	}
+	if (token.size() != 1) {
+		token.at(token.size() - 1) = '\0';
+		output.push_back(token);
+	}
+	return (output);
+}
+
+std::map<std::string, std::string>	Parser::parseCgiParam(std::string& token) {
+	std::map<std::string, std::string>	output;
+	
+	if (!_ss.good() || token == "}") {
+		std::cerr << "parseCgiParam: [key] unexpected end of line " << token << std::endl;
+		output.insert(output.begin(), std::make_pair("ERROR", "ERROR"));
+		return (output);
+	}
+
+	std::string							key = token;
+	std::string							value;
+
+	do {
+		_ss >> value;
+		if (!_ss.good() || value == "}") {
+			std::cerr << "parseCgiParam: [value] unexpected end of line " << value << std::endl;
+			output.insert(output.begin(), std::make_pair("ERROR", "ERROR"));
+			return (output);
+		}
+		output.insert(output.end(), std::make_pair(key, value));
+
+		_ss >> key;
+		if (!_ss.good()) {
+			std::cerr << "parseCgiParam: [key] unexpected end of line " << key << std::endl;
+			output.insert(output.begin(), std::make_pair("ERROR", "ERROR"));
+			return (output);
+		}
+		if (key == "}")
+			break;
+	} while (_ss.good());
 	return (output);
 }
 
@@ -146,12 +199,13 @@ Location	Parser::parseLocation(void) {
 	locStruct.autoindex = true;
 	locStruct.root_path = "/";
 	locStruct.upload_path = "/uploads/";
-	//locStrunc.error_path is missing?
+	//locStruct.error_path # NO NEED ?
 
 	//if token is here valid /path/ - else error handling
 	_ss >> token;
 	if (token.at(0) != '/') {
 		std::cerr << "parseLocation: path not starting from root " << token << std::endl;
+		locStruct.route = "ERROR";
 		Location	error(locStruct);
 		return (error);
 	}
@@ -169,11 +223,20 @@ Location	Parser::parseLocation(void) {
 	//if token is a location token - else error handling
 	//populate struct
 	int	i;
-	do { //warning, this shit loop does not handle ";" appropriately
+	do {
 		_ss >> token;
 
 		for (i = 0; (unsigned int)i < locationAllowed->size(); i++) {
 			if (token == locationAllowed[i]) {
+				_ss >> token;
+				if (token.at(token.size() - 1) == ';')
+					token.at(token.size() - 1) = '\0';
+				if (token.size() < 1) {
+					std::cerr << "parseLocation: unexpected token of size 0" << std::endl;
+					locStruct.route = "ERROR";
+					Location	error(locStruct);
+					return (error);
+				}
 				break ;
 			}
 		}
@@ -186,7 +249,7 @@ Location	Parser::parseLocation(void) {
 			break;
 
 		case 1:
-		locStruct.root_path = token;
+			locStruct.root_path = token;
 			break;
 
 		case 2:
@@ -194,8 +257,7 @@ Location	Parser::parseLocation(void) {
 			break;
 
 		case 3:
-			locStruct.limit_except = token; // horror
-			//https://nginx.org/en/docs/http/ngx_http_core_module.html#limit_except
+			locStruct.limit_except = parseLimitExcept(token);
 			break;
 
 		case 4:
@@ -207,10 +269,7 @@ Location	Parser::parseLocation(void) {
 			break;
 
 		case 6:
-			_ss >> token;
-			std::string	tmp = token;
-			_ss >> token;
-			locStruct.cgi_param = std::make_pair(tmp, token); // script name , script location
+			locStruct.cgi_param = parseCgiParam(token);
 			break;
 
 		case 7:

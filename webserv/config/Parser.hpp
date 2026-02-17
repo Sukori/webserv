@@ -17,6 +17,7 @@
 # include <string>
 # include <sstream>
 # include <vector>
+# include <map>
 # include "Configuration.hpp"
 
 class Parser {
@@ -24,10 +25,12 @@ public:
 	Parser(const std::string data);
 	~Parser(void);
 
-	std::vector<Server>	initParser(void);
-	Server				parseServer(void);
-	Location			parseLocation(void);
-	struct s_listen		parseListen(void);
+	std::vector<Server>					initParser(void);
+	Server								parseServer(void);
+	Location							parseLocation(void);
+	struct s_listen						parseListen(void);
+	std::vector<std::string>			parseLimitExcept(std::string token);
+	std::map<std::string, std::string>	parseCgiParam(std::string& token);
 
 private:
 	Parser(void);
