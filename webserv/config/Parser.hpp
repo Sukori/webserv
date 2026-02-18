@@ -6,7 +6,7 @@
 /*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 14:36:55 by pberset           #+#    #+#             */
-/*   Updated: 2026/01/28 14:36:59 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/02/18 11:34:08 by pberset          ###   Lausanne.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ public:
 	Server								parseServer(void);
 	std::vector<std::string>			parseIndex(void);
 	unsigned int						parseBodySize(void);
+	std::map<int, std::string>			parseErrorPages(void);
 	Location							parseLocation(void);
 	struct s_listen						parseListen(std::string token);
 	std::vector<std::string>			parseLimitExcept(std::string token);
@@ -42,3 +43,4 @@ private:
 };
 
 #endif
+

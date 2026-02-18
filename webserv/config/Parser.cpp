@@ -6,7 +6,7 @@
 /*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 14:36:34 by pberset           #+#    #+#             */
-/*   Updated: 2026/02/18 11:32:29 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/02/18 12:00:21 by pberset          ###   Lausanne.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,8 +141,28 @@ std::map<int, std::string>	Parser::parseErrorPages(void) {
 	unsigned int				errINT;
 	std::string					errPagePath;
 
+	_ss >> errNUM;
+	if (errNUM != "{"){
+		std::cerr << "parseErrorPages: unexpected token " << errNUM << std::endl;
+		std::map<int, std::string>	fail;
+		fail.insert(map.begin(), std::make_pair(-1, "ERROR"));
+		return (fail);
+	}
+
+	//space separated number and path
+	//space is also a separator for each pair
+	//always extract two from stream
+	do {
 	_ss >> errNum;
+	if (errNUM == '}')
+		break ;
 	_ss >> errPagePath;
+	if (errPagePath == '}'){
+		std::cerr << "parseErrorPages: closed error_pages block with an undefined page " << errNUM << std::endl;
+		std::map<int, std::string>	fail;
+		fail.insert(map.begin(), std::make_pair(-1, "ERROR"));
+		return (fail);
+	}
 
 	if (!ft_isNUM(errNUM)) {
 		std::cerr << "from parseErrorPages" << std::endl;
@@ -151,7 +171,9 @@ std::map<int, std::string>	Parser::parseErrorPages(void) {
 		return (fail);
 	}
 
-	
+	output.insert(output.end(), std::make_pair(ft_stoui(errNUM), errPagePath));
+
+	} while (_ss.good())
 
 	return (output);
 }
@@ -162,7 +184,6 @@ Server	Parser::parseServer(void) {
 	std::string				token;
 	std::string				serverAllowed[] = {"server_name", "listen", "root", "index", "access_logs", "error_logs", "client_max_body_size", "error_pages", "location"};
 
-	servStruct.error_pages.insert(std::make_pair(404, "/www/error_pages/404.html"));
 	_ss >> token;
 	if (token != "{") {
 		std::cerr << "parseServer: unexpected token " << token << std::endl;
@@ -209,7 +230,7 @@ Server	Parser::parseServer(void) {
 			servStruct.client_max_body_size = parseBodySize();
 			break;
 
-		case 7:
+		case 7: //the full error page map could be filled with defaults and we replace specifically requested from config
 			servStruct.error_pages = parseErrorPages(token);
 			break;
 
@@ -401,3 +422,4 @@ Location	Parser::parseLocation(void) {
 	Location	output(locStruct);
 	return (output);
 }
+
