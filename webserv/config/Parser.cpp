@@ -6,7 +6,7 @@
 /*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 14:36:34 by pberset           #+#    #+#             */
-/*   Updated: 2026/02/18 10:44:24 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/02/18 11:32:29 by pberset          ###   Lausanne.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,15 @@ static bool	ft_stob(std::string& token) {
 	}
 }
 
+static bool	ft_isNUM(std::string token) {
+	for (size_t i = 0; i < token.length(); i++) {
+		if (token.at(i) < '0' || token.at(i) > '9') {
+			std::cerr << "ft_isNUM: token " << token << " is not a valid numeral string" << std::endl;
+			return (false);
+	}
+	return (true);
+}
+
 struct s_listen	Parser::parseListen(std::string token) {
 	struct s_listen	output;
 	std::string		token;
@@ -67,13 +76,12 @@ struct s_listen	Parser::parseListen(std::string token) {
 		output.port = -1;
 	}
 	token.erase(token.end() - 1);
-	port = ft_stoui(token);
-	if (port < 8000) {
-		//error invalid port
-		std::cerr << "port: invalid port " << port << std::endl;
+	if (!ft_isNUM(token) {
+		std::cerr << "from parseListen" << std::endl;
+		output.port = -1;
 		return (output);
 	}
-
+	port = ft_stoui(token);
 	output.port = port;
 	return (output);
 }
@@ -111,6 +119,11 @@ unsigned int	Parser::parseBodySize(void) {
 		}
 		token.erase(token.end() - 1);
 	}
+
+	if (ft_isNUM(token) {
+		std::cerr << "from parseBodySize" << std::endl;
+		return (0);
+	}
 	
 	output = ft_stoui(token);
 
@@ -118,6 +131,27 @@ unsigned int	Parser::parseBodySize(void) {
 		output *= 1000;
 	else if (sizeUnit == 'm')
 		output *= 1000000;
+
+	return (output);
+}
+
+std::map<int, std::string>	Parser::parseErrorPages(void) {
+	std::map<int, std::string>	output;
+	std::string					errNum;
+	unsigned int				errINT;
+	std::string					errPagePath;
+
+	_ss >> errNum;
+	_ss >> errPagePath;
+
+	if (!ft_isNUM(errNUM)) {
+		std::cerr << "from parseErrorPages" << std::endl;
+		std::map<int, std::string>	fail;
+		fail.insert(map.begin(), std::make_pair(-1, "ERROR"));
+		return (fail);
+	}
+
+	
 
 	return (output);
 }
