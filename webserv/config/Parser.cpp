@@ -6,7 +6,7 @@
 /*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 14:36:34 by pberset           #+#    #+#             */
-/*   Updated: 2026/02/14 10:18:35 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/02/18 10:44:24 by pberset          ###   Lausanne.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,11 @@ unsigned int	Parser::parseBodySize(void) {
 	}
 	
 	output = ft_stoui(token);
+
+	if (sizeUnit == 'k')
+		output *= 1000;
+	else if (sizeUnit == 'm')
+		output *= 1000000;
 
 	return (output);
 }
