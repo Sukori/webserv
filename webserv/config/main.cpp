@@ -39,8 +39,10 @@ int	main(int argc, char* argv[]) {
 	Parser			parser(safeLine);
 	Configuration*	config = new Configuration(parser.initParser()); // will be used repeatedly, so better fix it into memory, instead of keeping on stack
 
+	std::cout << *config << std::endl;
 	//at this point, config is valid, or we handle error
 
+	delete(config);
 	return (0);
 }
 
