@@ -33,11 +33,10 @@ static void	ft_toLower(std::string& str) {
 	}
 }
 
-static char	ft_toLowerChr(char c) {
-	if (c > 64 && c < 91) {
-		return (c += 32);
+static void	ft_toLowerChr(char* c) {
+	if ((unsigned char)*c > 64 && (unsigned char)*c < 91) {
+		*c = (unsigned char)*c + 32;
 	}
-	return (0);
 }
 
 static bool	ft_stob(std::string& token) {
@@ -99,11 +98,10 @@ unsigned int	Parser::parseBodySize(void) {
 	std::string		token;
 
 	_ss >> token;
-
 	char	sizeUnit;
-	if (token.at(token.size() - 1) < '0' && token.at(token.size() - 1) > '9') {
+	if (token.at(token.size() - 1) < '0' || token.at(token.size() - 1) > '9') {
 		sizeUnit = token.at(token.size() - 1);
-		sizeUnit = ft_toLowerChr(sizeUnit);
+		ft_toLowerChr(&sizeUnit);
 		if (sizeUnit != 'k' && sizeUnit != 'm') {
 			std::cerr << "parseBodySize: invalid body size unit " << sizeUnit << ". Expect none, 'k' or 'm'" << std::endl;
 			return (0);
@@ -175,7 +173,7 @@ Server	Parser::parseServer(void) {
 	std::string				serverAllowed[] = {"server_name", "listen", "root", "index", "access_logs", "error_logs", "client_max_body_size", "error_pages", "location"};
 
 	_ss >> token;
-	if (token != "{") {
+	if (token.compare("{")) {
 		std::cerr << "parseServer: unexpected token " << token << std::endl;
 		servStruct.serverName = "ERROR";
 		return (Server(servStruct,locs));
@@ -359,7 +357,7 @@ Location	Parser::parseLocation(void) {
 		return (error);
 	}
 	
-	//while token != '}' or eof - error handling if eof
+	//while token.compare('}') or eof - error handling if eof
 	//if token is a location token - else error handling
 	//populate struct
 	int	i;
