@@ -42,9 +42,9 @@ static char	ft_toLowerChr(char c) {
 
 static bool	ft_stob(std::string& token) {
 	ft_toLower(token);
-	if (token == "true") {
+	if (!token.compare("true")) {
 		return (true);
-	} else if (token == "false") {
+	} else if (!token.compare("false")) {
 		return (false);
 	} else {
 		std::cerr << "ft_stob: invalid token " << token << std::endl;
@@ -89,7 +89,7 @@ std::vector<std::string>	Parser::parseIndex(void) {
 	do { 
 		_ss >> token;
 		output.push_back(token);
-	} while (token.at(token.size() - 1) != ';' && _ss.good());
+	} while (token.at(token.size() - 1) != ';' && !_ss.eof());
 
 	return (output);
 }
@@ -144,10 +144,10 @@ std::map<int, std::string>	Parser::parseErrorPages(void) {
 	//always extract two from stream
 	do {
 	_ss >> errNum;
-	if (errNum == "}")
+	if (!errNum.compare("}"))
 		break ;
 	_ss >> errPagePath;
-	if (errPagePath == "}") {
+	if (!errPagePath.compare("}")) {
 		std::cerr << "parseErrorPages: closed error_pages block with an undefined page " << errNum << std::endl;
 		std::map<int, std::string>	fail;
 		fail.insert(fail.begin(), std::make_pair(-1, "ERROR"));
@@ -163,7 +163,7 @@ std::map<int, std::string>	Parser::parseErrorPages(void) {
 
 	output.insert(output.end(), std::make_pair(ft_stoui(errNum), errPagePath));
 
-	} while (_ss.good());
+	} while (!_ss.eof());
 
 	return (output);
 }
@@ -180,15 +180,16 @@ Server	Parser::parseServer(void) {
 		servStruct.serverName = "ERROR";
 		return (Server(servStruct,locs));
 	}
-
+	
 	do {
 		_ss >> token;
-		if (token == "}")
+		if (!token.compare("}")) {
 			break ;
+		}
 		
 		int	i;
 		for (i = 0; (unsigned int)i < sizeof(serverAllowed) / sizeof(std::string); i++) {
-			if (token == serverAllowed[i]) {
+			if (!token.compare(serverAllowed[i])) {
 				break ;
 			}
 		}
@@ -240,7 +241,7 @@ Server	Parser::parseServer(void) {
 			return (output);
 		}
 
-	} while (_ss.good());
+	} while (!_ss.eof());
 	//if locs & listen are not empty - else error handling
 	Server	output(servStruct, locs);
 
@@ -251,15 +252,18 @@ std::vector<Server> Parser::initParser(void) {
     std::vector<Server> output;
 	std::string			token;
 
-	while (_ss >> token) { //will stop at !_ss.good()
-		if (token == "server") {
+	do { //will stop at _ss.eof()
+		_ss >> token;
+		if (_ss.eof())
+			break;
+		if (!token.compare("server")) {
 			output.push_back(parseServer());
 		} else {
 			std::cerr << "initParser: unexpected token at root level " << token << std::endl;
 			//set a custom errno and return?
 			break ;
 		}
-	}
+	} while (!_ss.eof());
 	
 	if (output.empty()) {
 		std::cerr << "config file: no server definition found" << std::endl;
@@ -274,7 +278,7 @@ std::vector<std::string>	Parser::parseLimitExcept(std::string token) {
 	std::vector<std::string>	output;
 
 	while (token.at(token.size() - 1) != ';') {
-		if (!_ss.good()) {
+		if (!!_ss.eof()) {
 			std::cerr << "parseLimitExcept: unexpected end of line " << token << std::endl;
 			output.insert(output.begin(), std::string("ERROR"));
 			return (output);
@@ -292,7 +296,7 @@ std::vector<std::string>	Parser::parseLimitExcept(std::string token) {
 std::map<std::string, std::string>	Parser::parseCgiParam(std::string& token) {
 	std::map<std::string, std::string>	output;
 	
-	if (!_ss.good() || token == "}") {
+	if (!!_ss.eof() || !token.compare("}")) {
 		std::cerr << "parseCgiParam: [key] unexpected end of line " << token << std::endl;
 		output.insert(output.begin(), std::make_pair("ERROR", "ERROR"));
 		return (output);
@@ -303,7 +307,7 @@ std::map<std::string, std::string>	Parser::parseCgiParam(std::string& token) {
 
 	do {
 		_ss >> value;
-		if (!_ss.good() || value == "}") {
+		if (!!_ss.eof() || !value.compare("}")) {
 			std::cerr << "parseCgiParam: [value] unexpected end of line " << value << std::endl;
 			output.insert(output.begin(), std::make_pair("ERROR", "ERROR"));
 			return (output);
@@ -311,21 +315,26 @@ std::map<std::string, std::string>	Parser::parseCgiParam(std::string& token) {
 		output.insert(output.end(), std::make_pair(key, value));
 
 		_ss >> key;
-		if (!_ss.good()) {
+		if (!key.compare("}")) {
+			_ss.putback('}');
+			break ;
+		}
+		if (!key.compare("cgi_param")) {
+			_ss >> key;
+		}
+		if (!!_ss.eof()) {
 			std::cerr << "parseCgiParam: [key] unexpected end of line " << key << std::endl;
 			output.insert(output.begin(), std::make_pair("ERROR", "ERROR"));
 			return (output);
 		}
-		if (key == "}")
-			break;
-	} while (_ss.good());
+	} while (!_ss.eof());
 	return (output);
 }
 
 Location	Parser::parseLocation(void) {
 	struct s_location	locStruct;
 	std::string			token;
-	std::string			locationAllowed[] = {"route", "root_path", "alias", "limit_except", "autoindex", "upload_path", "cgi_param", "cgi_pass"};
+	std::string			locationAllowed[] = {"route", "root", "alias", "limit_except", "autoindex", "upload_path", "cgi_param", "cgi_pass"};
 
 	locStruct.autoindex = true;
 	locStruct.root_path = "/";
@@ -356,11 +365,12 @@ Location	Parser::parseLocation(void) {
 	int	i;
 	do {
 		_ss >> token;
-		if (token == "}")
+		if (!token.compare("}")) {
 			break ;
+		}
 			
 		for (i = 0; (unsigned int)i < sizeof(locationAllowed) / sizeof(std::string); i++) {
-			if (token == locationAllowed[i]) {
+			if (!token.compare(locationAllowed[i])) {
 				break ;
 			}
 		}
@@ -384,6 +394,7 @@ Location	Parser::parseLocation(void) {
 			break;
 
 		case 3:
+			_ss >> token;
 			locStruct.limit_except = parseLimitExcept(token);
 			break;
 
@@ -398,6 +409,7 @@ Location	Parser::parseLocation(void) {
 			break;
 
 		case 6:
+			_ss >> token;
 			locStruct.cgi_param = parseCgiParam(token);
 			break;
 
@@ -411,7 +423,7 @@ Location	Parser::parseLocation(void) {
 			Location	output(locStruct);
 			return (output);
 		}
-	} while (_ss.good());
+	} while (!_ss.eof());
 
 	Location	output(locStruct);
 	return (output);
