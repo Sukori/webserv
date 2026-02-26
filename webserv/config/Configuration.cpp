@@ -106,24 +106,32 @@ std::ostream&	operator<<(std::ostream& os, const std::vector<Location>& location
 	for (std::vector<Location>::const_iterator lit = locations.begin(); lit != locations.end(); ++lit) {
 		const Location&	loc = *lit;
 
-		os << "	* route: " << loc.getRoute() << std::endl
-		   << "		- root: " << loc.getRoot() << std::endl
-		   << "		- alias: " << loc.getAlias() << std::endl
-		   << "		- autoindex: " << loc.getAutoIndex() << std::endl;
+		os << "\t* route: " << loc.getRoute() << std::endl
+		   << "\t\t- root: " << loc.getRoot() << std::endl
+		   << "\t\t- alias: " << loc.getAlias() << std::endl
+		   << "\t\t- autoindex: " << loc.getAutoIndex() << std::endl;
 
 		if (!loc.getLimExcept().empty()) {
-			os << "		- limite except: " << *loc.getLimExcept().begin() << std::endl;
+			std::vector<std::string>::const_iterator start = loc.getLimExcept().begin();
+			std::vector<std::string>::const_iterator end = loc.getLimExcept().end();
+			os << "\t\t- limit except: " << std::endl;
+			for (std::vector<std::string>::const_iterator lex = start; lex != end; ++lex) {
+				os << "\t\t\t> " << *lex << std::endl;
+			}
 		}
 
-		os << "		- upload_path: " << loc.getUploadPath() << std::endl;
+		os << "\t\t- upload_path: " << loc.getUploadPath() << std::endl;
 
 		if (!loc.getCgiParams().empty()) {
-			const std::pair<std::string, std::string>& params = *loc.getCgiParams().begin();
-
-			os << "		- CGI params: " << params.first << ", " << params.second << std::endl;
+			const std::map<std::string, std::string>::const_iterator& start = loc.getCgiParams().begin();
+			const std::map<std::string, std::string>::const_iterator& end = loc.getCgiParams().end();
+			os << "\t\t- CGI params: " << std::endl;
+			for (std::map<std::string, std::string>::const_iterator cgip = start; cgip != end; ++cgip) {
+				os << "\t\t\t> " << cgip->first << " = " << cgip->second << std::endl;
+			}
 		}
 
-		os << "		- CGI pass: " << loc.getCgiPass() << std::endl;
+		os << "\t\t- CGI pass: " << loc.getCgiPass() << std::endl;
 	}
 
     return os;
@@ -148,8 +156,12 @@ std::ostream&	operator<<(std::ostream& os, const Configuration& config) {
            << "client max body size: " << srv.getMaxBodySize() << std::endl;
 
         if (!srv.getErrPages().empty()) {
-            const std::pair<int, std::string>& err = *srv.getErrPages().begin();
-            os << "error pages: " << err.first << ", " << err.second << std::endl;
+            const std::map<int, std::string>::const_iterator& start = srv.getErrPages().begin();
+			const std::map<int, std::string>::const_iterator& end = srv.getErrPages().end();
+            os << "error pages:" << std::endl;
+			for (std::map<int, std::string>::const_iterator errp = start; errp != end; ++errp) {
+				os << "\t* " << errp->first << " = " << errp->second << std::endl;
+			}
         }
 
         os << "Locations:\n";

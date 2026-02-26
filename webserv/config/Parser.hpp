@@ -29,11 +29,11 @@ public:
 	Server								parseServer(void);
 	std::vector<std::string>			parseIndex(void);
 	unsigned int						parseBodySize(void);
-	std::map<int, std::string>			parseErrorPages(void);
+	std::pair<int, std::string>			parseErrorPages(void);
 	Location							parseLocation(void);
 	struct s_listen						parseListen(std::string token);
 	std::vector<std::string>			parseLimitExcept(std::string token);
-	std::map<std::string, std::string>	parseCgiParam(std::string& token);
+	std::pair<std::string, std::string>	parseCgiParam(std::string& token);
 
 private:
 	Parser(void);
