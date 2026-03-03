@@ -44,7 +44,6 @@ std::string		Http::_parseNextLine(int fd) {
 Http::StartLine	Http::_parseStartLine(int fd) {
 	StartLine ret;
 	std::string line = _parseNextLine(fd);
-	std::cout << line;
 	size_t	end = line.find(' '), start = 0;
 	ret.method = line.substr(start, end - start);
 	start = line.find_first_not_of(' ', end);
@@ -146,6 +145,18 @@ std::string Http::getResponseBody(const std::string& root, const std::map<std::s
 	}
 }
 
+static std::string ft_uint_to_string(unsigned int n) {
+	std::string ret;
+	if (n == 0)
+		return "0";
+	while (n > 0)
+	{
+		ret.insert(ret.begin(), n%10 + '0');
+		n = n/10;
+	}
+	return ret;
+}
+
 std::string Http::buildResponse(int status, const std::string& body, const std::string& server) {
 	/**
 	 * startline: HTTP/1 status ~status-desc(optional)~
@@ -156,19 +167,22 @@ std::string Http::buildResponse(int status, const std::string& body, const std::
 	 * 
 	 * body: ez, just paste
 	 */
-	std::cout << "\n\n\n\n\n";
 
 	std::string res;
 	res += "HTTP/1 ";
-	res += std::to_string(status);
-	res += "\n";
-	res += "content-length:" + body.length();
-	res += "\ndate: ";
+	res += ft_uint_to_string(status);
+	res += "\r\ncontent-length: ";
+	res += ft_uint_to_string(body.length());
+	res += "\r\ndate: ";
 	{
 		time_t t = time(NULL);
 		res += ctime(&t);
 	}
-	res += "\nserver: " + server + "\n\n" + body;
-	std::cout << res << '\n';
+	res += "server: " + server + "\r\n";
+	if (body.length() > 0)
+	{
+		res += "\r\n";
+		res += body;
+	}
 	return res;
 }

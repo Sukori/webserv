@@ -1,6 +1,9 @@
 #include "Http.hpp"
 #include "../cgi/Cgi.hpp"
 
+/* remove/comment to turn off logging */
+//#define DEBUG
+
 // test main for http requests
 int	main(int argc, char *argv[]) {
 	if (argc < 2)
@@ -12,12 +15,15 @@ int	main(int argc, char *argv[]) {
 	a.insert("GET");
 	a.insert("POST");
 	a.insert("DELETE");
-	
+
+	std::string response_body ("");
+	int response_status;
 	try {
 		Http req (fds[0], a);
-		const Http::StartLine& sl (req.getStartLine());
 		Http::Header h (req.getHeader());
-
+		
+		#ifdef DEBUG
+		const Http::StartLine& sl (req.getStartLine());
 		std::cout << "path:\t" + sl.path + '\n';
 		std::cout << "extra:\t" + sl.extra + '\n';
 		std::cout << "query:\t" + sl.query + '\n';
@@ -27,6 +33,7 @@ int	main(int argc, char *argv[]) {
 		for (Http::Header::const_iterator it = h.begin(); it != h.end();it++)
 		std::cout << '\t' + it->first + '=' + it->second + '\n';
 		std::cout << '\n';
+		#endif
 
 		std::string root ("/home/ylabussi/Documents/webserv/webserv/www");
 
@@ -42,11 +49,12 @@ int	main(int argc, char *argv[]) {
 		idx.insert(idx.end(), "index.py");
 		idx.insert(idx.end(), "home.py");
 
-		std::cout << req.getResponseBody(root, bin, idx);
+		response_body = req.getResponseBody(root, bin, idx);
+		response_status = 200;
 	} catch (int status) {
-		std::cerr << status << '\n';
+		response_status = status;
 	}
 
-	Http::buildResponse(200, "message body", "weebserv");
+	std::cout << Http::buildResponse(response_status, response_body, "weebserv") << '\n';
 	return 0;
 }
