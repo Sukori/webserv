@@ -6,18 +6,18 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 16:17:33 by pberset           #+#    #+#             */
-/*   Updated: 2026/02/05 16:45:14 by ylabussi         ###   ########.fr       */
+/*   Updated: 2026/02/25 17:26:34 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Cgi.hpp"
 //#include "../../config/Configuration.hpp"
 
-#define SERVER_SOFTWARE "ftws"
+#define SERVER_SOFTWARE "weebserv"
 #define GATEWAY_INTERFACE "CGI/1"
 #define SERVER_PROTOCOL "HTTP/1"
 
-void add_cgi_env(std::map<std::string, std::string>& env, /*const Server& server,*/ const Http::StartLine& startLine) {
+void add_cgi_env(std::map<std::string, std::string>& env, /*const Server& server,*/ const Http::StartLine& startLine, const std::string& path) {
     env.insert(std::make_pair("SERVER_SOFTWARE", SERVER_SOFTWARE "/0.1"));  /* SERVER_SOFTWARE   */
     env.insert(std::make_pair("SERVER_NAME", SERVER_SOFTWARE));             /* SERVER_NAME       */
     env.insert(std::make_pair("GATEWAY_INTERFACE", GATEWAY_INTERFACE));     /* GATEWAY_INTERFACE */
@@ -26,8 +26,8 @@ void add_cgi_env(std::map<std::string, std::string>& env, /*const Server& server
     env.insert(std::make_pair("REQUEST_METHOD", startLine.method));         /* REQUEST_METHOD    */
     env.insert(std::make_pair("PATH_INFO", startLine.path));                /* PATH_INFO         */
     //env.insert(std::make_pair("PATH_TRANSLATED", ""));                      /* PATH_TRANSLATED   */
-    env.insert(std::make_pair("SCRIPT_NAME", startLine.path));              /* SCRIPT_NAME       */
-    env.insert(std::make_pair("QUERY_STRING", startLine.path));             /* QUERY_STRING      */
+    env.insert(std::make_pair("SCRIPT_NAME", path));                        /* SCRIPT_NAME       */
+    env.insert(std::make_pair("QUERY_STRING", startLine.query));            /* QUERY_STRING      */
     env.insert(std::make_pair("REMOTE_HOST", ""));                          /* REMOTE_HOST       */
     env.insert(std::make_pair("REMOTE_ADDR", ""));                          /* REMOTE_ADDR       */
     //env.insert(std::make_pair("AUTH_TYPE", "?"));                           /* AUTH_TYPE         */

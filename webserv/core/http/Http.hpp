@@ -5,6 +5,7 @@
 #include <fcntl.h>
 #include <string>
 #include <map>
+#include <vector>
 #include <set>
 #include <algorithm>
 #include <iostream>
@@ -27,16 +28,18 @@ class Http {
 		Http(const Http&);
 		~Http(void);
 
-		bool				isValidRequest(std::string root) const;
 		int					getSocket(void) const;
 		const StartLine&	getStartLine(void) const;
 		const Header&		getHeader(void) const;
-
+		std::string			getResponseBody(const std::string& root, const std::map<std::string, std::string>& binaries, const std::vector<std::string>& indexes);
+		
+		static std::string	buildResponse(int status, const std::string& body, const std::string& server);
 	private:
 		Http(void);
-		static StartLine	_getStartLine(int fd);
-		static Header		_getHeaders(int fd);
-		static std::string	_getNextLine(int fd);
+		
+		static StartLine	_parseStartLine(int fd);
+		static Header		_parseHeaders(int fd);
+		static std::string	_parseNextLine(int fd);
 		static void			_splitPath(const std::string& path, StartLine& sl);
 
 		const int					_socket;
