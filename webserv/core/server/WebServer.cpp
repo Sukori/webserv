@@ -66,6 +66,7 @@ void	WebServer::_handleRequest(Client& client) {
 	
 	// for now: hello world
 	std::string	body = "<html><body><h1>Hello from Poll Server!</h1></body></html>";
+	Http test(client.getSocket(), _config.getServers().front().getListen().port);
 
 	std::ostringstream	oss;
 	oss << "HTTP/1.1 200 OK\r\n"
@@ -138,6 +139,8 @@ void	WebServer::run(void) {
 	
 							if (it->second.isRequestComplete()) {
 								_handleRequest(it->second);
+								std::cout << it->second.getRequestIn() << std::endl;
+								std::cout << (int)_socketAddress.sin_port << std::endl;
 								_fds[i].events = POLLOUT;
 							}
 

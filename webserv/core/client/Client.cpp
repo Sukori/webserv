@@ -40,6 +40,10 @@ int	Client::getSocketStatus(void) {
     return (_socket);
 }
 
+int	Client::getSocket(void) {
+	return (_socket);
+}
+
 void	Client::setResponse(const std::string& response) {
 	_responseOut = response;
 }
