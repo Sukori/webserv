@@ -2,9 +2,9 @@ CC = g++
 
 CFLAGS = -Wall -Wextra -Werror -std=c++98
 
-NAME = cgi
+NAME	= http
 
-SRC = Cgi.cpp test_cgi.cpp
+SRC = test_http.cpp Http.cpp ../cgi/Cgi.cpp
 OBJ = $(SRC:.cpp=.o)
 
 RM = rm -f

@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
+/*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 16:12:29 by pberset           #+#    #+#             */
 /*   Updated: 2026/01/24 15:50:38 by pberset          ###   Lausanne.ch       */
@@ -43,6 +43,7 @@ class Client {
 		bool			_requestComplete;
 		int				_socket;
 };
+
 
 #endif
 

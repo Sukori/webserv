@@ -4,12 +4,27 @@
 ├── README.md
 └── webserv
     ├── config
-    │   └── default.conf
+    │   ├── config_files
+    │   │   ├── config1.conf
+    │   │   ├── default.conf
+    │   │   ├── nginx_template_light_commented.md
+    │   │   ├── nginx_template_light.md
+    │   │   ├── nginx_template_overkill.md
+    │   │   └── README.md
+    │   ├── Configuration.cpp
+    │   ├── Configuration.hpp
+    │   ├── helperConfig.cpp
+    │   ├── helperConfig.hpp
+    │   ├── main.cpp
+    │   ├── Makefile
+    │   └── Pseudocode
     ├── core
     │   ├── cgi
     │   │   ├── Cgi.cpp
     │   │   ├── Cgi.hpp
+    │   │   ├── Cgi.o
     │   │   ├── Makefile
+    │   │   ├── req
     │   │   └── test_cgi.cpp
     │   ├── client
     │   │   ├── Client.cpp
@@ -33,16 +48,20 @@
     │   │   ├── test_loop.cpp
     │   │   └── utils
     │   │       └── LoopUtils.hpp
-    │   ├── http_requests
+    │   ├── http
+    │   │   ├── http
     │   │   ├── Http.cpp
     │   │   ├── Http.hpp
+    │   │   ├── Http.o
     │   │   ├── Makefile
-    │   │   └── test_http.cpp
+    │   │   ├── req
+    │   │   ├── res
+    │   │   ├── test_http.cpp
+    │   │   └── test_http.o
     │   ├── logs
-    │   │   ├── error.log
     │   │   ├── logfiles
-    │   │   │   ├── debug.log
-    │   │   │   └── info.log
+    │   │   │   ├── access.log
+    │   │   │   └── error.log
     │   │   ├── Logger.cpp
     │   │   ├── Logger.hpp
     │   │   ├── Makefile
@@ -52,23 +71,31 @@
     │   │   ├── Server.cpp
     │   │   ├── Server.hpp
     │   │   └── test_server.cpp
-    │   ├── utils
-    │   │   ├── Makefile
-    │   │   ├── NetworkUtils.hpp
-    │   │   ├── PostUtils.hpp
-    │   │   ├── SocketUtils.hpp
-    │   │   ├── StrUtils.hpp
-    │   │   └── test_StrUtils.cpp
-    │   └── www
-    │       ├── html
-    │       │   └── index.html
-    │       └── php
-    │           └── index.php
+    │   └── utils
+    │       ├── core
+    │       │   ├── NetworkUtils.hpp
+    │       │   └── SocketUtils.hpp
+    │       ├── http
+    │       │   └── PostUtils.hpp
+    │       ├── Makefile
+    │       ├── shared
+    │       │   └── StrUtils.hpp
+    │       └── test_StrUtils.cpp
     ├── main
     │   ├── Webserv.cpp
     │   └── Webserv.hpp
     ├── Makefile
-    └── tests
-        └── integration
-            └── test_postToCGI.cpp.cpp
+    ├── tests
+    │   └── integration
+    │       └── test_postToCGI.cpp.cpp
+    ├── uploads
+    │   └── upload0.txt
+    └── www
+        ├── html
+        │   └── index.html
+        ├── php
+        │   └── index.php
+        └── python
+            └── index.py
 ```
+26 directories, 71 files

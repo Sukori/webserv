@@ -1,0 +1,13 @@
+HTTP/2 304 
+date: Thu, 18 Dec 2025 14:37:48 GMT
+etag: "694228aa-201"
+age: 11000
+server: cloudflare
+last-modified: Wed, 17 Dec 2025 03:51:06 GMT
+cache-control: max-age=14400
+cf-cache-status: HIT
+vary: accept-encoding
+cf-ray: 9aff667a4c42278f-LYS
+X-Firefox-Spdy: h2
+
+<!doctype html><html lang="en"><head><title>Example Domain</title><meta name="viewport" content="width=device-width, initial-scale=1"><style>body{background:#eee;width:60vw;margin:15vh auto;font-family:system-ui,sans-serif}h1{font-size:1.5em}div{opacity:0.8}a:link,a:visited{color:#348}</style><body><div><h1>Example Domain</h1><p>This domain is for use in documentation examples without needing permission. Avoid use in operations.<p><a href="https://iana.org/domains/example">Learn more</a></div></body></html>

@@ -53,3 +53,4 @@ Helpful documentation we used
 * [nginx documentation - HTTP CORE MODULE](https://nginx.org/en/docs/http/ngx_http_core_module.html)
 * [ipv4 - ipv6 converter](https://dnschecker.org/ipv4-to-ipv6.php)
 * [mozilla http reference (headers list, request methods and response status)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference)
+>>>>>>>>> Temporary merge branch 2
