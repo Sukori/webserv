@@ -12,7 +12,7 @@
 
 #include "Client.hpp"
 
-Client::Client(int socket): _socket(socket) {
+Client::Client(sockaddr_in socket): _socket(socket) {
     std::cout << "Default Client constructor" << std::endl;
 }
 
@@ -52,7 +52,7 @@ ssize_t	Client::readRequest(void) {
     char    temp_buffer[BUFFER_SIZE] = {0};
     ssize_t bytes_read;
 
-    bytes_read = recv(_socket, temp_buffer, BUFFER_SIZE, 0);
+    bytes_read = recv(_socket.sin_port, temp_buffer, BUFFER_SIZE, 0);
     if (bytes_read < 0) {
         std::cout << "recv read error" << std::endl;
     } else if (bytes_read == 0) {
@@ -73,7 +73,7 @@ bool	Client::writeResponse(void) {
 		return (false);
 	}
 
-	ssize_t	bytes_sent = send(_socket, _responseOut.c_str(), _responseOut.size(), 0);
+	ssize_t	bytes_sent = send(_socket.sin_port, _responseOut.c_str(), _responseOut.size(), 0);
 	if (bytes_sent < 0 ) {
 		std::cout << "send error" << std::endl;
 	} else if (bytes_sent == 0) {
