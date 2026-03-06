@@ -32,7 +32,6 @@ class Client {
 		std::string		getResponseOut(void);
 		ssize_t			getRequestSize(void);
 		bool			isRequestComplete(void);
-		int				getSocketStatus(void);
 		int				getSocket(void);
 
 		void			setResponse(const std::string& response);

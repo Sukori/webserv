@@ -36,7 +36,7 @@ bool    Client::isRequestComplete(void) {
     return (_requestComplete);
 }
 
-int	Client::getSocketStatus(void) {
+struct sockaddr_in	Client::getSocket(void) {
     return (_socket);
 }
 
