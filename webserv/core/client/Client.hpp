@@ -28,11 +28,11 @@ class Client {
 		ssize_t			readRequest(void);
 		bool			writeResponse(void);
 
-		std::string		getRequestIn(void);
-		std::string		getResponseOut(void);
-		ssize_t			getRequestSize(void);
-		bool			isRequestComplete(void);
-		int				getSocketStatus(void);
+		std::string			getRequestIn(void);
+		std::string			getResponseOut(void);
+		ssize_t				getRequestSize(void);
+		bool				isRequestComplete(void);
+		struct sockaddr_in	getSocket(void);
 
 		void			setResponse(const std::string& response);
 
