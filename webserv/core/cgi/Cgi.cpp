@@ -6,12 +6,12 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 16:17:33 by pberset           #+#    #+#             */
-/*   Updated: 2026/03/03 17:16:12 by ylabussi         ###   ########.fr       */
+/*   Updated: 2026/03/05 16:47:21 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Cgi.hpp"
-#include "../../config/Configuration.hpp"
+//#include "../../config/Configuration.hpp"
 
 #define SERVER_SOFTWARE "weebserv"
 #define GATEWAY_INTERFACE "CGI/1"

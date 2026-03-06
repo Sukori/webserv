@@ -1,7 +1,6 @@
 #include "Http.hpp"
 #include "../cgi/Cgi.hpp"
 #include <ctime>
-#include <sstream>
 
 Http::Http(void): _socket(0), _allowed_methods() {}
 Http::Http(int socket, const std::set<std::string>& allowed_methods):
