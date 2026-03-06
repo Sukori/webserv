@@ -2,24 +2,24 @@
 #include "../cgi/Cgi.hpp"
 #include <ctime>
 
-Http::Http(void): _socket(0), _allowed_methods() {}
-Http::Http(int socket, const std::set<std::string>& allowed_methods):
+Http::Http(int socket):
 	_socket(socket),
 	_startline(_parseStartLine(_socket)),
-	_header(_parseHeaders(_socket)),
-	_allowed_methods(allowed_methods)
-{/* check for 400 Bad Request, 405 Method Not Allowed, 411 Length Required */
-	if (allowed_methods.find(_startline.method) == allowed_methods.end())
-		throw 405; // Method Not Allowed
+	_header(_parseHeaders(_socket)) {
+	/* check for 400 Bad Request, 411 Length Required */
 	if (_header.count("CONTENT_LENGTH") == 0)
 		throw 411; // Length Required
+}
+
+void	Http::verifyMethod(const std::set<std::string>& allowed_methods) const {
+	if (allowed_methods.find(_startline.method) == allowed_methods.end())
+		throw 405; // Method Not Allowed
 }
 
 Http::Http(const Http& o):
 	_socket(o._socket),
 	_startline(o._startline),
-	_header(o._header),
-	_allowed_methods(o._allowed_methods)
+	_header(o._header)
 {}
 
 Http::~Http(void) {}

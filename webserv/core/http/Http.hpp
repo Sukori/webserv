@@ -24,7 +24,7 @@ class Http {
 			std::string	method;
 		};
 
-		Http(int socket, const std::set<std::string>& allowed_methods);
+		Http(int socket);
 		Http(const Http&);
 		~Http(void);
 
@@ -32,7 +32,8 @@ class Http {
 		const StartLine&	getStartLine(void) const;
 		const Header&		getHeader(void) const;
 		std::string			getResponseBody(const std::string& root, const std::map<std::string, std::string>& binaries, const std::vector<std::string>& indexes);
-		
+		void				verifyMethod(const std::set<std::string>& allowed_methods) const;
+
 		static std::string	buildResponse(int status, const std::string& body, const std::string& server);
 	private:
 		Http(void);
@@ -42,10 +43,9 @@ class Http {
 		static std::string	_parseNextLine(int fd);
 		static void			_splitPath(const std::string& path, StartLine& sl);
 
-		const int					_socket;
-		StartLine					_startline;
-		Header						_header;
-		const std::set<std::string>	_allowed_methods;
+		const int	_socket;
+		StartLine	_startline;
+		Header		_header;
 };
 
 #endif
