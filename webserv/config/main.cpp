@@ -10,7 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <Configuration.hpp>
+#include "Configuration.hpp"
+#include "Parser.hpp"
 
 int	main(int argc, char* argv[]) {
 
@@ -33,16 +34,15 @@ int	main(int argc, char* argv[]) {
 	if (noComments.empty())
 		return (2);
 	
-	std::string	oneLine = filterSpaces(noComments);
-	if (oneLine.empty())
-		return (3);
-	
-	std::cout << "File extract-------------" << std::endl;
-	std::cout << configStr << std::endl;
-	std::cout << "FilterComments-----------" << std::endl;
-	std::cout << noComments << std::endl;
-	std::cout << "FilterSpace-----------" << std::endl;
-	std::cout << oneLine << std::endl;
+	std::string	safeLine = insertSpaces(noComments);
+
+	Parser			parser(safeLine);
+	Configuration*	config = new Configuration(parser.initParser()); // will be used repeatedly, so better fix it into memory, instead of keeping on stack
+
+	std::cout << *config << std::endl;
+	//at this point, config is valid, or we handle error
+
+	delete(config);
 	return (0);
 }
 

@@ -2,12 +2,15 @@ NAME	= test_conf
 
 CPP		= c++ -std=c++98
 
-FLAGS	= -I. -Wall -Wextra -Werror
+FLAGS	= -Wall -Wextra -Werror -g3
 
 HDRS	= helperConfig \
+		Parser \
 		Configuration
 
 SRCS	= helperConfig \
+		Parser \
+		Configuration \
 		main
 
 HDR		= $(addsuffix .hpp , $(HDRS))

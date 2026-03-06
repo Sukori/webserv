@@ -19,11 +19,12 @@
 # include <sstream>
 # include <vector>
 # include <map>
+# include <utility>
 # include <cctype>
 
 struct s_location {
-	std::string							route; // location "/dir/" {     for instance
-	std::string							root_path; // root "/var/www"; } for instance
+	std::string							route; // location "/dir/"     for instance
+	std::string							root_path; // root "/var/www"; for instance
 	std::string							alias;
 	std::vector<std::string>			limit_except;
 	bool								autoindex;
@@ -34,27 +35,25 @@ struct s_location {
 
 
 struct s_listen {
-	/* IPV4 are stored in IPV4 mapped IPV6
-	::ffff:xxxx:xxxx */
-	std::string	ip; 
+	std::string	ip; //allways broadcast for this project
 	int			port; // 8080++ for this project
+	std::string	protocol; //HTTP, TCP, SSL, SSH ...
 };
 
 struct s_server {
-	std::vector<s_listen>		listen;
+	std::string					serverName;
+	s_listen					listen;
 	std::string					root;
 	std::vector<std::string>	index;
 	std::string					access_logs;
 	std::string					error_logs;
-	long						client_max_body_size; // convert "10m" or "10M" in bits (10000000)
+	unsigned int				client_max_body_size; // convert "10m" or "10M" in bits (10000000)
 	std::map<int, std::string>	error_pages; // {error_code<int>, path_to_page<string>}, {404, "/www/error_pages/404.html"}
 };
 
 std::string	readFile(const char* file);
 std::string	filterComments(std::string& str);
 std::string	insertSpaces(std::string& str);
-
-// TODO fonctions de parsing
 
 #endif
 
