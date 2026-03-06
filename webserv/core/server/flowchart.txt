@@ -1,0 +1,19 @@
+WebServ(config)
+	-> _socketAddr init
+	initServer()
+
+initServer()
+	-> init _socket()
+	bind()
+
+WebServ.run()
+	// loop all servers missing?
+	-> listen(socket)
+	struct pollfd
+		.fd = _socket;
+	_fds.push_back(pollfd)
+	while()
+		poll
+		for(all _fds)
+			if (_fds[i].fd == _socket)
+				acceptconnnection() -> /!\
