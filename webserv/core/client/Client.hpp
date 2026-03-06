@@ -16,12 +16,13 @@
 # include <iostream>
 # include <string>
 # include <sys/socket.h>
+# include <arpa/inet.h>
 
 # define BUFFER_SIZE 4096
 
 class Client {
 	public:
-		Client(int socket);
+		Client(sockaddr_in socket);
 		~Client(void);
 
 		ssize_t			readRequest(void);
@@ -37,11 +38,11 @@ class Client {
 
 	private:
 		Client(void);
-		std::string		_requestIn;
-		std::string		_responseOut;
-		ssize_t			_requestSize;
-		bool			_requestComplete;
-		int				_socket;
+		std::string			_requestIn;
+		std::string			_responseOut;
+		ssize_t				_requestSize;
+		bool				_requestComplete;
+		struct sockaddr_in	_socket;
 };
 
 #endif
