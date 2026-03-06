@@ -164,9 +164,6 @@ std::map<int, std::string>	Parser::parseErrorPages(std::string& token) {
 		return (output);
 	}
 
-	//space separated number and path
-	//semicolon is a pair separator
-	//always extract two from stream
 	do {
 		_ss >> token;
 		if (!token.compare("}")){
@@ -194,6 +191,13 @@ Server	Parser::parseServer(void) {
 	
 	do {
 		_ss >> token;
+		if (token.empty() || _ss.fail() || _ss.eof()) {
+			std::cerr << "parseServer: unexpected end of stream" << std::endl;
+			servStruct.serverName = "ERROR";
+			Server	output(servStruct, locs);
+			return (output);
+		}
+
 		if (!token.compare("}")) {
 			break ;
 		}
@@ -206,48 +210,56 @@ Server	Parser::parseServer(void) {
 		}
 		switch (i)
 		{
-		case 0:
-			_ss >> token;
-			servStruct.serverName = token;
-			break;
+			case 0:
+				_ss >> token;
+				servStruct.serverName = token;
+				break;
 
-		case 1:
-			servStruct.listen = parseListen(token);
-			break;
+			case 1:
+				servStruct.listen = parseListen(token);
+				break;
 
-		case 2:
-			_ss >> token;
-			servStruct.root = token;
-			break;
+			case 2:
+				_ss >> token;
+				servStruct.root = token;
+				break;
 
-		case 3:
-			servStruct.index = parseIndex();
-			break;
+			case 3:
+				servStruct.index = parseIndex();
+				break;
 
-		case 4:
-			_ss >> token;
-			servStruct.access_logs = token;
-			break;
+			case 4:
+				_ss >> token;
+				servStruct.access_logs = token;
+				break;
 
-		case 5:
-			_ss >> token;
-			servStruct.error_logs = token;
-			break;
+			case 5:
+				_ss >> token;
+				servStruct.error_logs = token;
+				break;
 
-		case 6:
-			servStruct.client_max_body_size = parseBodySize();
-			break;
+			case 6:
+				servStruct.client_max_body_size = parseBodySize();
+				break;
 
-		case 7: //the full error page map could be filled with defaults and we replace specifically requested from config
-			_ss >> token;
-			servStruct.error_pages = parseErrorPages(token);
-			break;
+			case 7: //the full error page map could be filled with defaults and we replace specifically requested from config
+				_ss >> token;
+				servStruct.error_pages = parseErrorPages(token);
+				break;
 
-		case 8:
-			locs.push_back(parseLocation());
-			break;
+			case 8:
+				locs.push_back(parseLocation());
+				break;
 
-		default:
+			default:
+				std::cerr << "parseServer: unexpected token. Got " << token << std::endl;
+				servStruct.serverName = "ERROR";
+				Server	output(servStruct, locs);
+				return (output);
+		}
+
+		if (!locs.empty() && !(locs[locs.size() - 1].getRoute()).compare("ERROR")) {
+			std::cerr << "from parseServer" << std::endl;
 			servStruct.serverName = "ERROR";
 			Server	output(servStruct, locs);
 			return (output);
@@ -264,7 +276,7 @@ std::vector<Server> Parser::initParser(void) {
     std::vector<Server> output;
 	std::string			token;
 
-	do { //will stop at _ss.fail()
+	do {
 		_ss >> token;
 		if (_ss.fail())
 			break;
@@ -274,6 +286,10 @@ std::vector<Server> Parser::initParser(void) {
 			std::cerr << "initParser: unexpected token at root level. Got " << token << std::endl;
 			//set a custom errno and return?
 			break ;
+		}
+		if (!(output[output.size() - 1].getName()).compare("ERROR")) {
+			std::cerr << "from initParser" << std::endl;
+			break;
 		}
 	} while (!_ss.fail());
 	
@@ -338,15 +354,22 @@ std::map<std::string, std::string>	Parser::parseCgiParams(std::string& token) {
 		return (output);
 	}
 
-	//space separated variable name and value
-	//semicolon is a pair separator
-	//always extract two from stream
 	do {
 		_ss >> token;
+		if (token.empty() || _ss.fail() || _ss.eof()) {
+			std::cerr << "parseCgiParams: unexpected end of stream " << std::endl;
+			output.insert(std::make_pair("ERROR", "ERROR"));
+			return (output);
+		}
 		if (!token.compare("}")){
 			break ;
 		}
 		output.insert(parseCgiParam(token));
+
+		if (output.find("ERROR") != output.end() && !(output.find("ERROR")->first).compare("ERROR")) {
+			std::cerr << "from parseCgiParams"<< std::endl;
+			return (output);
+		}
 
 	} while(!_ss.fail() && token.compare("}"));
 	
@@ -365,7 +388,14 @@ Location	Parser::parseLocation(void) {
 
 	//if token is here valid /path/ - else error handling
 	_ss >> token;
-	if (token.empty() || token.at(0) != '/') {
+	if (token.empty()) {
+		std::cerr << "parseLocation: unexpected end of stream" << std::endl;
+		locStruct.route = "ERROR";
+		Location	error(locStruct);
+		return (error);
+	}
+	
+	if (token.at(0) != '/') {
 		std::cerr << "parseLocation: path not starting from root. Got " << token << std::endl;
 		locStruct.route = "ERROR";
 		Location	error(locStruct);
@@ -374,7 +404,6 @@ Location	Parser::parseLocation(void) {
 	locStruct.route = token;
 	_ss >> token;
 	
-	//if token is '{' - else error handling
 	if (token.empty() || token.at(0) != '{') {
 		std::cerr << "parseLocation: unexpected token after route. Got " << token << std::endl;
 		Location	error(locStruct);
@@ -445,10 +474,26 @@ Location	Parser::parseLocation(void) {
 			break;
 
 		default:
+			std::cerr << "parseLocation: unexpected token. Got " << token << std::endl;
 			locStruct.route = "ERROR";
 			Location	output(locStruct);
 			return (output);
 		}
+
+		if (!locStruct.cgi_param.empty() && locStruct.cgi_param.find("ERROR") != locStruct.cgi_param.end() && !locStruct.cgi_param.find("ERROR")->first.compare("ERROR")) {
+			std::cerr << "from parseLocation" << std::endl;
+			locStruct.route = "ERROR";
+			Location	output(locStruct);
+			return (output);
+		}
+
+		if (!locStruct.limit_except.empty() && !locStruct.limit_except[0].compare("ERROR")) {
+			std::cerr << "from parseLocation" << std::endl;
+			locStruct.route = "ERROR";
+			Location	output(locStruct);
+			return (output);
+		}
+
 	} while (!_ss.fail());
 
 	Location	output(locStruct);
