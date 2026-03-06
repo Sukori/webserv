@@ -25,15 +25,15 @@ WebServer::WebServer(const Configuration& config) : _config(config) {
     std::cout << "Config WebServer constructor" << std::endl;
 	
 	_socketAddress.sin_family = AF_INET;
-	_socketAddress.sin_port = htons(_config.getServers().front().getListens().front().port);
-	_socketAddress.sin_addr.s_addr = inet_addr(_config.getServers().front().getListens().front().ip.c_str()); //not allowed, must find alt
+	_socketAddress.sin_port = htons(_config.getServers().front().getListen().port);
+	_socketAddress.sin_addr.s_addr = inet_addr(_config.getServers().front().getListen().ip.c_str()); //not allowed, must find alt
 
 	if (_initServer() != 0) {
 		std::ostringstream ss;
 		ss << "failed to initialize server with PORT: " << ntohs(_socketAddress.sin_port);
 		putLog(ss.str());
 	}
-    std::cout << "Initialized server with IP: " <<_config.getServers().front().getListens().front().ip << " | PORT: " << _config.getServers().front().getListens().front().port << std::endl;
+    std::cout << "Initialized server with IP: " <<_config.getServers().front().getListen().ip << " | PORT: " << _config.getServers().front().getListen().port << std::endl;
 }
 
 WebServer::~WebServer(void) {

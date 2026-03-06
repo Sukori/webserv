@@ -15,11 +15,13 @@ CLIDIR		= core/client/
 HDRS		= $(WEBDIR)WebServer \
 			$(CNFDIR)Configuration \
 			$(CNFDIR)helperConfig \
+			$(CNFDIR)Parser \
 			$(CLIDIR)Client
 
 SRCS		= $(WEBDIR)WebServer \
 			$(CNFDIR)Configuration \
 			$(CNFDIR)helperConfig \
+			$(CNFDIR)Parser \
 			$(CLIDIR)Client \
 			run
 

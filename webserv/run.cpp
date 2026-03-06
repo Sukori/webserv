@@ -34,7 +34,7 @@ int	main(int argc, char *argv[]) {
 		now parse sureLine!
 	*/
 
-	struct s_location	s_loca;
+	/*struct s_location	s_loca;
 	s_loca.route = "/";
 	s_loca.root_path = "../../../www/html";
 	s_loca.autoindex = true;
@@ -56,9 +56,12 @@ int	main(int argc, char *argv[]) {
 	std::vector<Server>	v_serv;
 	v_serv.push_back(servConf);
 
-	Configuration	config(v_serv);
+	Configuration	config(v_serv);*/
 
-	WebServer	webserv(config);
+	Parser			parser(sureLine);
+	Configuration*	config = new Configuration(parser.initParser());
+
+	WebServer	webserv(*config);
 	webserv.run();
 
 	return (0);

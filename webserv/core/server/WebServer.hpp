@@ -27,7 +27,7 @@
 # include <arpa/inet.h>
 # include <unistd.h>
 # include <sys/time.h>
-# include "../../config/Configuration.hpp" 
+# include "../../config/Parser.hpp" 
 # include "../client/Client.hpp"
 
 # define BUFFER_SIZE 4096
