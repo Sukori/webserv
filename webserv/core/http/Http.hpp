@@ -12,6 +12,8 @@
 #include <fstream>
 #include <sys/stat.h>
 #include <exception>
+#include "../../config/Configuration.hpp"
+
 
 class Http {
 	public:
@@ -34,7 +36,8 @@ class Http {
 		std::string			getResponseBody(const std::string& root, const std::map<std::string, std::string>& binaries, const std::vector<std::string>& indexes);
 		void				verifyMethod(const std::set<std::string>& allowed_methods) const;
 
-		static std::string	buildResponse(int status, const std::string& body, const std::string& server);
+		static std::string	buildErrorHtml(int status, const Server &server);
+		static std::string	buildResponse(int status, const std::string& body, const std::string& server_name);
 	private:
 		Http(void);
 		

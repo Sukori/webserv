@@ -11,19 +11,25 @@ ODIR		= obj/
 WEBDIR		= core/server/
 CNFDIR		= config/
 CLIDIR		= core/client/
+HTPDIR		= core/http/
+CGIDIR		= core/cgi/
 
 HDRS		= $(WEBDIR)WebServer \
 			$(CNFDIR)Configuration \
 			$(CNFDIR)helperConfig \
 			$(CNFDIR)Parser \
-			$(CLIDIR)Client
+			$(CLIDIR)Client \
+			$(HTPDIR)Http \
+			$(CGIDIR)Cgi \
 
 SRCS		= $(WEBDIR)WebServer \
 			$(CNFDIR)Configuration \
 			$(CNFDIR)helperConfig \
 			$(CNFDIR)Parser \
 			$(CLIDIR)Client \
-			run
+			$(HTPDIR)Http \
+			$(CGIDIR)Cgi \
+			run \
 
 HDR			= $(addsuffix .hpp, $(HDRS))
 SRC			= $(addsuffix .cpp, $(SRCS))

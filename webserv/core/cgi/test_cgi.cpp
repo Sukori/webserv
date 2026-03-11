@@ -55,7 +55,7 @@ int	main() {
 	
 	
 
-	exec_cgi("/opt/pyenv/shims/python", "../../www/python/index.py", env, sockets);
+	exec_cgi("/opt/pyenv/shims/python", "../../www/python/index.py", env, sockets[0]);
 
 	return (0);
 }

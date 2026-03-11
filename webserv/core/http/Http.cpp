@@ -6,9 +6,7 @@ Http::Http(int socket):
 	_socket(socket),
 	_startline(_parseStartLine(_socket)),
 	_header(_parseHeaders(_socket)) {
-	/* check for 400 Bad Request, 411 Length Required */
-	if (_header.count("CONTENT_LENGTH") == 0)
-		throw 411; // Length Required
+	/* check for 400 Bad Request */
 }
 
 void	Http::verifyMethod(const std::set<std::string>& allowed_methods) const {
@@ -33,9 +31,9 @@ std::string		Http::_parseNextLine(int fd) {
 	char c;
 	while (read(fd, &c, 1) > 0)
 	{
-		ret += c;
 		if (c == '\n')
 			break;
+		ret += c;
 	}
 	return ret;
 }
@@ -62,8 +60,9 @@ Http::Header	Http::_parseHeaders(int fd) {
 	Header ret;
 	std::string line, key, val;
 	size_t sep;
-	while ((line = _parseNextLine(fd)).length() > 1)
+	while ((line = _parseNextLine(fd)).length() >1)
 	{
+		std::cout << line << std::endl;
 		sep = line.find(':');
 		if (sep == line.npos)
 			throw 400; // Bad Request
@@ -72,7 +71,7 @@ Http::Header	Http::_parseHeaders(int fd) {
 		sep++;
 		while (isspace(line[sep]))
 			sep++;
-		val = line.substr(sep, line.find('\n') - sep);
+		val = line.substr(sep);
 		ret.insert(std::make_pair(key, val));
 	}
 	return ret;
@@ -118,7 +117,10 @@ std::string Http::getResponseBody(const std::string& root, const std::map<std::s
 		}
 		if (!found)
 			throw 404; // Not Found
-	}
+		}
+	std::cout << "getting file " << file_path << '\n';
+	if (access(file_path.c_str(), R_OK) == -1)
+		throw 404; // Not Found
 	std::string ext (get_ext(file_path));
 	std::string bin_f;
 
@@ -157,18 +159,8 @@ static std::string ft_uint_to_string(unsigned int n) {
 }
 
 std::string Http::buildResponse(int status, const std::string& body, const std::string& server) {
-	/**
-	 * startline: HTTP/1 status ~status-desc(optional)~
-	 * headers:
-	 * 		date:
-	 * 		server:
-	 * 		content-length:
-	 * 
-	 * body: ez, just paste
-	 */
-
 	std::string res;
-	res += "HTTP/1 ";
+	res += "HTTP/1.0 ";
 	res += ft_uint_to_string(status);
 	res += "\r\ncontent-length: ";
 	res += ft_uint_to_string(body.length());
@@ -184,4 +176,14 @@ std::string Http::buildResponse(int status, const std::string& body, const std::
 		res += body;
 	}
 	return res;
+}
+
+std::string Http::buildErrorHtml(int status, const Server &server) {
+	std::string path, ret, line;
+	path = server.getRoot() + server.getErrPages().at(status);
+	std::cout << "error: " << path << '\n';
+	std::ifstream file(path.c_str());
+	while(std::getline(file, line))
+		ret += line;
+	return ret + '\n';
 }

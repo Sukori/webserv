@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServer.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
+/*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 14:11:12 by pberset           #+#    #+#             */
-/*   Updated: 2026/01/25 15:17:15 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/03/11 17:58:02 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,6 @@ void	WebServer::_handleRequest(Client& client) {
 	
 	// for now: hello world
 	std::string	body = "<html><body><h1>Hello from Poll Server!</h1></body></html>";
-	Http test(client.getSocket(), _config.getServers().front().getListen().port);
 
 	std::ostringstream	oss;
 	oss << "HTTP/1.1 200 OK\r\n"
@@ -127,7 +126,40 @@ void	WebServer::run(void) {
 
 				if (it != _clients.end()) {
 					if (_fds[i].revents & POLLIN) {
-						ssize_t read_bytes = it->second.readRequest();
+						/* definitely need to put this in its own function TODO */
+						int status;
+						std::string out;
+						try {
+							Http req(it->second.getSocket());
+							const Http::Header h (req.getHeader());
+							const Http::StartLine& sl (req.getStartLine());
+
+							std::cout << "path:\t" + sl.path + '\n';
+							std::cout << "extra:\t" + sl.extra + '\n';
+							std::cout << "query:\t" + sl.query + '\n';
+							std::cout << "method:\t" + sl.method + '\n';
+							std::cout << "headers:\n";
+							for (Http::Header::const_iterator it = h.begin(); it != h.end();it++)
+								std::cout << '\t' + it->first + '=' + it->second + '\n';
+							std::cout << '\n';
+
+							std::string route ("/www/html"); /* from location TODO */
+							std::map<std::string, std::string> bin; /* need to figure out where to define that TODO */
+							bin.insert(std::make_pair("py", "/usr/bin/python3"));
+							bin.insert(std::make_pair("php", "/usr/bin/php"));
+
+							out = req.getResponseBody(_config.getServers()[0].getRoot() + route, bin, _config.getServers()[0].getIndex());
+							status = 200;
+						} catch (int s) {
+							status = s;
+							out = Http::buildErrorHtml(status, _config.getServers()[0]);
+						}
+						std::cout << status << '\n';
+						//std::cout << out << std::endl;
+						it->second.setResponse(Http::buildResponse(status, out, _config.getServers()[0].getName()));
+						_fds[i].events = POLLOUT;
+
+						/*ssize_t read_bytes = it->second.readRequest();
 	
 							if (read_bytes <= 0) {
 								close(_fds[i].fd);
@@ -136,14 +168,13 @@ void	WebServer::run(void) {
 								i--;
 								continue ;
 							}
-	
+
 							if (it->second.isRequestComplete()) {
 								_handleRequest(it->second);
 								std::cout << it->second.getRequestIn() << std::endl;
 								std::cout << (int)_socketAddress.sin_port << std::endl;
 								_fds[i].events = POLLOUT;
-							}
-
+							}*/
 					} else if (_fds[i].revents & POLLOUT) {
 						if (it->second.writeResponse()) { //for now, we close
 							close(_fds[i].fd);

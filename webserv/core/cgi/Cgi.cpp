@@ -6,7 +6,7 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 16:17:33 by pberset           #+#    #+#             */
-/*   Updated: 2026/03/05 16:47:21 by ylabussi         ###   ########.fr       */
+/*   Updated: 2026/03/09 15:52:47 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,6 @@ std::string read_all(int fd) {
 }
 
 /*
-returns -1 if failed fork, child status otherwise
 make sure first field of all env is full UPPER_SNAKE_CASE instead of lower-kebab-case
 */
 std::string exec_cgi(const std::string& exe, const std::string& path, const std::map<std::string, std::string>& env, int socketIn) {
