@@ -16,10 +16,23 @@ void	putLog(const std::string& message) {
 	std::cout << message << std::endl;
 }
 
+void	closeAllSockets(std::map<int, const Server*> sockets) {
+	for (std::map<int, const Server*>::iterator it = sockets.begin(); it != sockets.end(); ++it) {
+		close(it->first);
+	}
+}
+
+void	closeAllPollFds(std::vector<pollfd> fds) {
+	for (size_t i = 0; i < fds.size(); i++) {
+		close(fds[i].fd);
+	}
+}
+
 void	exitWithError(const std::string& funct, const std::string& message) {
 	putLog(funct +": " + message);
 	exit(1);
 }
+\
 
 WebServer::WebServer(const Configuration& config) : _config(config) {
     std::cout << "Config WebServer constructor" << std::endl;
@@ -39,9 +52,11 @@ WebServer::WebServer(const Configuration& config) : _config(config) {
 		errnum = getaddrinfo(_config.getServers()[i].getListens().front().ip.c_str(), service.str().c_str(), &hints, &addrinfo);
 		if (errnum != 0) {
 			std::cerr << "getaddrinfo: " << gai_strerror(errnum);
+			freeaddrinfo(addrinfo);
 			exitWithError("from WebServer", "WebServer constructor");
 		}
 		if (_initServer(addrinfo, &_config.getServers()[i]) != 0) {
+			freeaddrinfo(addrinfo);
 			exitWithError("WebServer constructor", "failed to initialize server");
 		}
 		std::cout << "Initialized server with IP: " <<_config.getServers()[i].getListens().front().ip << " | PORT: " << _config.getServers()[i].getListens().front().port << std::endl;
@@ -52,6 +67,7 @@ WebServer::WebServer(const Configuration& config) : _config(config) {
 
 WebServer::~WebServer(void) {
     std::cout << "WebServer destructor" << std::endl;
+	closeAllSockets(_sockets);
 	_closeServer();
 }
 
@@ -61,6 +77,7 @@ int	WebServer::_initServer(const struct addrinfo* addrinfo, const Server* server
 	int sockBuff = socket(AF_INET, SOCK_STREAM, 0);
 	if (sockBuff < 0) {
 		std::cerr << "create socket failed" << std::endl;
+		closeAllSockets(_sockets);
 		exitWithError("_initServer", server->getName());
 	}
 
@@ -68,12 +85,14 @@ int	WebServer::_initServer(const struct addrinfo* addrinfo, const Server* server
 	if (ctrlno < 0) {
 		putLog("fcntl(GET): " + std::string(strerror(errno)));
 		close(sockBuff);
+		closeAllSockets(_sockets);
 		exitWithError("_initServer", server->getName());
 	}
 	ctrlno = fcntl(sockBuff, F_SETFL, ctrlno | O_NONBLOCK);
 	if (ctrlno < 0) {
 		putLog("fcntl(SET): " + std::string(strerror(errno)));
 		close(sockBuff);
+		closeAllSockets(_sockets);
 		exitWithError("_initServer", server->getName());
 	}
 
@@ -82,12 +101,14 @@ int	WebServer::_initServer(const struct addrinfo* addrinfo, const Server* server
 	if (ctrlno < 0) {
 		putLog("setsockopt: " + std::string(strerror(errno)));
 		close(sockBuff);
+		closeAllSockets(_sockets);
 		exitWithError("_initServer", server->getName());
 	}
 
 	_sockets.insert(std::pair<int, const Server*>(sockBuff, server));
 	if (bind(sockBuff, addrinfo->ai_addr, addrinfo->ai_addrlen) < 0) {
 		std::cerr << "bind socket failed" << std::endl;
+		closeAllSockets(_sockets);
 		exitWithError("_initServer", server->getName());
 	}
 	return (0);
@@ -157,6 +178,8 @@ void	WebServer::run(void) {
     std::cout << "===== Listening =====" << std::endl;
 		ctrlno = poll(&_fds[0], _fds.size(), -1);
 		if (ctrlno < 0) {
+			closeAllSockets(_sockets);
+			closeAllPollFds(_fds);
 			exitWithError("poll", strerror(errno));
 		} else if (ctrlno == 0) {
 			continue ;

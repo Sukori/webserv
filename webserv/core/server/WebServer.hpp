@@ -57,6 +57,8 @@ class WebServer {
 };
 
 void	putLog(const std::string& message);
+void	closeAllSockets(std::map<int, const Server*> sockets);
+void	closeAllPollFds(std::vector<pollfd> fds);
 void	exitWithError(const std::string& funct,const std::string& message);
 
 #endif
