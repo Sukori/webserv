@@ -27,8 +27,8 @@
 # include <arpa/inet.h>
 # include <unistd.h>
 # include <sys/time.h>
-# include "Configuration.hpp" 
-# include "Client.hpp"
+# include "../../config/Configuration.hpp" 
+# include "../client/Client.hpp"
 
 # define BUFFER_SIZE 4096
 # define BACKLOG 1024
@@ -60,4 +60,3 @@ void	putLog(const std::string& message);
 void	exitWithError(const std::string& funct,const std::string& message);
 
 #endif
-
