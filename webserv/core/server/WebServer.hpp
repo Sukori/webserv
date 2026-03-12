@@ -44,14 +44,14 @@ class WebServer {
 	
 	private:
 		WebServer(void); 
-		Configuration			_config;
-		std::vector<pollfd>		_fds;
-		std::map<int, const Client*>	_clients;
+		Configuration					_config;
+		std::vector<pollfd>				_fds;
+		std::map<int, Client>			_clients;
 		std::map<int, const Server*>	_sockets;
 
 		int						_initServer(const struct addrinfo* addrinfo, const Server* server);
 		void					_closeServer(void);
-		int						_acceptConnection(void);
+		int						_acceptConnection(int fd);
 		void					_handleRequest(Client& client);
 		const Server*			_findBestConfig(std::string host, int port); //rename ServerConfig when merge with config branch
 };

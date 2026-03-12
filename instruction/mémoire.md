@@ -110,16 +110,33 @@ Modifications réalisées dans `WebServer.cpp` et `WebServer.hpp` :
 6. **`sizeof` corrigé dans `bind()`** : utilisation de `addrinfo->ai_addrlen` au lieu de `sizeof(pointeur)`.
 
 Points résolus (par rapport à la session précédente) :
+- Point 1 : multi-serveurs dans le constructeur, _initServer, run, _acceptConnection ✅
 - Point 2 : inet_addr → getaddrinfo ✅
+- Point 3 : listening sockets mis en non-bloquant via fcntl(F_SETFL, O_NONBLOCK) dans _initServer ✅
 - Point 4 : exit(0) dans _closeServer supprimé ✅
-- Point 1 (partiel) : multi-serveurs dans le constructeur et _initServer ✅
+- Point 5 : _socketAddress supprimé, accept() utilise NULL, NULL ✅
 
-Points restants / identifiés :
-- `run()` et `_acceptConnection()` utilisent encore `_sockets` comme un `int` → à adapter pour multi-serveurs.
-- Le socket serveur n'est toujours pas mis en non-bloquant (point 3 session précédente).
-- `_acceptConnection()` utilise toujours `_socketsAddress` (point 5 session précédente).
-- `_closeServer()` type de retour `int` → `void`.
-- Initialisation designated (`{.ai_family = ...}`) dans hints : syntaxe C99/C++20, pas C++98. À vérifier/corriger.
-- `std::ostringstream service` dans le constructeur : n'est pas réinitialisé entre les itérations de la boucle → le port s'accumule.
+Corrections supplémentaires appliquées durant la session :
+- `_closeServer()` : type de retour changé de `int` à `void`.
+- Designated initializers (`{.ai_family = ...}`) remplacés par assignation membre par membre (C++98).
+- `service.str("")` ajouté en fin de boucle du constructeur pour réinitialiser l'ostringstream.
+- `_acceptConnection(int fd)` : reçoit le fd du listening socket, accept(fd, NULL, NULL), fcntl non-bloquant.
+- `run()` : boucle d'init listen + pollfd sur tous les listening sockets. `_sockets.find()` distingue listening socket vs client dans la main loop.
+
+Points à traiter avant/pendant le merge :
+- ~~**freeaddrinfo()**~~ : ajouté dans la boucle du constructeur après chaque _initServer ✅
+- ~~**setsockopt(SO_REUSEADDR)**~~ : ajouté dans _initServer, avant bind, avec check d'erreur ✅
+- ~~**fcntl F_GETFL**~~ : corrigé — double appel F_GETFL puis F_SETFL avec OR bitwise, chacun avec check d'erreur ✅
+- **Gestion d'erreurs** : exitWithError appelle exit(1) partout. Si un socket sur N échoue, les autres restent ouverts sans cleanup. À améliorer à terme.
+
+Séquence complète de _initServer (état final) :
+1. socket(AF_INET, SOCK_STREAM, 0)
+2. fcntl(F_GETFL) → fcntl(F_SETFL, flags | O_NONBLOCK)
+3. setsockopt(SOL_SOCKET, SO_REUSEADDR, &1, sizeof(int))
+4. insert dans _sockets map
+5. bind(sockBuff, addrinfo->ai_addr, addrinfo->ai_addrlen)
+Chaque étape a son check d'erreur avec close(sockBuff) en cas d'échec.
+
+Prochaine étape : merge de la branche server et test en conditions réelles.
 <br/>
 

@@ -26,12 +26,11 @@ WebServer::WebServer(const Configuration& config) : _config(config) {
 	int					errnum;
 	std::ostringstream	service;
 	
-	struct addrinfo hints = {
-		.ai_family = AF_INET,
-		.ai_socktype = SOCK_STREAM,
-		.ai_flags = AI_PASSIVE,
-		.ai_protocol = IPPROTO_TCP
-	};
+	struct addrinfo hints;
+	hints.ai_family = AF_INET;
+	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_flags = AI_PASSIVE;
+	hints.ai_protocol = IPPROTO_TCP;
 	
 	struct addrinfo*	addrinfo;
 	
@@ -46,6 +45,8 @@ WebServer::WebServer(const Configuration& config) : _config(config) {
 			exitWithError("WebServer constructor", "failed to initialize server");
 		}
 		std::cout << "Initialized server with IP: " <<_config.getServers()[i].getListens().front().ip << " | PORT: " << _config.getServers()[i].getListens().front().port << std::endl;
+		service.str("");
+		freeaddrinfo(addrinfo);
 	}
 }
 
@@ -62,6 +63,28 @@ int	WebServer::_initServer(const struct addrinfo* addrinfo, const Server* server
 		std::cerr << "create socket failed" << std::endl;
 		exitWithError("_initServer", server->getName());
 	}
+
+	int	ctrlno = fcntl(sockBuff, F_GETFL);
+	if (ctrlno < 0) {
+		putLog("fcntl(GET): " + std::string(strerror(errno)));
+		close(sockBuff);
+		exitWithError("_initServer", server->getName());
+	}
+	ctrlno = fcntl(sockBuff, F_SETFL, ctrlno | O_NONBLOCK);
+	if (ctrlno < 0) {
+		putLog("fcntl(SET): " + std::string(strerror(errno)));
+		close(sockBuff);
+		exitWithError("_initServer", server->getName());
+	}
+
+	int optval = 1;
+	ctrlno = setsockopt(sockBuff, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(int));
+	if (ctrlno < 0) {
+		putLog("setsockopt: " + std::string(strerror(errno)));
+		close(sockBuff);
+		exitWithError("_initServer", server->getName());
+	}
+
 	_sockets.insert(std::pair<int, const Server*>(sockBuff, server));
 	if (bind(sockBuff, addrinfo->ai_addr, addrinfo->ai_addrlen) < 0) {
 		std::cerr << "bind socket failed" << std::endl;
@@ -93,23 +116,43 @@ void	WebServer::_handleRequest(Client& client) {
 	client.setResponse(oss.str());
 }
 
+int	WebServer::_acceptConnection(int fd) {
+
+	int newSocket = accept(fd, NULL, NULL);
+	if (newSocket < 0) {
+		putLog("accept: " + std::string(strerror(errno)));
+		return (-1);
+	}
+	
+	int	ctrlno = fcntl(newSocket, F_SETFL, O_NONBLOCK);
+	if (ctrlno < 0) {
+		putLog("fcntl: " + std::string(strerror(errno)));
+		close(newSocket);
+		return (-2);
+	}
+	return (newSocket);
+}
+
 void	WebServer::run(void) {
 
     std::cout << "run" << std::endl;
 	int	ctrlno;
+	_fds.clear();
 
-	ctrlno = listen(_sockets, BACKLOG);
-	if (ctrlno < 0) {
-		exitWithError("listen", strerror(errno));
+	//listen to each sockets and populate the pollfd struct foreach sockets
+	for (std::map<int, const Server*>::iterator it = _sockets.begin(); it != _sockets.end(); ++it) {
+		ctrlno = listen(it->first, BACKLOG);
+		if (ctrlno < 0) {
+			exitWithError("listen", strerror(errno));
+		}
+		struct pollfd	pfd;
+		pfd.fd = it->first;
+		pfd.events = POLLIN;
+		pfd.revents = 0;
+		_fds.push_back(pfd);
 	}
 
-	_fds.clear();
-	struct pollfd	pfd;
-	pfd.fd = _sockets;
-	pfd.events = POLLIN;
-	pfd.revents = 0;
-	_fds.push_back(pfd);
-
+	//Main loop
 	while (true) {
     std::cout << "===== Listening =====" << std::endl;
 		ctrlno = poll(&_fds[0], _fds.size(), -1);
@@ -123,10 +166,10 @@ void	WebServer::run(void) {
 			if (_fds[i].revents == 0) {
 				continue ;
 			}
-			if (_fds[i].fd == _sockets) {
-				int newSocket = _acceptConnection();
+			if (_sockets.find(_fds[i].fd) != _sockets.end()) {
+				int newSocket = _acceptConnection(_fds[i].fd);
 				if (newSocket > 0) {
-					_clients.insert(std::make_pair(newSocket, Client(newSocket)));
+					_clients.insert(std::pair<int, Client>(newSocket, Client(newSocket)));
 					struct pollfd	npfd;
 					npfd.fd = newSocket;
 					npfd.events = POLLIN;
@@ -173,23 +216,3 @@ void	WebServer::run(void) {
 		}
 	}
 }
-
-int	WebServer::_acceptConnection(void) {
-
-	socklen_t	addrLen = sizeof(_socketsAddress);
-
-	int newSocket = accept(_sockets, (sockaddr *)&_socketsAddress, &addrLen);
-	if (newSocket < 0) {
-		putLog("accept: " + std::string(strerror(errno)));
-		return (-1);
-	}
-	
-	int	ctrlno = fcntl(newSocket, F_SETFL, O_NONBLOCK);
-	if (ctrlno < 0) {
-		putLog("fcntl: " + std::string(strerror(errno)));
-		close(newSocket);
-		return (-2);
-	}
-	return (newSocket);
-}
-
