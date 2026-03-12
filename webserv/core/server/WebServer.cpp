@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "WebServer.hpp"
-#include "Configuration.hpp" 
 
 void	putLog(const std::string& message) {
 	std::cout << message << std::endl;
@@ -24,17 +23,30 @@ void	exitWithError(const std::string& funct, const std::string& message) {
 
 WebServer::WebServer(const Configuration& config) : _config(config) {
     std::cout << "Config WebServer constructor" << std::endl;
+	int					errnum;
+	std::ostringstream	service;
 	
-	_socketAddress.sin_family = AF_INET;
-	_socketAddress.sin_port = htons(_config.getServers().front().getListens().front().port);
-	_socketAddress.sin_addr.s_addr = inet_addr(_config.getServers().front().getListens().front().ip.c_str()); //not allowed, must find alt
-
-	if (_initServer() != 0) {
-		std::ostringstream ss;
-		ss << "failed to initialize server with PORT: " << ntohs(_socketAddress.sin_port);
-		putLog(ss.str());
+	struct addrinfo hints = {
+		.ai_family = AF_INET,
+		.ai_socktype = SOCK_STREAM,
+		.ai_flags = AI_PASSIVE,
+		.ai_protocol = IPPROTO_TCP
+	};
+	
+	struct addrinfo*	addrinfo;
+	
+	for (size_t i = 0; i < _config.getServers().size(); i++) {
+		service << _config.getServers()[i].getListens().front().port;
+		errnum = getaddrinfo(_config.getServers()[i].getListens().front().ip.c_str(), service.str().c_str(), &hints, &addrinfo);
+		if (errnum != 0) {
+			std::cerr << "getaddrinfo: " << gai_strerror(errnum);
+			exitWithError("from WebServer", "WebServer constructor");
+		}
+		if (_initServer(addrinfo, &_config.getServers()[i]) != 0) {
+			exitWithError("WebServer constructor", "failed to initialize server");
+		}
+		std::cout << "Initialized server with IP: " <<_config.getServers()[i].getListens().front().ip << " | PORT: " << _config.getServers()[i].getListens().front().port << std::endl;
 	}
-    std::cout << "Initialized server with IP: " <<_config.getServers().front().getListens().front().ip << " | PORT: " << _config.getServers().front().getListens().front().port << std::endl;
 }
 
 WebServer::~WebServer(void) {
@@ -42,23 +54,26 @@ WebServer::~WebServer(void) {
 	_closeServer();
 }
 
-int	WebServer::_initServer(void) {
+int	WebServer::_initServer(const struct addrinfo* addrinfo, const Server* server) {
     std::cout << "initServer" << std::endl;
-	_socket = socket(AF_INET, SOCK_STREAM, 0);
-	if (_socket < 0) {
-		exitWithError("_initServer", "create socket failed");
-		return (1);
+
+	int sockBuff = socket(AF_INET, SOCK_STREAM, 0);
+	if (sockBuff < 0) {
+		std::cerr << "create socket failed" << std::endl;
+		exitWithError("_initServer", server->getName());
 	}
-	if (bind(_socket, (sockaddr *)&_socketAddress, sizeof(_socketAddress)) < 0) {
-		exitWithError("_initServer", "failed to bind socket");
-		return (2);
+	_sockets.insert(std::pair<int, const Server*>(sockBuff, server));
+	if (bind(sockBuff, addrinfo->ai_addr, addrinfo->ai_addrlen) < 0) {
+		std::cerr << "bind socket failed" << std::endl;
+		exitWithError("_initServer", server->getName());
 	}
 	return (0);
 }
 
-int	WebServer::_closeServer(void) {
-	close(_socket);
-	exit(0);
+void	WebServer::_closeServer(void) {
+	for (std::map<int, const Server*>::iterator it = _sockets.begin(); it != _sockets.end(); ++it) {
+		close(it->first);
+	}
 }
 
 void	WebServer::_handleRequest(Client& client) {
@@ -83,14 +98,14 @@ void	WebServer::run(void) {
     std::cout << "run" << std::endl;
 	int	ctrlno;
 
-	ctrlno = listen(_socket, BACKLOG);
+	ctrlno = listen(_sockets, BACKLOG);
 	if (ctrlno < 0) {
 		exitWithError("listen", strerror(errno));
 	}
 
 	_fds.clear();
 	struct pollfd	pfd;
-	pfd.fd = _socket;
+	pfd.fd = _sockets;
 	pfd.events = POLLIN;
 	pfd.revents = 0;
 	_fds.push_back(pfd);
@@ -108,7 +123,7 @@ void	WebServer::run(void) {
 			if (_fds[i].revents == 0) {
 				continue ;
 			}
-			if (_fds[i].fd == _socket) {
+			if (_fds[i].fd == _sockets) {
 				int newSocket = _acceptConnection();
 				if (newSocket > 0) {
 					_clients.insert(std::make_pair(newSocket, Client(newSocket)));
@@ -161,9 +176,9 @@ void	WebServer::run(void) {
 
 int	WebServer::_acceptConnection(void) {
 
-	socklen_t	addrLen = sizeof(_socketAddress);
+	socklen_t	addrLen = sizeof(_socketsAddress);
 
-	int newSocket = accept(_socket, (sockaddr *)&_socketAddress, &addrLen);
+	int newSocket = accept(_sockets, (sockaddr *)&_socketsAddress, &addrLen);
 	if (newSocket < 0) {
 		putLog("accept: " + std::string(strerror(errno)));
 		return (-1);

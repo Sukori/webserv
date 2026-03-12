@@ -46,7 +46,7 @@ run.cpp (main de la branche de test) :
 - La branche principale utilise un Parser pour produire la Configuration, le flux reste identique.
 
 WebServer.hpp :
-- Classe WebServer avec : _config (Configuration), _fds (vector<pollfd>), _clients (map<int, Client>), _socket (int), _socketAddress (sockaddr_in).
+- Classe WebServer avec : _config (Configuration), _fds (vector<pollfd>), _clients (map<int, Client>), _sockets (int), _socketsAddress (sockaddr_in).
 - Méthodes : run(), _initServer(), _closeServer(), _acceptConnection(), _handleRequest(Client&), _findBestConfig(host, port).
 - Dépendances : Configuration (../../config/), Client (../client/).
 - Constantes : BUFFER_SIZE=4096, BACKLOG=1024.
@@ -54,7 +54,7 @@ WebServer.hpp :
 WebServer.cpp :
 - Constructeur : configure sockaddr_in à partir du premier listen du premier serveur (front().front()), crée le socket et bind dans _initServer().
 - run() : listen(), crée un pollfd pour le socket serveur, boucle infinie avec poll().
-  - Si fd == _socket → acceptConnection() → nouveau client ajouté à _clients et _fds (POLLIN).
+  - Si fd == _sockets → acceptConnection() → nouveau client ajouté à _clients et _fds (POLLIN).
   - Si POLLIN → readRequest() ; si read_bytes <= 0, fermeture du client ; si requête complète, _handleRequest() puis bascule vers POLLOUT.
   - Si POLLOUT → writeResponse() ; si terminé, fermeture du client. Commentaire personnel de l'humain : envisage de garder la connexion ouverte (keep-alive) au lieu de fermer.
 - _acceptConnection() : accept() + fcntl(F_SETFL, O_NONBLOCK) sur le nouveau socket.
@@ -63,9 +63,9 @@ WebServer.cpp :
 Points identifiés (non résolus, pas d'action prise) :
 1. Mono-serveur/mono-listen : seul front() est utilisé, pas de boucle sur les serveurs ni les listens.
 2. **(en cours)** inet_addr() à remplacer par getaddrinfo — voir décisions ci-dessous.
-3. Le socket serveur (_socket) n'est pas mis en non-bloquant (requis par le sujet).
+3. Le socket serveur (_sockets) n'est pas mis en non-bloquant (requis par le sujet).
 4. _closeServer() appelle exit(0), ce qui empêche le déroulement normal des destructeurs.
-5. _acceptConnection() passe &_socketAddress à accept(), ce qui écrase l'adresse du serveur avec celle du client entrant.
+5. _acceptConnection() passe &_socketsAddress à accept(), ce qui écrase l'adresse du serveur avec celle du client entrant.
 
 Travail sur le remplacement de inet_addr() par getaddrinfo() — décisions prises :
 - getaddrinfo(hostname, service, hints, &res) remplace inet_addr + remplissage manuel de sockaddr_in.
@@ -74,8 +74,52 @@ Travail sur le remplacement de inet_addr() par getaddrinfo() — décisions pris
 - hints : struct addrinfo avec ai_family=AF_INET, ai_socktype=SOCK_STREAM, ai_flags=AI_PASSIVE (serveur destiné à bind). ai_protocol peut rester à 0 (SOCK_STREAM implique TCP) ou utiliser IPPROTO_TCP pour être explicite.
 - res : liste chaînée de résultats (différentes adresses possibles pour un même hostname, pas les clients). Itérer sur la liste pour trouver une adresse valide.
 - Libérer la liste avec freeaddrinfo(res) après usage.
-- Le sockaddr retourné dans res->ai_addr est directement utilisable pour bind() → le membre _socketAddress (sockaddr_in) de la classe sera remplacé/adapté, car getaddrinfo fournit déjà le sockaddr prêt à l'emploi.
+- Le sockaddr retourné dans res->ai_addr est directement utilisable pour bind() → le membre _socketsAddress (sockaddr_in) de la classe sera remplacé/adapté, car getaddrinfo fournit déjà le sockaddr prêt à l'emploi.
 - Gestion d'erreur : getaddrinfo retourne 0 en cas de succès, sinon utiliser gai_strerror() pour le message d'erreur.
 Aucun code n'a encore été modifié, uniquement de la réflexion.
+<br/>
+
+[20260312]
+Session de travail — refactoring du constructeur, `_initServer()` et `_closeServer()`.
+Documents lus en début de session : `instruction/agent.md`, `instruction/README.md`, `instruction/mémoire.md`.
+
+Modifications réalisées dans `WebServer.cpp` et `WebServer.hpp` :
+
+1. **getaddrinfo implémenté** — remplacement effectif de `inet_addr()`.
+   - `hints` est maintenant une variable locale séparée (struct addrinfo sur la stack).
+   - `_addrinfo` n'est plus un membre de la classe ; `getaddrinfo` est appelé dans la boucle du constructeur, et `freeaddrinfo` libère à chaque itération.
+   - Le `new(struct addrinfo)` initial a été supprimé (getaddrinfo alloue lui-même).
+
+2. **Support multi-serveurs dans le constructeur** :
+   - Le constructeur boucle sur `_config.getServers()` au lieu de n'utiliser que `front()`.
+   - Chaque itération : `getaddrinfo()` → `_initServer(addrinfo, &server)` → `freeaddrinfo()`.
+
+3. **`_sockets` est maintenant `std::map<int, const Server*>`** (anciennement `int _socket`) :
+   - Clé = fd du listening socket, valeur = pointeur const vers le `Server` associé.
+   - Pointeurs stables car `Configuration` (et son vector de `Server`) est const et ne change jamais.
+
+4. **`_initServer()` refactoré** :
+   - Signature : `int _initServer(const struct addrinfo* addrinfo, const Server* server)`.
+   - Crée le socket, vérifie l'erreur sur le fd, insère dans `_sockets`, puis bind avec `addrinfo->ai_addr` et `addrinfo->ai_addrlen`.
+
+5. **`_closeServer()` corrigé** :
+   - `exit(0)` supprimé (point 4 de la session précédente résolu).
+   - Itération avec `std::map::iterator` en C++98 pour fermer tous les listening sockets.
+   - Type de retour à changer de `int` vers `void` (identifié, pas encore appliqué).
+
+6. **`sizeof` corrigé dans `bind()`** : utilisation de `addrinfo->ai_addrlen` au lieu de `sizeof(pointeur)`.
+
+Points résolus (par rapport à la session précédente) :
+- Point 2 : inet_addr → getaddrinfo ✅
+- Point 4 : exit(0) dans _closeServer supprimé ✅
+- Point 1 (partiel) : multi-serveurs dans le constructeur et _initServer ✅
+
+Points restants / identifiés :
+- `run()` et `_acceptConnection()` utilisent encore `_sockets` comme un `int` → à adapter pour multi-serveurs.
+- Le socket serveur n'est toujours pas mis en non-bloquant (point 3 session précédente).
+- `_acceptConnection()` utilise toujours `_socketsAddress` (point 5 session précédente).
+- `_closeServer()` type de retour `int` → `void`.
+- Initialisation designated (`{.ai_family = ...}`) dans hints : syntaxe C99/C++20, pas C++98. À vérifier/corriger.
+- `std::ostringstream service` dans le constructeur : n'est pas réinitialisé entre les itérations de la boucle → le port s'accumule.
 <br/>
 

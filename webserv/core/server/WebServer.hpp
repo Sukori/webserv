@@ -24,9 +24,11 @@
 # include <fcntl.h>
 # include <poll.h>
 # include <sys/socket.h>
+# include <sys/types.h>
+# include <sys/time.h>
+# include <netdb.h>
 # include <arpa/inet.h>
 # include <unistd.h>
-# include <sys/time.h>
 # include "../../config/Configuration.hpp" 
 # include "../client/Client.hpp"
 
@@ -44,13 +46,11 @@ class WebServer {
 		WebServer(void); 
 		Configuration			_config;
 		std::vector<pollfd>		_fds;
-		std::map<int, Client>	_clients;
-		int						_socket;
+		std::map<int, const Client*>	_clients;
+		std::map<int, const Server*>	_sockets;
 
-		struct sockaddr_in		_socketAddress;
-
-		int						_initServer(void);
-		int						_closeServer(void);
+		int						_initServer(const struct addrinfo* addrinfo, const Server* server);
+		void					_closeServer(void);
 		int						_acceptConnection(void);
 		void					_handleRequest(Client& client);
 		const Server*			_findBestConfig(std::string host, int port); //rename ServerConfig when merge with config branch
