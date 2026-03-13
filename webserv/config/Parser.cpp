@@ -62,8 +62,8 @@ struct s_listen	Parser::parseListen(std::string token) {
 	int				port;
 
 	//ip and port are the only data.
-	//for simplicity, ip is assumed to be 0.0.0.0 and is not written in config
-	output.ip = "0.0.0.0";
+	//for simplicity, ip is assumed to be 127.0.0.1 and is not written in config
+	output.ip = "127.0.0.1";
 	output.protocol = "HTML";
 	_ss >> token;
 	//first int for port - else error handling
