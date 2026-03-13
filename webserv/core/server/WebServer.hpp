@@ -24,10 +24,13 @@
 # include <fcntl.h>
 # include <poll.h>
 # include <sys/socket.h>
+# include <sys/types.h>
+# include <sys/time.h>
+# include <netdb.h>
 # include <arpa/inet.h>
 # include <unistd.h>
-# include <sys/time.h>
-# include "../../config/Parser.hpp" 
+# include "../../config/Configuration.hpp"
+# include "../../config/Parser.hpp"
 # include "../client/Client.hpp"
 # include "../http/Http.hpp"
 
@@ -43,21 +46,21 @@ class WebServer {
 	
 	private:
 		WebServer(void); 
-		Configuration			_config;
-		std::vector<pollfd>		_fds;
-		std::map<int, Client>	_clients;
-		int						_socket;
+		Configuration					_config;
+		std::vector<pollfd>				_fds;
+		std::map<int, Client>			_clients;
+		std::map<int, const Server*>	_sockets;
 
-		struct sockaddr_in		_socketAddress;
-
-		int						_initServer(void);
-		int						_closeServer(void);
-		int						_acceptConnection(void);
+		int						_initServer(const struct addrinfo* addrinfo, const Server* server);
+		void					_closeServer(void);
+		int						_acceptConnection(int fd);
 		void					_handleRequest(Client& client);
 		const Server*			_findBestConfig(std::string host, int port); //rename ServerConfig when merge with config branch
 };
 
 void	putLog(const std::string& message);
+void	closeAllSockets(std::map<int, const Server*> sockets);
+void	closeAllPollFds(std::vector<pollfd> fds);
 void	exitWithError(const std::string& funct,const std::string& message);
 
 #endif
