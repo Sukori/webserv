@@ -27,18 +27,27 @@ SRCS		= $(WEBDIR)WebServer \
 
 HDR			= $(addsuffix .hpp, $(HDRS))
 SRC			= $(addsuffix .cpp, $(SRCS))
-OBJ			= $(addsuffix .o, $(SRCS))
+OBJ			= $(addprefix $(ODIR), $(notdir $(addsuffix .o, $(SRCS))))
 
 all: $(NAME)
 
 $(NAME): $(OBJ)
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
-$(ODIR)%.o: $(WEBDIR)%.cpp $(CNFDIR)%.cpp $(CLIDIR)%.cpp $(HDR) | $(ODIR)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
 $(ODIR):
 	mkdir -p $(ODIR)
+
+$(ODIR)%.o: $(WEBDIR)%.cpp $(HDR) | $(ODIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(ODIR)%.o: $(CNFDIR)%.cpp $(HDR) | $(ODIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(ODIR)%.o: $(CLIDIR)%.cpp $(HDR) | $(ODIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(ODIR)%.o: %.cpp $(HDR) | $(ODIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
 	rm -rf $(ODIR)
