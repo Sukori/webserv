@@ -47,5 +47,9 @@ Helpful documentation we used
 * [C++ Application Architecture - A Mini-Series (by The Cherno)](https://www.youtube.com/watch?v=rUxZ5N77M5E)
 * [Beej's Guide to Network Programming](https://beej.us/guide/bgnet/html/)
 * [Hypertext Transfer Protocol -- HTTP/1.1](https://www.rfc-editor.org/rfc/rfc2616)
-* [cppReference](https://en.cppreference.com/w/)$
+* [cppReference](https://en.cppreference.com/w/)
+* [CGI - Wikipedia](https://en.wikipedia.org/wiki/Common_Gateway_Interface)
+* [nginx documentation - config](https://nginx.org/en/docs/example.html)
+* [nginx documentation - HTTP CORE MODULE](https://nginx.org/en/docs/http/ngx_http_core_module.html)
+* [ipv4 - ipv6 converter](https://dnschecker.org/ipv4-to-ipv6.php)
 * [Building an http server from scratch in c++](https://osasazamegbe.medium.com/showing-building-an-http-server-from-scratch-in-c-2da7c0db6cb7)

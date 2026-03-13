@@ -1,0 +1,19 @@
+J'ai:
+- Ouverture et lecture du fichier config
+- Stockage dans une string
+
+Je veux:
+- peupler la struct location
+- vérifier la struct location
+- peupler la struct server
+- vérifier la struct server
+- build les classes y relatives
+- build la classe Config avec tout ça
+
+Workflow:
+
+Le mieux serait de passer des pointeurs vers les structs depuis la fonction caller.
+Depuis le main:
+Configuration	conf(buildConfig()); // Parametered constructor with vector vector<Server> buildConfig(void)
+
+
