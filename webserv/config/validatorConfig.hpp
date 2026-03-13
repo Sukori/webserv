@@ -17,7 +17,7 @@
 # include <string>
 # include <vector>
 # include <map>
-# include <sys/stat.h>
+# include <sys/stat.h> //stat() to check directory existence
 
 # include "helperConfig.hpp"
 
