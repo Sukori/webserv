@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "Parser.hpp"
+#include "validatorConfig.hpp"
 
 Parser::Parser(const std::string data): _ss(data) {}
 
@@ -266,7 +267,9 @@ Server	Parser::parseServer(void) {
 		}
 
 	} while (!_ss.fail());
-	//if locs & listen are not empty - else error handling
+
+	validateServer(servStruct);
+
 	Server	output(servStruct, locs);
 
 	return (output);
@@ -384,7 +387,6 @@ Location	Parser::parseLocation(void) {
 	locStruct.autoindex = true;
 	locStruct.root_path = "/";
 	locStruct.upload_path = "/uploads/";
-	//locStruct.error_path # NO NEED ?
 
 	//if token is here valid /path/ - else error handling
 	_ss >> token;
@@ -495,6 +497,8 @@ Location	Parser::parseLocation(void) {
 		}
 
 	} while (!_ss.fail());
+
+	validateLocation(locStruct);
 
 	Location	output(locStruct);
 	return (output);

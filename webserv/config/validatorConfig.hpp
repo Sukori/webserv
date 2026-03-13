@@ -17,6 +17,7 @@
 # include <string>
 # include <vector>
 # include <map>
+# include <sys/stat.h>
 
 # include "helperConfig.hpp"
 
@@ -28,17 +29,19 @@ void	validLimitExcept(std::vector<std::string>& limitExcept); //default GET is n
 void	validUploadPath(std::string& uploadPath); //default /www/upload if not specified. Create if not exists
 //cgi_params ? subject to deletion
 //cgi_pass ? subject to deletion
+void	validateLocation(s_location& locStruct);
 
 
 //validate server
 
 void	validServerName(std::string& serverName); //if not set, use "server<port>"
-bool	validServRoot(std::string& root);
+bool	validServerRoot(std::string& root);
 bool	validPort(int port);
-void	validIndex(std::string& index); //if not set, use "index.html"
+void	validIndex(std::vector<std::string>& index); //if not set, use "index.html"
 void	validAccessLogs(std::string& accessLogs); //create if not exists, can be null
 void	validErrorLogs(std::string& errorLogs); //create if not exists, can be null
 bool	validClientMaxBodySize(unsigned int maxBodySize);
-bool	validErrorPages(std::map<int, std::string>& errorPages);
+void	validErrorPages(std::map<int, std::string>& errorPages);
+void	validateServer(s_server& servStruct);
 
 #endif
