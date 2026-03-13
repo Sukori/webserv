@@ -48,8 +48,8 @@ WebServer::WebServer(const Configuration& config) : _config(config) {
 	struct addrinfo*	addrinfo;
 	
 	for (size_t i = 0; i < _config.getServers().size(); i++) {
-		service << _config.getServers()[i].getListens().front().port;
-		errnum = getaddrinfo(_config.getServers()[i].getListens().front().ip.c_str(), service.str().c_str(), &hints, &addrinfo);
+		service << _config.getServers()[i].getListen().port;
+		errnum = getaddrinfo(_config.getServers()[i].getListen().ip.c_str(), service.str().c_str(), &hints, &addrinfo);
 		if (errnum != 0) {
 			std::cerr << "getaddrinfo: " << gai_strerror(errnum);
 			freeaddrinfo(addrinfo);
@@ -59,7 +59,7 @@ WebServer::WebServer(const Configuration& config) : _config(config) {
 			freeaddrinfo(addrinfo);
 			exitWithError("WebServer constructor", "failed to initialize server");
 		}
-		std::cout << "Initialized server with IP: " <<_config.getServers()[i].getListens().front().ip << " | PORT: " << _config.getServers()[i].getListens().front().port << std::endl;
+		std::cout << "Initialized server with IP: " <<_config.getServers()[i].getListen().ip << " | PORT: " << _config.getServers()[i].getListen().port << std::endl;
 		service.str("");
 		freeaddrinfo(addrinfo);
 	}
@@ -192,7 +192,7 @@ void	WebServer::run(void) {
 			if (_sockets.find(_fds[i].fd) != _sockets.end()) {
 				int newSocket = _acceptConnection(_fds[i].fd);
 				if (newSocket > 0) {
-					_clients.insert(std::pair<int, Client>(newSocket, Client(newSocket)));
+					_clients.insert(std::pair<int, Client>(newSocket, Client()));
 					struct pollfd	npfd;
 					npfd.fd = newSocket;
 					npfd.events = POLLIN;
@@ -208,7 +208,7 @@ void	WebServer::run(void) {
 
 				if (it != _clients.end()) {
 					if (_fds[i].revents & POLLIN) {
-						ssize_t read_bytes = it->second.readRequest();
+						ssize_t read_bytes = it->second.readRequest(it->first);
 	
 							if (read_bytes <= 0) {
 								close(_fds[i].fd);
@@ -221,12 +221,12 @@ void	WebServer::run(void) {
 							if (it->second.isRequestComplete()) {
 								_handleRequest(it->second);
 								std::cout << it->second.getRequestIn() << std::endl;
-								std::cout << (int)_socketAddress.sin_port << std::endl;
+								std::cout << _sockets.find(it->first)->first << std::endl;
 								_fds[i].events = POLLOUT;
 							}
 
 					} else if (_fds[i].revents & POLLOUT) {
-						if (it->second.writeResponse()) { //for now, we close
+						if (it->second.writeResponse(it->first)) { //for now, we close
 							close(_fds[i].fd);
 							_clients.erase(it);
 							_fds.erase(_fds.begin() + i);
