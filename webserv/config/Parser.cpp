@@ -51,7 +51,7 @@ static bool	ft_stob(std::string& token) {
 static bool	ft_isNUM(std::string token) {
 	for (size_t i = 0; i < token.length(); i++) {
 		if (token.at(i) < '0' || token.at(i) > '9') {
-			std::cerr << "ft_isNUM: token. Got " << token << " is not a valid numeral string" << std::endl;
+			std::cerr << "ft_isNUM: token. Got " << token << " is not a valid unsigned numeral string" << std::endl;
 			return (false);
 		}
 	}
@@ -60,7 +60,7 @@ static bool	ft_isNUM(std::string token) {
 
 struct s_listen	Parser::parseListen(std::string token) {
 	struct s_listen	output;
-	int				port;
+	unsigned int	port;
 
 	//ip and port are the only data.
 	//for simplicity, ip is assumed to be 127.0.0.1 and is not written in config
@@ -128,7 +128,7 @@ std::pair<int, std::string>	Parser::parseErrorPage(std::string& token) {
 	std::string	errPagePath;
 
 	if (!ft_isNUM(token)) {
-		std::cerr << "parseErrorPages: error number is not a number. Got " << token << std::endl;
+		std::cerr << "parseErrorPages: error number is not an unsigned int. Got " << token << std::endl;
 		output = std::make_pair(0, "ERROR");
 		return (output);
 	} else {
