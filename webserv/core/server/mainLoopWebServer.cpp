@@ -12,6 +12,8 @@
 
 #include "WebServer.hpp"
 
+/// @brief Main loop server runtime
+/// @param  none
 void	WebServer::run(void) {
 
     std::cout << "run" << std::endl;
