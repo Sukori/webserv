@@ -40,7 +40,10 @@ void	Client::setResponse(const std::string& response) {
 	_responseOut = response;
 }
 
-ssize_t	Client::readRequest(int socket) {
+/// @brief reads a request until RFC end of header flag from a client and stores it 
+/// @param  none
+/// @return bytes read
+ssize_t	Client::readRequest(void) {
     char    temp_buffer[BUFFER_SIZE] = {0};
     ssize_t bytes_read;
 
@@ -60,7 +63,10 @@ ssize_t	Client::readRequest(int socket) {
     return (bytes_read);
 }
 
-bool	Client::writeResponse(int socket) {
+/// @brief writes a server response to a client
+/// @param  none
+/// @return bool. True if response was successfully sent
+bool	Client::writeResponse(void) {
 	if (_responseOut.empty()) {
 		return (false);
 	}
