@@ -6,10 +6,14 @@ FLAGS	= -Wall -Wextra -Werror -g3
 
 HDRS	= helperConfig \
 		Parser \
+		validatorConfig \
+		errPages \
 		Configuration
 
 SRCS	= helperConfig \
 		Parser \
+		validatorConfig \
+		errPages \
 		Configuration \
 		main
 

@@ -12,6 +12,7 @@
 
 #include "Configuration.hpp"
 #include "Parser.hpp"
+#include "validatorConfig.hpp"
 
 int	main(int argc, char* argv[]) {
 
