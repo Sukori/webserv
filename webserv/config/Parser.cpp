@@ -385,8 +385,9 @@ Location	Parser::parseLocation(void) {
 	std::string			locationAllowed[] = {"route", "root", "alias", "limit_except", "autoindex", "upload_path", "cgi_param", "cgi_pass"};
 
 	locStruct.autoindex = true;
-	locStruct.root_path = "/";
-	locStruct.upload_path = "/uploads/";
+	locStruct.root_path = ".";
+	locStruct.route = ".";
+	locStruct.upload_path = ".";
 
 	//if token is here valid /path/ - else error handling
 	_ss >> token;
@@ -403,7 +404,7 @@ Location	Parser::parseLocation(void) {
 		Location	error(locStruct);
 		return (error);
 	}
-	locStruct.route = token;
+	locStruct.route += token;
 	_ss >> token;
 	
 	if (token.empty() || token.at(0) != '{') {
@@ -432,17 +433,16 @@ Location	Parser::parseLocation(void) {
 		}
 		// This switch statement should then check for ";" end line and handle errors
 		// Maybe a return (handle location error) that returns an empty struct would be good
-		std::pair<std::string, std::string> buff;
 		switch (i)
 		{
 		case 0:
 			_ss >> token;
-			locStruct.route = token;
+			locStruct.route += token;
 			break;
 
 		case 1:
 			_ss >> token;
-			locStruct.root_path = token;
+			locStruct.root_path += token;
 			break;
 
 		case 2:
@@ -462,7 +462,7 @@ Location	Parser::parseLocation(void) {
 
 		case 5:
 			_ss >> token;
-			locStruct.upload_path = token;
+			locStruct.upload_path += token;
 			break;
 
 		case 6:
