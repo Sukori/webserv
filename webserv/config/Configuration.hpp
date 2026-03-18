@@ -90,4 +90,3 @@ std::ostream&	operator<<(std::ostream& os, const Configuration& config);
 std::ostream&	operator<<(std::ostream& os, const std::vector<Location>& locations);
 
 #endif
-

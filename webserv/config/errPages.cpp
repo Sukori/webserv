@@ -11,6 +11,10 @@
 /* ************************************************************************** */
 
 #include "errPages.hpp"
+
+/// @brief generates a map of all the default error pages
+/// @param  
+/// @return map int - string, error code - path
 std::map<int, std::string>	defaultErrorPages(void) {
 
 	std::map<int, std::string> m;

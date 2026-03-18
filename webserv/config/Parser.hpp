@@ -19,6 +19,8 @@
 # include <vector>
 # include <map>
 # include "Configuration.hpp"
+# include "helperParser.hpp"
+# include "validatorConfig.hpp"
 
 class Parser {
 public:

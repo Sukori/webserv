@@ -5,15 +5,20 @@ CPP		= c++ -std=c++98
 FLAGS	= -Wall -Wextra -Werror -g3
 
 HDRS	= helperConfig \
+		helperParser \
 		Parser \
 		validatorConfig \
 		errPages \
 		Configuration
 
 SRCS	= helperConfig \
+		helperParser \
 		Parser \
+		ParserLocation \
+		ParserServer \
 		validatorConfig \
 		errPages \
+		ConfigurationStreamOut \
 		Configuration \
 		main
 
