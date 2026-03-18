@@ -6,7 +6,7 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 16:17:33 by pberset           #+#    #+#             */
-/*   Updated: 2026/03/09 15:52:47 by ylabussi         ###   ########.fr       */
+/*   Updated: 2026/03/18 17:50:28 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,25 +14,38 @@
 //#include "../../config/Configuration.hpp"
 
 #define SERVER_SOFTWARE "weebserv"
-#define GATEWAY_INTERFACE "CGI/1"
-#define SERVER_PROTOCOL "HTTP/1"
+#define GATEWAY_INTERFACE "CGI/1.0"
+#define SERVER_PROTOCOL "HTTP/1.0"
 
-void add_cgi_env(std::map<std::string, std::string>& env, /*const Server& server,*/ const Http::StartLine& startLine, const std::string& path) {
+static std::string ft_uint_to_string(unsigned int n) {
+	std::string ret;
+	if (n == 0)
+		return "0";
+	while (n > 0)
+	{
+		ret.insert(ret.begin(), n%10 + '0');
+		n = n/10;
+	}
+	return ret;
+}
+
+void add_cgi_env(std::map<std::string, std::string>& env, const Server& server, const Http::StartLine& startLine, const std::string& path) {
     env.insert(std::make_pair("SERVER_SOFTWARE", SERVER_SOFTWARE "/1"));                    /* SERVER_SOFTWARE   */
-    //env.insert(std::make_pair("SERVER_NAME", server.getName()));                            /* SERVER_NAME       */
+    env.insert(std::make_pair("SERVER_NAME", server.getName()));                            /* SERVER_NAME       */
     env.insert(std::make_pair("GATEWAY_INTERFACE", GATEWAY_INTERFACE));                     /* GATEWAY_INTERFACE */
     env.insert(std::make_pair("SERVER_PROTOCOL", SERVER_PROTOCOL));                         /* SERVER_PROTOCOL   */
-    //env.insert(std::make_pair("SERVER_PORT", ft_uint_to_string(server.getListen().port)));  /* SERVER_PORT       */
+    env.insert(std::make_pair("SERVER_PORT", ft_uint_to_string(server.getListen().port)));  /* SERVER_PORT       */
     env.insert(std::make_pair("REQUEST_METHOD", startLine.method));                         /* REQUEST_METHOD    */
     env.insert(std::make_pair("PATH_INFO", startLine.path));                                /* PATH_INFO         */
     //env.insert(std::make_pair("PATH_TRANSLATED", ""));                                      /* PATH_TRANSLATED   */
     env.insert(std::make_pair("SCRIPT_NAME", path));                                        /* SCRIPT_NAME       */
-    env.insert(std::make_pair("QUERY_STRING", startLine.query));                            /* QUERY_STRING      */
-    env.insert(std::make_pair("REMOTE_HOST", ""));                                          /* REMOTE_HOST       */
-    env.insert(std::make_pair("REMOTE_ADDR", ""));                                          /* REMOTE_ADDR       */
-    //env.insert(std::make_pair("AUTH_TYPE", "?"));                                           /* AUTH_TYPE         */
-    //env.insert(std::make_pair("REMOTE_USER", "?"));                                         /* REMOTE_USER       */
-    //env.insert(std::make_pair("REMOTE_IDENT", "?"));                                        /* REMOTE_IDENT      */
+    env.insert(std::make_pair("QUERY_STRING", startLine.query.length() > 0 ? startLine.query.substr(1): ""));                  /* QUERY_STRING      */
+    env.insert(std::make_pair("REMOTE_HOST", "localhost"));                                          /* REMOTE_HOST       */
+    env.insert(std::make_pair("REMOTE_ADDR", "127.0.0.1"));                                          /* REMOTE_ADDR       */
+    env.insert(std::make_pair("AUTH_TYPE", ""));                                           /* AUTH_TYPE         */
+    env.insert(std::make_pair("REMOTE_USER", ""));                                         /* REMOTE_USER       */
+    env.insert(std::make_pair("REMOTE_IDENT", ""));                                        /* REMOTE_IDENT      */
+    env.insert(std::make_pair("TMPDIR", "/www/html/u"));
     //env.insert(std::make_pair("CONTENT_TYPE", ""));                                         /* CONTENT_TYPE      */
     //env.insert(std::make_pair("CONTENT_LENGTH", ""));                                       /* CONTENT_LENGTH    */
 }
@@ -48,7 +61,7 @@ std::string read_all(int fd) {
 /*
 make sure first field of all env is full UPPER_SNAKE_CASE instead of lower-kebab-case
 */
-std::string exec_cgi(const std::string& exe, const std::string& path, const std::map<std::string, std::string>& env, int socketIn) {
+std::string exec_cgi(const std::string& exe, const std::string& path, std::map<std::string, std::string> env, int socketIn) {
     typedef std::map<std::string, std::string> env_map;
     int     pfds[2];
     if (pipe(pfds))
@@ -64,10 +77,11 @@ std::string exec_cgi(const std::string& exe, const std::string& path, const std:
         return response;
     } else {
         /* child */
+        env.erase("CONTENT_TYPE");
         char *argv[] = {(char*)exe.c_str(), (char*)path.c_str(), NULL};
         char **envp = new char*[env.size() + 1];
         envp[env.size()] = NULL;
-        for (env_map::const_iterator it = env.begin(); it != env.end(); it++)
+        for (env_map::iterator it = env.begin(); it != env.end(); it++)
             envp[std::distance(env.begin(), it)] = strdup((it->first + '=' + it->second).c_str());
         dup2(socketIn, 0);
         dup2(pfds[1], 1);

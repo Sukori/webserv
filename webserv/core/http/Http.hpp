@@ -33,7 +33,7 @@ class Http {
 		int					getSocket(void) const;
 		const StartLine&	getStartLine(void) const;
 		const Header&		getHeader(void) const;
-		std::string			getResponseBody(const std::string& root, const std::map<std::string, std::string>& binaries, const std::vector<std::string>& indexes);
+		std::string			getResponseBody(const std::string& route, const std::map<std::string, std::string>& binaries, const Server &server);
 		void				verifyMethod(const std::set<std::string>& allowed_methods) const;
 
 		static std::string	buildErrorHtml(int status, const Server &server);

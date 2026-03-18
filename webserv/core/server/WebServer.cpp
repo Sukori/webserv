@@ -6,7 +6,7 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 14:11:12 by pberset           #+#    #+#             */
-/*   Updated: 2026/03/11 17:58:02 by ylabussi         ###   ########.fr       */
+/*   Updated: 2026/03/18 16:02:22 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,30 @@ void	WebServer::run(void) {
 	pfd.revents = 0;
 	_fds.push_back(pfd);
 
+	try {
+		Http req (open("req", O_RDONLY));
+
+		const Http::Header h (req.getHeader());
+		const Http::StartLine& sl (req.getStartLine());
+
+		std::cout << "path:\t" + sl.path + '\n';
+		std::cout << "extra:\t" + sl.extra + '\n';
+		std::cout << "query:\t" + sl.query + '\n';
+		std::cout << "method:\t" + sl.method + '\n';
+		std::cout << "headers:\n";
+		for (Http::Header::const_iterator it = h.begin(); it != h.end();it++)
+			std::cout << '\t' + it->first + '=' + it->second + '\n';
+		std::cout << '\n';
+
+		std::map<std::string, std::string> bin; /* need to figure out where to define that TODO */
+		bin.insert(std::make_pair("py", "/usr/bin/python3"));
+		bin.insert(std::make_pair("php", "/usr/bin/php"));
+		std::cout << req.getResponseBody("/www/html", bin, _config.getServers()[0]);
+	} catch (int s) {
+		std::cout << s << std::endl;
+	}
+	return;
+
 	while (true) {
     std::cout << "===== Listening =====" << std::endl;
 		ctrlno = poll(&_fds[0], _fds.size(), -1);
@@ -148,7 +172,8 @@ void	WebServer::run(void) {
 							bin.insert(std::make_pair("py", "/usr/bin/python3"));
 							bin.insert(std::make_pair("php", "/usr/bin/php"));
 
-							out = req.getResponseBody(_config.getServers()[0].getRoot() + route, bin, _config.getServers()[0].getIndex());
+							/* TODO replace [0] with index */
+							out = req.getResponseBody(route, bin, _config.getServers()[0]);
 							status = 200;
 						} catch (int s) {
 							status = s;
@@ -160,7 +185,7 @@ void	WebServer::run(void) {
 						_fds[i].events = POLLOUT;
 
 						/*ssize_t read_bytes = it->second.readRequest();
-	
+
 							if (read_bytes <= 0) {
 								close(_fds[i].fd);
 								_clients.erase(it);

@@ -62,7 +62,6 @@ Http::Header	Http::_parseHeaders(int fd) {
 	size_t sep;
 	while ((line = _parseNextLine(fd)).length() >1)
 	{
-		std::cout << line << std::endl;
 		sep = line.find(':');
 		if (sep == line.npos)
 			throw 400; // Bad Request
@@ -71,7 +70,7 @@ Http::Header	Http::_parseHeaders(int fd) {
 		sep++;
 		while (isspace(line[sep]))
 			sep++;
-		val = line.substr(sep);
+		val = line.substr(sep, line.find('\r') - sep);
 		ret.insert(std::make_pair(key, val));
 	}
 	return ret;
@@ -95,19 +94,21 @@ void			Http::_splitPath(const std::string& path, StartLine& sl) {
 }
 
 static std::string get_ext(const std::string& path) {
-	size_t sep = path.find('.');
+	size_t sep = path.find_last_of('.');
 	if (sep == -1ul)
 		return "";
 	else
 		return path.substr(sep + 1);
 }
 
-std::string Http::getResponseBody(const std::string& root, const std::map<std::string, std::string>& binaries, const std::vector<std::string>& indexes) {
+std::string Http::getResponseBody(const std::string& route, const std::map<std::string, std::string>& binaries, const Server &server) {
 	std::string file_path;
+	std::string root = server.getRoot() + route;
 	file_path = root + _startline.path;
 	if (_startline.path.find('.') == -1ul)
 	{
 		bool found (false);
+		const std::vector<std::string> &indexes = server.getIndex();
 		for (std::vector<std::string>::const_iterator it = indexes.begin(); it != indexes.end(); it++)
 		{
 			file_path = root + _startline.path + (*(_startline.path.end() - 1) != '/' ? "/" : "") + *it;
@@ -126,8 +127,7 @@ std::string Http::getResponseBody(const std::string& root, const std::map<std::s
 
 	try {
 		bin_f = binaries.at(ext);
-	}
-	catch (const std::out_of_range& e) {
+	} catch (const std::out_of_range& e) {
 		bin_f = "";
 	}
 
@@ -141,8 +141,8 @@ std::string Http::getResponseBody(const std::string& root, const std::map<std::s
 	}
 	else {
 		/* cgi */
-		add_cgi_env(_header, _startline, file_path);
-		return exec_cgi(bin_f, file_path, _header, _socket);
+		add_cgi_env(_header, server, _startline, file_path);
+		return exec_cgi(bin_f, file_path, Header(_header), _socket);
 	}
 }
 

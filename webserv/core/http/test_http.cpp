@@ -51,7 +51,7 @@ int	main(int argc, char *argv[]) {
 		idx.insert(idx.end(), "index.py");
 		idx.insert(idx.end(), "home.py");
 
-		response_body = req.getResponseBody(root, bin, idx);
+		response_body = req.getResponseBody(root, bin, Server());
 		response_status = 200;
 	} catch (int status) {
 		response_status = status;
