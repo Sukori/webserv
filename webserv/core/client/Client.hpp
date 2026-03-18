@@ -25,8 +25,8 @@ class Client {
 		Client(sockaddr_in socket);
 		~Client(void);
 
-		ssize_t			readRequest(void);
-		bool			writeResponse(void);
+		ssize_t				readRequest(void);
+		bool				writeResponse(void);
 
 		std::string			getRequestIn(void);
 		std::string			getResponseOut(void);
@@ -34,7 +34,7 @@ class Client {
 		bool				isRequestComplete(void);
 		struct sockaddr_in	getSocket(void);
 
-		void			setResponse(const std::string& response);
+		void				setResponse(const std::string& response);
 
 	private:
 		Client(void);
