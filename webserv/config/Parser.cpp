@@ -17,6 +17,9 @@ Parser::Parser(const std::string data): _ss(data) {}
 
 Parser::~Parser(void) {}
 
+/// @brief converts string into an unsigned int
+/// @param token 
+/// @return unsigned int conversion of token
 static unsigned int	ft_stoui(std::string& token) {
 	int	output = 0;
 
@@ -26,16 +29,23 @@ static unsigned int	ft_stoui(std::string& token) {
 	return (output);
 }
 
+/// @brief lowercases string
+/// @param str 
 static void	ft_toLower(std::string& str) {
 	for (int i = 0; (unsigned int)i < str.size(); i++) {
 		str.at(i) = std::tolower((unsigned char)str.at(i));
 	}
 }
 
+/// @brief lowercases a cstring
+/// @param c 
 static void	ft_toLowerChr(char* c) {
 	*c = std::tolower((unsigned char)*c);
 }
 
+/// @brief converts a boolean string
+/// @param token 
+/// @return bool equivalent of "true" or "false"
 static bool	ft_stob(std::string& token) {
 	ft_toLower(token);
 	if (!token.compare("true")) {
@@ -48,6 +58,9 @@ static bool	ft_stob(std::string& token) {
 	}
 }
 
+/// @brief checks if string contains an unsigned int representation
+/// @param token 
+/// @return bool true or false
 static bool	ft_isNUM(std::string token) {
 	for (size_t i = 0; i < token.length(); i++) {
 		if (token.at(i) < '0' || token.at(i) > '9') {
@@ -58,268 +71,9 @@ static bool	ft_isNUM(std::string token) {
 	return (true);
 }
 
-struct s_listen	Parser::parseListen(std::string token) {
-	struct s_listen	output;
-	unsigned int	port;
-
-	//ip and port are the only data.
-	//for simplicity, ip is assumed to be 127.0.0.1 and is not written in config
-	output.ip = "127.0.0.1";
-	output.protocol = "HTML";
-	_ss >> token;
-	//first int for port - else error handling
-	if (!ft_isNUM(token)) {
-		std::cerr << "from parseListen" << std::endl;
-		output.port = -1;
-		return (output);
-	}
-	port = ft_stoui(token);
-	output.port = port;
-	return (output);
-}
-
-std::vector<std::string>	Parser::parseIndex(void) {
-	std::vector<std::string>	output;
-	std::string					token;
-
-	_ss >> token;
-	while (token != ";" && !_ss.fail()){
-		output.push_back(token);
-		_ss >> token;
-	}
-
-	return (output);
-}
-
-unsigned int	Parser::parseBodySize(void) {
-	unsigned int	output;
-	std::string		token;
-
-	_ss >> token;
-	char	sizeUnit = '\0';
-	if (token.at(token.size() - 1) < '0' || token.at(token.size() - 1) > '9') {
-		sizeUnit = token.at(token.size() - 1);
-		ft_toLowerChr(&sizeUnit);
-		if (sizeUnit != 'k' && sizeUnit != 'm') {
-			std::cerr << "parseBodySize: invalid body size unit. Got " << sizeUnit << ". Expect none, 'k' or 'm'" << std::endl;
-			return (0);
-		}
-		token.erase(token.end() - 1);
-	}
-
-	if (!ft_isNUM(token)) {
-		std::cerr << "from parseBodySize" << std::endl;
-		return (0);
-	}
-	
-	output = ft_stoui(token);
-
-	if (sizeUnit == 'k')
-		output *= 1000;
-	else if (sizeUnit == 'm')
-		output *= 1000000;
-
-	return (output);
-}
-
-std::pair<int, std::string>	Parser::parseErrorPage(std::string& token) {
-	std::pair<int, std::string>	output;
-	unsigned int	errNum;	
-	std::string	errPagePath;
-
-	if (!ft_isNUM(token)) {
-		std::cerr << "parseErrorPages: error number is not an unsigned int. Got " << token << std::endl;
-		output = std::make_pair(0, "ERROR");
-		return (output);
-	} else {
-		errNum = ft_stoui(token);
-	}
-	_ss >> errPagePath;
-	if (errPagePath.empty() || !errPagePath.compare("}")) {
-		std::cerr << "parseErrorPages: closed error_pages block with an undefined page or end of file. Got " << errPagePath << std::endl;
-		output = std::make_pair(0, "ERROR");
-		return (output);
-	} else if (!errPagePath.compare(";")) {
-		std::cerr << "parseErrorPages: closed error_pages definition without a path. Got " << errPagePath << std::endl;
-		output = std::make_pair(0, "ERROR");
-		return (output);
-	}
-
-	_ss >> token;
-	if (token.compare(";")){
-		std::cerr << "parseErrorPages: expected \";\". Got " << token << std::endl;
-		output = std::make_pair(0, "ERROR");
-		return (output);
-	}
-	output = std::make_pair(errNum, errPagePath);
-
-	return (output);
-}
-
-std::map<int, std::string>	Parser::parseErrorPages(std::string& token) {
-	std::map<int, std::string>	output;
-	
-	if (_ss.fail() || token.compare("{")) {
-		std::cerr << "parseErrorPages: unexpected opening of block. Got " << token << std::endl;
-		output.insert(std::make_pair(0, "ERROR"));
-		return (output);
-	}
-
-	do {
-		_ss >> token;
-		if (!token.compare("}")){
-			break ;
-		}
-		output.insert(parseErrorPage(token));
-
-	} while(!_ss.fail() && token.compare("}"));
-	
-	return (output);
-}
-
-Server	Parser::parseServer(void) {
-	struct s_server			servStruct;
-	std::vector<Location>	locs;
-	std::string				token;
-	std::string				serverAllowed[] = {"server_name", "listen", "root", "index", "access_logs", "error_logs", "client_max_body_size", "error_pages", "location"};
-
-	_ss >> token;
-	if (token.compare("{")) {
-		std::cerr << "parseServer: unexpected token. Got " << token << std::endl;
-		servStruct.serverName = "ERROR";
-		return (Server(servStruct,locs));
-	}
-	
-	do {
-		_ss >> token;
-		if (token.empty() || _ss.fail() || _ss.eof()) {
-			std::cerr << "parseServer: unexpected end of stream" << std::endl;
-			servStruct.serverName = "ERROR";
-			Server	output(servStruct, locs);
-			return (output);
-		}
-
-		if (!token.compare("}")) {
-			break ;
-		}
-		
-		int	i;
-		for (i = 0; (unsigned int)i < sizeof(serverAllowed) / sizeof(std::string); i++) {
-			if (!token.compare(serverAllowed[i])) {
-				break ;
-			}
-		}
-		switch (i)
-		{
-			case 0:
-				_ss >> token;
-				servStruct.serverName = token;
-				break;
-
-			case 1:
-				servStruct.listen = parseListen(token);
-				break;
-
-			case 2:
-				_ss >> token;
-				servStruct.root = token;
-				break;
-
-			case 3:
-				servStruct.index = parseIndex();
-				break;
-
-			case 4:
-				_ss >> token;
-				servStruct.access_logs = token;
-				break;
-
-			case 5:
-				_ss >> token;
-				servStruct.error_logs = token;
-				break;
-
-			case 6:
-				servStruct.client_max_body_size = parseBodySize();
-				break;
-
-			case 7: //the full error page map could be filled with defaults and we replace specifically requested from config
-				_ss >> token;
-				servStruct.error_pages = parseErrorPages(token);
-				break;
-
-			case 8:
-				locs.push_back(parseLocation());
-				break;
-
-			default:
-				std::cerr << "parseServer: unexpected token. Got " << token << std::endl;
-				servStruct.serverName = "ERROR";
-				Server	output(servStruct, locs);
-				return (output);
-		}
-
-		if (!locs.empty() && !(locs[locs.size() - 1].getRoute()).compare("ERROR")) {
-			std::cerr << "from parseServer" << std::endl;
-			servStruct.serverName = "ERROR";
-			Server	output(servStruct, locs);
-			return (output);
-		}
-
-	} while (!_ss.fail());
-
-	validateServer(servStruct);
-
-	Server	output(servStruct, locs);
-
-	return (output);
-}
-
-std::vector<Server> Parser::initParser(void) {
-    std::vector<Server> output;
-	std::string			token;
-
-	do {
-		_ss >> token;
-		if (_ss.fail())
-			break;
-		if (!token.compare("server")) {
-			output.push_back(parseServer());
-		} else {
-			std::cerr << "initParser: unexpected token at root level. Got " << token << std::endl;
-			//set a custom errno and return?
-			break ;
-		}
-		if (!(output[output.size() - 1].getName()).compare("ERROR")) {
-			std::cerr << "from initParser" << std::endl;
-			break;
-		}
-	} while (!_ss.fail());
-	
-	if (output.empty()) {
-		std::cerr << "config file: no server definition found" << std::endl;
-		//set a custom errno?
-	}
-
-	return (output);
-}
-
-//Single line declaration of all allowed methods only, terminated by semicolon
-std::vector<std::string>	Parser::parseLimitExcept(std::string token) {
-	std::vector<std::string>	output;
-
-	while (token != ";") {
-		if (_ss.fail()) {
-			std::cerr << "parseLimitExcept: unexpected end of line. Got " << token << std::endl;
-			output.insert(output.begin(), std::string("ERROR"));
-			return (output);
-		}
-		output.push_back(token);
-		_ss >> token;
-	}
-	return (output);
-}
-
+/// @brief parses the CGI param
+/// @param token 
+/// @return pair of string - string, variable - value
 std::pair<std::string, std::string>	Parser::parseCgiParam(std::string& token) {
 	std::pair<std::string, std::string>	output;
 	std::string							varName = token;	
@@ -348,6 +102,9 @@ std::pair<std::string, std::string>	Parser::parseCgiParam(std::string& token) {
 	return (output);
 }
 
+/// @brief parses the elements of the cgi_params block
+/// @param token 
+/// @return map string string, all the variable - value pairs
 std::map<std::string, std::string>	Parser::parseCgiParams(std::string& token) {
 	std::map<std::string, std::string>	output;
 	
@@ -379,16 +136,32 @@ std::map<std::string, std::string>	Parser::parseCgiParams(std::string& token) {
 	return (output);
 }
 
+/// @brief parses the limitExcept parameter list
+/// @param token 
+/// @return vector of string for allowed methods. Defaults to "GET" if no config
+std::vector<std::string>	Parser::parseLimitExcept(std::string token) {
+	std::vector<std::string>	output;
+
+	while (token != ";") {
+		if (_ss.fail()) {
+			std::cerr << "parseLimitExcept: unexpected end of line. Got " << token << std::endl;
+			output.insert(output.begin(), std::string("ERROR"));
+			return (output);
+		}
+		output.push_back(token);
+		_ss >> token;
+	}
+	return (output);
+}
+
+/// @brief parses a location block
+/// @param  none
+/// @return Location object
 Location	Parser::parseLocation(void) {
 	struct s_location	locStruct;
 	std::string			token;
 	std::string			locationAllowed[] = {"route", "root", "alias", "limit_except", "autoindex", "upload_path", "cgi_param", "cgi_pass"};
 
-	locStruct.autoindex = true;
-	locStruct.root_path = "/";
-	locStruct.upload_path = "/uploads/";
-
-	//if token is here valid /path/ - else error handling
 	_ss >> token;
 	if (token.empty()) {
 		std::cerr << "parseLocation: unexpected end of stream" << std::endl;
@@ -412,9 +185,6 @@ Location	Parser::parseLocation(void) {
 		return (error);
 	}
 	
-	//while token.compare('}') or eof - error handling if eof
-	//if token is a location token - else error handling
-	//populate struct
 	int	i;
 	do {
 		_ss >> token;
@@ -430,9 +200,7 @@ Location	Parser::parseLocation(void) {
 				break ;
 			}
 		}
-		// This switch statement should then check for ";" end line and handle errors
-		// Maybe a return (handle location error) that returns an empty struct would be good
-		std::pair<std::string, std::string> buff;
+
 		switch (i)
 		{
 		case 0:
@@ -504,3 +272,267 @@ Location	Parser::parseLocation(void) {
 	return (output);
 }
 
+/// @brief parses an error page code and path
+/// @param token 
+/// @return pair of error number and path to error page
+std::pair<int, std::string>	Parser::parseErrorPage(std::string& token) {
+	std::pair<int, std::string>	output;
+	unsigned int	errNum;	
+	std::string	errPagePath;
+
+	if (!ft_isNUM(token)) {
+		std::cerr << "parseErrorPages: error number is not an unsigned int. Got " << token << std::endl;
+		output = std::make_pair(0, "ERROR");
+		return (output);
+	} else {
+		errNum = ft_stoui(token);
+	}
+	_ss >> errPagePath;
+	if (errPagePath.empty() || !errPagePath.compare("}")) {
+		std::cerr << "parseErrorPages: closed error_pages block with an undefined page or end of file. Got " << errPagePath << std::endl;
+		output = std::make_pair(0, "ERROR");
+		return (output);
+	} else if (!errPagePath.compare(";")) {
+		std::cerr << "parseErrorPages: closed error_pages definition without a path. Got " << errPagePath << std::endl;
+		output = std::make_pair(0, "ERROR");
+		return (output);
+	}
+
+	_ss >> token;
+	if (token.compare(";")){
+		std::cerr << "parseErrorPages: expected \";\". Got " << token << std::endl;
+		output = std::make_pair(0, "ERROR");
+		return (output);
+	}
+	output = std::make_pair(errNum, errPagePath);
+
+	return (output);
+}
+
+/// @brief parses an error_pages block
+/// @param token 
+/// @return map of error numbers and pages paths
+std::map<int, std::string>	Parser::parseErrorPages(std::string& token) {
+	std::map<int, std::string>	output;
+	
+	if (_ss.fail() || token.compare("{")) {
+		std::cerr << "parseErrorPages: unexpected opening of block. Got " << token << std::endl;
+		output.insert(std::make_pair(0, "ERROR"));
+		return (output);
+	}
+
+	do {
+		_ss >> token;
+		if (!token.compare("}")){
+			break ;
+		}
+		output.insert(parseErrorPage(token));
+
+	} while(!_ss.fail() && token.compare("}"));
+	
+	return (output);
+}
+
+/// @brief parses the client_max_body_size parameter
+/// @param  none
+/// @return unsigned int size
+unsigned int	Parser::parseBodySize(void) {
+	unsigned int	output;
+	std::string		token;
+
+	_ss >> token;
+	char	sizeUnit = '\0';
+	if (token.at(token.size() - 1) < '0' || token.at(token.size() - 1) > '9') {
+		sizeUnit = token.at(token.size() - 1);
+		ft_toLowerChr(&sizeUnit);
+		if (sizeUnit != 'k' && sizeUnit != 'm') {
+			std::cerr << "parseBodySize: invalid body size unit. Got " << sizeUnit << ". Expect none, 'k' or 'm'" << std::endl;
+			return (0);
+		}
+		token.erase(token.end() - 1);
+	}
+
+	if (!ft_isNUM(token)) {
+		std::cerr << "from parseBodySize" << std::endl;
+		return (0);
+	}
+	
+	output = ft_stoui(token);
+
+	if (sizeUnit == 'k')
+		output *= 1000;
+	else if (sizeUnit == 'm')
+		output *= 1000000;
+
+	return (output);
+}
+
+/// @brief parses the indexes found in the stringstream
+/// @param  none
+/// @return vector of strings
+std::vector<std::string>	Parser::parseIndex(void) {
+	std::vector<std::string>	output;
+	std::string					token;
+
+	_ss >> token;
+	while (token != ";" && !_ss.fail()){
+		output.push_back(token);
+		_ss >> token;
+	}
+
+	return (output);
+}
+
+/// @brief parses tokens for the "listen" parameter
+/// @param token
+/// @return struct s_listen
+struct s_listen	Parser::parseListen(std::string token) {
+	struct s_listen	output;
+	unsigned int	port;
+
+	output.ip = "127.0.0.1";
+	output.protocol = "HTML";
+	_ss >> token;
+
+	if (!ft_isNUM(token)) {
+		std::cerr << "from parseListen" << std::endl;
+		output.port = -1;
+		return (output);
+	}
+	port = ft_stoui(token);
+	output.port = port;
+	return (output);
+}
+
+/// @brief parses the tokens found int the server block
+/// @param  none
+/// @return Server object
+Server	Parser::parseServer(void) {
+	struct s_server			servStruct;
+	std::vector<Location>	locs;
+	std::string				token;
+	std::string				serverAllowed[] = {"server_name", "listen", "root", "index", "access_logs", "error_logs", "client_max_body_size", "error_pages", "location"};
+
+	_ss >> token;
+	if (token.compare("{")) {
+		std::cerr << "parseServer: unexpected token. Got " << token << std::endl;
+		servStruct.serverName = "ERROR";
+		return (Server(servStruct,locs));
+	}
+	
+	do {
+		_ss >> token;
+		if (token.empty() || _ss.fail() || _ss.eof()) {
+			std::cerr << "parseServer: unexpected end of stream" << std::endl;
+			servStruct.serverName = "ERROR";
+			Server	output(servStruct, locs);
+			return (output);
+		}
+
+		if (!token.compare("}")) {
+			break ;
+		}
+		
+		int	i;
+		for (i = 0; (unsigned int)i < sizeof(serverAllowed) / sizeof(std::string); i++) {
+			if (!token.compare(serverAllowed[i])) {
+				break ;
+			}
+		}
+		switch (i)
+		{
+			case 0:
+				_ss >> token;
+				servStruct.serverName = token;
+				break;
+
+			case 1:
+				servStruct.listen = parseListen(token);
+				break;
+
+			case 2:
+				_ss >> token;
+				servStruct.root = token;
+				break;
+
+			case 3:
+				servStruct.index = parseIndex();
+				break;
+
+			case 4:
+				_ss >> token;
+				servStruct.access_logs = token;
+				break;
+
+			case 5:
+				_ss >> token;
+				servStruct.error_logs = token;
+				break;
+
+			case 6:
+				servStruct.client_max_body_size = parseBodySize();
+				break;
+
+			case 7:
+				_ss >> token;
+				servStruct.error_pages = parseErrorPages(token);
+				break;
+
+			case 8:
+				locs.push_back(parseLocation());
+				break;
+
+			default:
+				std::cerr << "parseServer: unexpected token. Got " << token << std::endl;
+				servStruct.serverName = "ERROR";
+				Server	output(servStruct, locs);
+				return (output);
+		}
+
+		if (!locs.empty() && !(locs[locs.size() - 1].getRoute()).compare("ERROR")) {
+			std::cerr << "from parseServer" << std::endl;
+			servStruct.serverName = "ERROR";
+			Server	output(servStruct, locs);
+			return (output);
+		}
+
+	} while (!_ss.fail());
+
+	validateServer(servStruct);
+
+	Server	output(servStruct, locs);
+
+	return (output);
+}
+
+/// @brief entry point of the parser. uses the input file saved as stringstream
+/// @param  none
+/// @return vector of servers detected in the config file
+std::vector<Server> Parser::initParser(void) {
+    std::vector<Server> output;
+	std::string			token;
+
+	do {
+		_ss >> token;
+		if (_ss.fail())
+			break;
+		if (!token.compare("server")) {
+			output.push_back(parseServer());
+		} else {
+			std::cerr << "initParser: unexpected token at root level. Got " << token << std::endl;
+			//set a custom errno and return?
+			break ;
+		}
+		if (!(output[output.size() - 1].getName()).compare("ERROR")) {
+			std::cerr << "from initParser" << std::endl;
+			break;
+		}
+	} while (!_ss.fail());
+	
+	if (output.empty()) {
+		std::cerr << "config file: no server definition found" << std::endl;
+		//set a custom errno?
+	}
+
+	return (output);
+}

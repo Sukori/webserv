@@ -15,6 +15,9 @@
 
 //validate location
 
+/// @brief checks if given route exists. Directory or file
+/// @param route 
+/// @return bool 
 bool	validLocRoute(std::string& route) {
 
 	if (route.empty()) {
@@ -35,6 +38,9 @@ bool	validLocRoute(std::string& route) {
 	return (S_ISDIR(buf.st_mode) || S_ISREG(buf.st_mode));
 }
 
+/// @brief checks if the giver root is valid. Directory only
+/// @param root 
+/// @return bool
 bool	validLocRoot(std::string& root) {
 
 		if (root.empty()) {
@@ -55,10 +61,15 @@ bool	validLocRoot(std::string& root) {
 	return (S_ISDIR(buf.st_mode));
 }
 
+/// @brief checks if the method is accepted by the server
+/// @param method 
+/// @return bool
 static bool	isValidMethod(const std::string& method) {
 	return (method == "GET" || method == "POST" || method == "DELETE");
 }
 
+/// @brief removes any duplicates of valid method from the vector methods
+/// @param methods 
 static void	removeDuplicates(std::vector<std::string>& methods) {
 
 	std::vector<std::string>::iterator	method = methods.begin();
@@ -78,6 +89,8 @@ static void	removeDuplicates(std::vector<std::string>& methods) {
 	}
 }
 
+/// @brief Removes invalid methods found in the limitExcept parameter defaults to "GET" if empty
+/// @param limitExcept 
 void	validLimitExcept(std::vector<std::string>& limitExcept) {
 
 	if (!limitExcept.empty()) {
@@ -87,7 +100,7 @@ void	validLimitExcept(std::vector<std::string>& limitExcept) {
 		limitExcept.push_back(DEFAULT_METHOD);
 		return ;
 	}
-	//loop all methods input
+
 	std::vector<std::string>::iterator method = limitExcept.begin();
 
 	while (method != limitExcept.end()) {
@@ -105,8 +118,11 @@ void	validLimitExcept(std::vector<std::string>& limitExcept) {
 		std::cerr << "validLimitExcept: empty list of allowed methods, default to " << DEFAULT_METHOD << std::endl;
 		limitExcept.push_back(DEFAULT_METHOD);
 	}
-}//default GET if not specified
+}
 
+/// @brief checks if the upload path exists
+/// @param uploadPath 
+/// @return bool
 bool	validUploadPath(std::string& uploadPath) {
 
 	if (uploadPath.empty()) {
@@ -130,6 +146,8 @@ bool	validUploadPath(std::string& uploadPath) {
 //cgi_params ? subject to deletion
 //cgi_pass ? subject to deletion
 
+/// @brief checks all fields of a location block
+/// @param locStruct 
 void	validateLocation(s_location& locStruct) {
 	
 	if (!validLocRoute(locStruct.route)) {
@@ -153,6 +171,9 @@ void	validateLocation(s_location& locStruct) {
 
 //validate server
 
+/// @brief chcecks if the server has a name. Sets "serverPORT" if empty
+/// @param serverName 
+/// @param port 
 void	validServerName(std::string& serverName, int port) {
 
 	if (serverName.empty()) {
@@ -164,6 +185,9 @@ void	validServerName(std::string& serverName, int port) {
 	}
 }
 
+/// @brief checks if root is valid
+/// @param root 
+/// @return bool
 bool	validServerRoot(std::string& root) {
 	if (root.empty()) {
 		std::cerr << "validServerRoot: empty root token" << std::endl;
@@ -183,6 +207,8 @@ bool	validServerRoot(std::string& root) {
 	return (S_ISDIR(buf.st_mode));
 }
 
+/// @brief sets {index.html, index.php} if empty
+/// @param index 
 void	validIndex(std::vector<std::string>& index) {
 
 	if (index.empty()) {
@@ -192,6 +218,8 @@ void	validIndex(std::vector<std::string>& index) {
 	}
 }
 
+/// @brief warns the admin if the accesLogs file is invalid or non-existant
+/// @param accessLogs 
 void	validAccessLogs(std::string& accessLogs) {
 
 	if (accessLogs.empty())
@@ -215,6 +243,8 @@ void	validAccessLogs(std::string& accessLogs) {
 	}
 }
 
+/// @brief warns the admin if the accesLogs file is invalid or non-existant
+/// @param errorLogs 
 void	validErrorLogs(std::string& errorLogs) {
 
 	if (errorLogs.empty())
@@ -239,6 +269,9 @@ void	validErrorLogs(std::string& errorLogs) {
 
 }
 
+/// @brief checks client_max_body_sive value. warns the admin if 0. false if the value is too large
+/// @param maxBodySize 
+/// @return bool
 bool	validClientMaxBodySize(unsigned int maxBodySize) {
 	if (maxBodySize == 0) {
 		std::cerr << "Warning! You are running with client_max_body_size = 0 (disabled)" << std::endl;
@@ -251,11 +284,15 @@ bool	validClientMaxBodySize(unsigned int maxBodySize) {
 	return (true);
 }
 
+/// @brief fills a minimal set of default error pages, if not already specified
+/// @param errorPages 
 void	validErrorPages(std::map<int, std::string>& errorPages) {
 	std::map<int, std::string>	m = defaultErrorPages();
 	errorPages.insert(m.begin(), m.end());
 }
 
+/// @brief checks the server block
+/// @param servStruct 
 void	validateServer(s_server& servStruct) {
 	validServerName(servStruct.serverName, servStruct.listen.port);
 	if (!validServerRoot(servStruct.root)) {
