@@ -25,8 +25,8 @@ class Client {
 		Client(void);
 		~Client(void);
 
-		ssize_t				readRequest(void);
-		bool				writeResponse(void);
+		ssize_t				readRequest(int socket);
+		bool				writeResponse(int socket);
 
 		std::string			getRequestIn(void);
 		std::string			getResponseOut(void);
