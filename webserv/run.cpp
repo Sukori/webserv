@@ -14,12 +14,16 @@ int	main(int argc, char *argv[]) {
 	else
 		configStr = readFile("config/config_files/default.conf");
 
-	if (configStr.empty())
-		return (1);
+	if (configStr.empty()) {
+		std::cerr << "input: file is empty" << std::endl;
+		return (2);
+	}
 	
 	std::string	noComments = filterComments(configStr);
-	if (noComments.empty())
-		return (2);
+	if (noComments.empty()){
+		std::cerr << "input: empty file after comments filtering" << std::endl;
+		return (3);
+	}
 	
 	std::string	sureLine = insertSpaces(noComments);
 
@@ -34,7 +38,7 @@ int	main(int argc, char *argv[]) {
 
 	Parser			parser(sureLine);
 	Configuration*	config = new Configuration(parser.initParser());
-
+	std::cout << *config << std::endl;
 	WebServer	webserv(*config);
 	webserv.run();
 
