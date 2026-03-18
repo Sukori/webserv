@@ -12,7 +12,7 @@
 
 #include "Client.hpp"
 
-Client::Client(sockaddr_in socket): _socket(socket) {
+Client::Client(void) {
     std::cout << "Default Client constructor" << std::endl;
 }
 
@@ -36,19 +36,15 @@ bool    Client::isRequestComplete(void) {
     return (_requestComplete);
 }
 
-struct sockaddr_in	Client::getSocket(void) {
-    return (_socket);
-}
-
 void	Client::setResponse(const std::string& response) {
 	_responseOut = response;
 }
 
-ssize_t	Client::readRequest(void) {
+ssize_t	Client::readRequest(int socket) {
     char    temp_buffer[BUFFER_SIZE] = {0};
     ssize_t bytes_read;
 
-    bytes_read = recv(_socket.sin_port, temp_buffer, BUFFER_SIZE, 0);
+    bytes_read = recv(socket, temp_buffer, BUFFER_SIZE, 0);
     if (bytes_read < 0) {
         std::cout << "recv read error" << std::endl;
     } else if (bytes_read == 0) {
@@ -64,12 +60,12 @@ ssize_t	Client::readRequest(void) {
     return (bytes_read);
 }
 
-bool	Client::writeResponse(void) {
+bool	Client::writeResponse(int socket) {
 	if (_responseOut.empty()) {
 		return (false);
 	}
 
-	ssize_t	bytes_sent = send(_socket.sin_port, _responseOut.c_str(), _responseOut.size(), 0);
+	ssize_t	bytes_sent = send(socket, _responseOut.c_str(), _responseOut.size(), 0);
 	if (bytes_sent < 0 ) {
 		std::cout << "send error" << std::endl;
 	} else if (bytes_sent == 0) {

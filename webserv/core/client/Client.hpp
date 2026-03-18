@@ -22,27 +22,24 @@
 
 class Client {
 	public:
-		Client(sockaddr_in socket);
+		Client(void);
 		~Client(void);
 
-		ssize_t			readRequest(void);
-		bool			writeResponse(void);
+		ssize_t			readRequest(int socket);
+		bool			writeResponse(int socket);
 
 		std::string			getRequestIn(void);
 		std::string			getResponseOut(void);
 		ssize_t				getRequestSize(void);
 		bool				isRequestComplete(void);
-		struct sockaddr_in	getSocket(void);
 
 		void				setResponse(const std::string& response);
 
 	private:
-		Client(void);
 		std::string			_requestIn;
 		std::string			_responseOut;
 		ssize_t				_requestSize;
 		bool				_requestComplete;
-		struct sockaddr_in	_socket;
 };
 
 

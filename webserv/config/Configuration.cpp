@@ -60,27 +60,27 @@ const s_listen&	Server::getListen(void) const{
 	return (_listen);
 }
 
-const std::string&					Server::getName(void) const {
+const std::string&	Server::getName(void) const {
 	return (_serverName);
 }
 
-const std::string&					Server::getRoot(void) const {
+const std::string&	Server::getRoot(void) const {
 	return (_root);
 }
 
-const std::vector<std::string>&		Server::getIndex(void) const{
+const std::vector<std::string>&	Server::getIndex(void) const{
 	return (_index);
 }
 
-const std::string&					Server::getAccLogs(void) const {
+const std::string&	Server::getAccLogs(void) const {
 	return (_access_logs);
 }
 
-const std::string&					Server::getErrLogs(void) const {
+const std::string&	Server::getErrLogs(void) const {
 	return (_error_logs);
 }
 
-const unsigned int&					Server::getMaxBodySize(void) const {
+const unsigned int&	Server::getMaxBodySize(void) const {
 	return (_client_max_body_size);
 }
 
@@ -88,7 +88,7 @@ const std::map<int, std::string>&	Server::getErrPages(void) const {
 	return (_error_pages);
 }
 
-const std::vector<Location>&		Server::getLocations(void) const {
+const std::vector<Location>&	Server::getLocations(void) const {
 	return (_locations);
 }
 
