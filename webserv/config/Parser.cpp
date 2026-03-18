@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "Parser.hpp"
+#include "validatorConfig.hpp"
 
 Parser::Parser(const std::string data): _ss(data) {}
 
@@ -50,7 +51,7 @@ static bool	ft_stob(std::string& token) {
 static bool	ft_isNUM(std::string token) {
 	for (size_t i = 0; i < token.length(); i++) {
 		if (token.at(i) < '0' || token.at(i) > '9') {
-			std::cerr << "ft_isNUM: token. Got " << token << " is not a valid numeral string" << std::endl;
+			std::cerr << "ft_isNUM: token. Got " << token << " is not a valid unsigned numeral string" << std::endl;
 			return (false);
 		}
 	}
@@ -59,11 +60,11 @@ static bool	ft_isNUM(std::string token) {
 
 struct s_listen	Parser::parseListen(std::string token) {
 	struct s_listen	output;
-	int				port;
+	unsigned int	port;
 
 	//ip and port are the only data.
-	//for simplicity, ip is assumed to be 0.0.0.0 and is not written in config
-	output.ip = "0.0.0.0";
+	//for simplicity, ip is assumed to be 127.0.0.1 and is not written in config
+	output.ip = "127.0.0.1";
 	output.protocol = "HTML";
 	_ss >> token;
 	//first int for port - else error handling
@@ -127,7 +128,7 @@ std::pair<int, std::string>	Parser::parseErrorPage(std::string& token) {
 	std::string	errPagePath;
 
 	if (!ft_isNUM(token)) {
-		std::cerr << "parseErrorPages: error number is not a number. Got " << token << std::endl;
+		std::cerr << "parseErrorPages: error number is not an unsigned int. Got " << token << std::endl;
 		output = std::make_pair(0, "ERROR");
 		return (output);
 	} else {
@@ -266,7 +267,9 @@ Server	Parser::parseServer(void) {
 		}
 
 	} while (!_ss.fail());
-	//if locs & listen are not empty - else error handling
+
+	validateServer(servStruct);
+
 	Server	output(servStruct, locs);
 
 	return (output);
@@ -382,9 +385,8 @@ Location	Parser::parseLocation(void) {
 	std::string			locationAllowed[] = {"route", "root", "alias", "limit_except", "autoindex", "upload_path", "cgi_param", "cgi_pass"};
 
 	locStruct.autoindex = true;
-	locStruct.root_path = "/";
-	locStruct.upload_path = "/uploads/";
-	//locStruct.error_path # NO NEED ?
+	locStruct.root_path = ".";
+	locStruct.upload_path = "./uploads";
 
 	//if token is here valid /path/ - else error handling
 	_ss >> token;
@@ -495,6 +497,8 @@ Location	Parser::parseLocation(void) {
 		}
 
 	} while (!_ss.fail());
+
+	validateLocation(locStruct);
 
 	Location	output(locStruct);
 	return (output);

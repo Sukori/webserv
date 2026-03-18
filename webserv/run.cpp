@@ -34,7 +34,7 @@ int	main(int argc, char *argv[]) {
 
 	Parser			parser(sureLine);
 	Configuration*	config = new Configuration(parser.initParser());
-
+	std::cout << *config << std::endl;
 	WebServer	webserv(*config);
 	webserv.run();
 

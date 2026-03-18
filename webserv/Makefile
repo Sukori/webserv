@@ -16,12 +16,16 @@ HDRS		= $(WEBDIR)WebServer \
 			$(CNFDIR)Configuration \
 			$(CNFDIR)helperConfig \
 			$(CNFDIR)Parser \
+			$(CNFDIR)validatorConfig \
+			$(CNFDIR)errPages \
 			$(CLIDIR)Client
 
 SRCS		= $(WEBDIR)WebServer \
 			$(CNFDIR)Configuration \
 			$(CNFDIR)helperConfig \
 			$(CNFDIR)Parser \
+			$(CNFDIR)validatorConfig \
+			$(CNFDIR)errPages \
 			$(CLIDIR)Client \
 			run
 
