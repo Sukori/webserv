@@ -2,7 +2,7 @@
 #include "../cgi/Cgi.hpp"
 
 /* remove/comment to turn off logging */
-//#define DEBUG
+#define DEBUG
 
 // test main for http requests
 int	main(int argc, char *argv[]) {
@@ -19,7 +19,9 @@ int	main(int argc, char *argv[]) {
 	std::string response_body ("");
 	int response_status;
 	try {
-		Http req (fds[0], a);
+		Http req (fds[0]);
+		
+		req.verifyMethod(a);
 		Http::Header h (req.getHeader());
 		
 		#ifdef DEBUG
