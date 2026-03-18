@@ -17,6 +17,7 @@
 # include <iostream>
 # include <string>
 # include <poll.h>
+# include <cstdlib>
 # include <unistd.h>
 # include "../../config/Configuration.hpp"
 

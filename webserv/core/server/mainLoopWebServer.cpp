@@ -50,7 +50,7 @@ void	WebServer::run(void) {
 			if (_sockets.find(_fds[i].fd) != _sockets.end()) {
 				int newSocket = _acceptConnection(_fds[i].fd);
 				if (newSocket > 0) {
-					_clients.insert(std::pair<int, Client>(newSocket, Client(newSocket)));
+					_clients.insert(std::pair<int, Client>(newSocket, Client()));
 					struct pollfd	npfd;
 					npfd.fd = newSocket;
 					npfd.events = POLLIN;
@@ -66,7 +66,7 @@ void	WebServer::run(void) {
 
 				if (it != _clients.end()) {
 					if (_fds[i].revents & POLLIN) {
-						ssize_t read_bytes = it->second.readRequest();
+						ssize_t read_bytes = it->second.readRequest(_fds[i].fd);
 	
 							if (read_bytes <= 0) {
 								close(_fds[i].fd);
@@ -82,7 +82,7 @@ void	WebServer::run(void) {
 							}
 
 					} else if (_fds[i].revents & POLLOUT) {
-						if (it->second.writeResponse()) { //for now, we close
+						if (it->second.writeResponse(_fds[i].fd)) { //for now, we close
 							close(_fds[i].fd);
 							_clients.erase(it);
 							_fds.erase(_fds.begin() + i);

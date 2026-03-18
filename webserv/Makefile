@@ -5,7 +5,6 @@ CXXFLAGS	= -Wall -Wextra -Werror
 
 CXX			+= -std=c++98
 
-
 ODIR		= obj/
 
 WEBDIR		= core/server/
@@ -13,6 +12,7 @@ CNFDIR		= config/
 CLIDIR		= core/client/
 
 HDRS		= $(WEBDIR)WebServer \
+			$(WEBDIR)helperWebServer \
 			$(CNFDIR)Configuration \
 			$(CNFDIR)helperConfig \
 			$(CNFDIR)helperParser \
@@ -22,6 +22,9 @@ HDRS		= $(WEBDIR)WebServer \
 			$(CLIDIR)Client
 
 SRCS		= $(WEBDIR)WebServer \
+			$(WEBDIR)helperWebServer \
+			$(WEBDIR)memberFunctionsWebServer \
+			$(WEBDIR)mainLoopWebServer \
 			$(CNFDIR)Configuration \
 			$(CNFDIR)ConfigurationStreamOut \
 			$(CNFDIR)helperConfig \
