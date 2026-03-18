@@ -15,6 +15,7 @@ CLIDIR		= core/client/
 HDRS		= $(WEBDIR)WebServer \
 			$(CNFDIR)Configuration \
 			$(CNFDIR)helperConfig \
+			$(CNFDIR)helperParser \
 			$(CNFDIR)Parser \
 			$(CNFDIR)validatorConfig \
 			$(CNFDIR)errPages \
@@ -22,8 +23,12 @@ HDRS		= $(WEBDIR)WebServer \
 
 SRCS		= $(WEBDIR)WebServer \
 			$(CNFDIR)Configuration \
+			$(CNFDIR)ConfigurationStreamOut \
 			$(CNFDIR)helperConfig \
+			$(CNFDIR)helperParser \
 			$(CNFDIR)Parser \
+			$(CNFDIR)ParserLocation \
+			$(CNFDIR)ParserServer \
 			$(CNFDIR)validatorConfig \
 			$(CNFDIR)errPages \
 			$(CLIDIR)Client \
