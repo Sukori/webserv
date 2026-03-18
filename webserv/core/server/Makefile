@@ -5,14 +5,18 @@ CPP		= c++ -std=c++98
 FLAGS	= -I. -Wall -Wextra -Werror
 
 HDRS	= WebServer \
-		Configuration \
-		helperConfig \
-		Client
+		../../config/Configuration \
+		../../config/helperConfig \
+		helperWebServer \
+		../client/Client
 
 SRCS	= WebServer \
-		Client \
-		Configuration \
-		helperConfig \
+		../client/Client \
+		../../config/Configuration \
+		../../config/helperConfig \
+		helperWebServer \
+		memberFunctionsWebServer \
+		mainLoopWebServer \
 		run
 
 HDR		= $(addsuffix .hpp , $(HDRS))

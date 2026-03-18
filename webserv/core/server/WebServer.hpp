@@ -31,6 +31,7 @@
 # include <unistd.h>
 # include "../../config/Configuration.hpp" 
 # include "../client/Client.hpp"
+# include "helperWebServer.hpp"
 
 # define BUFFER_SIZE 4096
 # define BACKLOG 1024
@@ -55,10 +56,5 @@ class WebServer {
 		void					_handleRequest(Client& client);
 		const Server*			_findBestConfig(std::string host, int port); //rename ServerConfig when merge with config branch
 };
-
-void	putLog(const std::string& message);
-void	closeAllSockets(std::map<int, const Server*> sockets);
-void	closeAllPollFds(std::vector<pollfd> fds);
-void	exitWithError(const std::string& funct,const std::string& message);
 
 #endif
