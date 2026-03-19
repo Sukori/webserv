@@ -126,8 +126,7 @@ void	validLimitExcept(std::vector<std::string>& limitExcept) {
 bool	validUploadPath(std::string& uploadPath) {
 
 	if (uploadPath.empty()) {
-		std::cerr << "validUploadPath: empty uploadPath token" << std::endl;
-		return (false);
+		return (true);
 	}
 
 	struct stat	buf;
@@ -149,22 +148,24 @@ bool	validUploadPath(std::string& uploadPath) {
 /// @brief checks all fields of a location block
 /// @param locStruct 
 void	validateLocation(s_location& locStruct) {
+
+	locStruct.valid = true;
 	
 	if (!validLocRoute(locStruct.route)) {
 		std::cerr << "Route: not a valid route for location " << locStruct.route << std::endl;
-		locStruct.route = "ERROR";
+		locStruct.valid = false;
 	}
 	
 	if (!validLocRoot(locStruct.root_path)) {
 		std::cerr << "Root: not a valid root for location " <<  locStruct.root_path << std::endl;
-		locStruct.route = "ERROR";
+		locStruct.valid = false;
 	}
 	
 	validLimitExcept(locStruct.limit_except);
 	
 	if (!validUploadPath(locStruct.upload_path)) {
 		std::cerr << "uploadPath: not a valid uploadPath for location " <<  locStruct.upload_path << std::endl;
-		locStruct.route = "ERROR";
+		locStruct.valid = false;
 	}
 }
 
@@ -294,10 +295,13 @@ void	validErrorPages(std::map<int, std::string>& errorPages) {
 /// @brief checks the server block
 /// @param servStruct 
 void	validateServer(s_server& servStruct) {
+
+	servStruct.valid = true;
+
 	validServerName(servStruct.serverName, servStruct.listen.port);
 	if (!validServerRoot(servStruct.root)) {
 		std::cerr << "Root: not a valid root for server " << servStruct.serverName << std::endl;
-		servStruct.serverName = "ERROR";
+		servStruct.valid = false;
 	}
 
 	validIndex(servStruct.index);
@@ -305,7 +309,7 @@ void	validateServer(s_server& servStruct) {
 	validErrorLogs(servStruct.error_logs);
 	if (!validClientMaxBodySize(servStruct.client_max_body_size)) {
 		std::cerr << "client_max_body_size: not a valid max client body size for server " << servStruct.client_max_body_size << std::endl;
-		servStruct.serverName = "ERROR";
+		servStruct.valid = false;
 	}
 	validErrorPages(servStruct.error_pages);
 }

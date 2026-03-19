@@ -1,17 +1,18 @@
 # Parsing
-- [ ] Si le premier serveur a qch d'invalide, le second serveur n'est pas initialisé
-- [ ] Les chemins vers les fichiers ont besoin d'un prepend "." pour garantir leur accès
-- [ ] Définition "/" == "." prepend automatique, ne pas écrire dans la config explicitement
-- [ ] "return" n'est pas parsé
-- [ ] "route" est parsé dans `Location` -> inutile !
+- [x] Si le premier serveur a qch d'invalide, le second serveur n'est pas initialisé
+- [x] Les chemins vers les fichiers ont besoin d'un prepend "." pour garantir leur accès
+- [x] Définition "/" == "." prepend automatique, ne pas écrire dans la config explicitement
+- [x] "return" n'est pas parsé
+- [x] "route" est parsé dans `Location` -> inutile !
 
 # Runtime
-- [ ] Si un serveur a pour nom "ERROR", il est tout de même démarré
+- [x] Si un serveur a pour nom "ERROR", il est tout de même démarré
 	>> Meilleure pratique d'utiliser une variable `bool` pour marquer la validité d'un serveur
 - [ ] Si une route est invalide, l'ignorer sans forcément rendre le serveur invalide ?
 	>> Besoin de rechercher la meilleure pratique
-- [ ] Ne pas bloquer le parsing du serveur 2 si serveur 1 avait une erreur
+- [x] Ne pas bloquer le parsing du serveur 2 si serveur 1 avait une erreur
 - [ ] Gérer les `req/res` à l'aide des fonctions `http` (merge effectué)
+- [ ] Si deux serveurs valides sont démarrés, l'un ne répond plus
 
 # CGI
 - [ ] Supprimer `cgi_pass` de la config ?

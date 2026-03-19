@@ -1,7 +1,7 @@
 NAME		= webServ_0-1
 
 CXX			= c++
-CXXFLAGS	= -Wall -Wextra -Werror
+CXXFLAGS	= -Wall -Wextra -Werror -g3
 
 CXX			+= -std=c++98
 

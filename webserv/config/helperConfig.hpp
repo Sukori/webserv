@@ -26,8 +26,10 @@
 
 struct s_location {
 	std::string							route; // location "/dir/"     for instance
+	bool								valid;
 	std::string							root_path; // root "/var/www"; for instance
 	std::string							alias;
+	std::string							locReturn;
 	std::vector<std::string>			limit_except;
 	bool								autoindex;
 	std::string							upload_path;
@@ -44,6 +46,7 @@ struct s_listen {
 
 struct s_server {
 	std::string					serverName;
+	bool						valid;
 	s_listen					listen;
 	std::string					root;
 	std::vector<std::string>	index;

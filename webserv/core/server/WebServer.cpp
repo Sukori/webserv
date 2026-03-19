@@ -16,6 +16,7 @@ WebServer::WebServer(const Configuration& config) : _config(config) {
     std::cout << "Config WebServer constructor" << std::endl;
 	int					errnum;
 	std::ostringstream	service;
+	std::vector<Server>	servers = _config.getServers();
 	
 	struct addrinfo hints;
 	hints.ai_family = AF_INET;
@@ -25,19 +26,22 @@ WebServer::WebServer(const Configuration& config) : _config(config) {
 	
 	struct addrinfo*	addrinfo;
 	
-	for (size_t i = 0; i < _config.getServers().size(); i++) {
-		service << _config.getServers()[i].getListen().port;
-		errnum = getaddrinfo(_config.getServers()[i].getListen().ip.c_str(), service.str().c_str(), &hints, &addrinfo);
+	for (size_t i = 0; i < servers.size(); i++) {
+		service << servers[i].getListen().port;
+		errnum = getaddrinfo(servers[i].getListen().ip.c_str(), service.str().c_str(), &hints, &addrinfo);
 		if (errnum != 0) {
-			std::cerr << "getaddrinfo: " << gai_strerror(errnum);
+			std::cerr << "WebServer constructor getaddrinfo: " << gai_strerror(errnum) << std::endl
+			<< "skipped " << servers[i].getName() << std::endl;
 			freeaddrinfo(addrinfo);
-			exitWithError("from WebServer", "WebServer constructor");
+			continue ;
 		}
-		if (_initServer(addrinfo, &_config.getServers()[i]) != 0) {
+		if (_initServer(addrinfo, &servers[i]) != 0) {
 			freeaddrinfo(addrinfo);
-			exitWithError("WebServer constructor", "failed to initialize server");
+			std::cerr << "WebServer constructor _initServer: failed init" << std::endl
+			<< "skipped " << servers[i].getName() << std::endl;
+			continue ;
 		}
-		std::cout << "Initialized server with IP: " <<_config.getServers()[i].getListen().ip << " | PORT: " << _config.getServers()[i].getListen().port << std::endl;
+		std::cout << "Initialized server with IP: " <<servers[i].getListen().ip << " | PORT: " << servers[i].getListen().port << std::endl;
 		service.str("");
 		freeaddrinfo(addrinfo);
 	}

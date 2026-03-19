@@ -28,21 +28,21 @@ std::vector<Server> Parser::initParser(void) {
 		if (_ss.fail())
 			break;
 		if (!token.compare("server")) {
-			output.push_back(parseServer());
+			Server	tmp(parseServer());
+			if (tmp.isValid()) {
+				output.push_back(tmp);
+			}
 		} else {
 			std::cerr << "initParser: unexpected token at root level. Got " << token << std::endl;
 			//set a custom errno and return?
 			break ;
 		}
-		if (!(output[output.size() - 1].getName()).compare("ERROR")) {
-			std::cerr << "from initParser" << std::endl;
-			break;
-		}
 	} while (!_ss.fail());
+
+
 	
 	if (output.empty()) {
 		std::cerr << "config file: no server definition found" << std::endl;
-		//set a custom errno?
 	}
 
 	return (output);

@@ -52,7 +52,7 @@ class WebServer {
 		std::map<int, Client>			_clients;
 		std::map<int, const Server*>	_sockets;
 
-		int						_initServer(const struct addrinfo* addrinfo, const Server* server);
+		int						_initServer(const struct addrinfo* addrinfo, Server* server);
 		void					_closeServer(void);
 		int						_acceptConnection(int fd);
 		void					_handleRequest(Client& client);

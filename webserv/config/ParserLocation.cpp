@@ -102,8 +102,9 @@ std::vector<std::string>	Parser::parseLimitExcept(std::string token) {
 Location	Parser::parseLocation(void) {
 	struct s_location	locStruct;
 	std::string			token;
-	std::string			locationAllowed[] = {"route", "root", "alias", "limit_except", "autoindex", "upload_path", "cgi_param", "cgi_pass"};
+	std::string			locationAllowed[] = {"return", "root", "alias", "limit_except", "autoindex", "upload_path", "cgi_param", "cgi_pass"};
 
+	locStruct.valid = false;
 	_ss >> token;
 	if (token.empty()) {
 		std::cerr << "parseLocation: unexpected end of stream" << std::endl;
@@ -118,7 +119,8 @@ Location	Parser::parseLocation(void) {
 		Location	error(locStruct);
 		return (error);
 	}
-	locStruct.route = token;
+
+	locStruct.route = "." + token;
 	_ss >> token;
 	
 	if (token.empty() || token.at(0) != '{') {
@@ -132,6 +134,7 @@ Location	Parser::parseLocation(void) {
 		_ss >> token;
 		if (token.empty()) {
 			std::cerr << "parseLocation: empty token\nExit" << std::endl;
+			break;
 		}
 		if (!token.compare("}")) {
 			break ;
@@ -147,12 +150,12 @@ Location	Parser::parseLocation(void) {
 		{
 		case 0:
 			_ss >> token;
-			locStruct.route = token;
+			locStruct.locReturn = token;
 			break;
 
 		case 1:
 			_ss >> token;
-			locStruct.root_path = token;
+			locStruct.root_path = "." + token;
 			break;
 
 		case 2:
@@ -172,7 +175,7 @@ Location	Parser::parseLocation(void) {
 
 		case 5:
 			_ss >> token;
-			locStruct.upload_path = token;
+			locStruct.upload_path = "." + token;
 			break;
 
 		case 6:
@@ -187,24 +190,27 @@ Location	Parser::parseLocation(void) {
 
 		default:
 			std::cerr << "parseLocation: unexpected token. Got " << token << std::endl;
-			locStruct.route = "ERROR";
 			Location	output(locStruct);
 			return (output);
 		}
+
+		/* Do we really invalidate a location if the cgi params are wrong ?
 
 		if (!locStruct.cgi_param.empty() && locStruct.cgi_param.find("ERROR") != locStruct.cgi_param.end() && !locStruct.cgi_param.find("ERROR")->first.compare("ERROR")) {
 			std::cerr << "from parseLocation" << std::endl;
 			locStruct.route = "ERROR";
 			Location	output(locStruct);
 			return (output);
-		}
+		}*/
 
+		/* If we got no limit except, it defaults to GET in the validator
+		
 		if (!locStruct.limit_except.empty() && !locStruct.limit_except[0].compare("ERROR")) {
 			std::cerr << "from parseLocation" << std::endl;
 			locStruct.route = "ERROR";
 			Location	output(locStruct);
 			return (output);
-		}
+		}*/
 
 	} while (!_ss.fail());
 

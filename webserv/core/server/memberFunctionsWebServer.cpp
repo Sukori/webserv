@@ -16,29 +16,26 @@
 /// @param addrinfo 
 /// @param server 
 /// @return int 0 if success or > 0 if error
-int	WebServer::_initServer(const struct addrinfo* addrinfo, const Server* server) {
-    std::cout << "initServer" << std::endl;
+int	WebServer::_initServer(const struct addrinfo* addrinfo, Server* server) {
+    std::cout << "init " + server->getName() << std::endl;
 
 	int sockBuff = socket(AF_INET, SOCK_STREAM, 0);
 	if (sockBuff < 0) {
 		std::cerr << "create socket failed" << std::endl;
-		closeAllSockets(_sockets);
-		exitWithError("_initServer", server->getName());
+		return (1);
 	}
 
 	int	ctrlno = fcntl(sockBuff, F_GETFL);
 	if (ctrlno < 0) {
 		putLog("fcntl(GET): " + std::string(strerror(errno)));
 		close(sockBuff);
-		closeAllSockets(_sockets);
-		exitWithError("_initServer", server->getName());
+		return (2);
 	}
 	ctrlno = fcntl(sockBuff, F_SETFL, ctrlno | O_NONBLOCK);
 	if (ctrlno < 0) {
 		putLog("fcntl(SET): " + std::string(strerror(errno)));
 		close(sockBuff);
-		closeAllSockets(_sockets);
-		exitWithError("_initServer", server->getName());
+		return (3);
 	}
 
 	int optval = 1;
@@ -46,16 +43,15 @@ int	WebServer::_initServer(const struct addrinfo* addrinfo, const Server* server
 	if (ctrlno < 0) {
 		putLog("setsockopt: " + std::string(strerror(errno)));
 		close(sockBuff);
-		closeAllSockets(_sockets);
-		exitWithError("_initServer", server->getName());
+		return (4);
 	}
 
-	_sockets.insert(std::pair<int, const Server*>(sockBuff, server));
 	if (bind(sockBuff, addrinfo->ai_addr, addrinfo->ai_addrlen) < 0) {
-		std::cerr << "bind socket failed" << std::endl;
-		closeAllSockets(_sockets);
-		exitWithError("_initServer", server->getName());
+		std::cerr << "bind socket failed " << server->getName() << std::endl;
+		close(sockBuff);
+		return (5);
 	}
+	_sockets.insert(std::pair<int, const Server*>(sockBuff, server));
 	return (0);
 }
 

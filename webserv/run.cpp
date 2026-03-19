@@ -39,18 +39,16 @@ int	main(int argc, char *argv[]) {
 	
 	std::string	sureLine = insertSpaces(noComments);
 
-	/* console log for cleaning check
-	std::cout << "File extract-------------" << std::endl;
-	std::cout << configStr << std::endl;
-	std::cout << "FilterComments-----------" << std::endl;
-	std::cout << noComments << std::endl;
-	std::cout << "insertSpaces-----------" << std::endl;
-	std::cout << sureLine << std::endl;
-	*/
-
 	Parser			parser(sureLine);
+
 	Configuration*	config = new Configuration(parser.initParser());
 	std::cout << *config << std::endl;
+
+	if (config->getServers().empty()) {
+		std::cerr << "No valid server definition found.\nExit" << std::endl;
+		return (4);
+	}
+	
 	WebServer	webserv(*config);
 	webserv.run();
 

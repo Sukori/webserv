@@ -22,10 +22,14 @@ void	WebServer::run(void) {
 
 	//listen to each sockets and populate the pollfd struct foreach sockets
 	for (std::map<int, const Server*>::iterator it = _sockets.begin(); it != _sockets.end(); ++it) {
+		
 		ctrlno = listen(it->first, BACKLOG);
 		if (ctrlno < 0) {
-			exitWithError("listen", strerror(errno));
+			std::cerr << "listen: " << strerror(errno) << " " << it->second->getName() << std::endl
+			<< "skipped server" << std::endl;
+			continue ;
 		}
+		
 		struct pollfd	pfd;
 		pfd.fd = it->first;
 		pfd.events = POLLIN;

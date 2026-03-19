@@ -150,10 +150,11 @@ struct s_listen	Parser::parseListen(std::string token) {
 /// @return Server object
 Server	Parser::parseServer(void) {
 	struct s_server			servStruct;
-	std::vector<Location>	locs;
+	std::vector<Location>	locs; //not initialized at 234 ...
 	std::string				token;
 	std::string				serverAllowed[] = {"server_name", "listen", "root", "index", "access_logs", "error_logs", "client_max_body_size", "error_pages", "location"};
 
+	servStruct.valid = false;
 	_ss >> token;
 	if (token.compare("{")) {
 		std::cerr << "parseServer: unexpected token. Got " << token << std::endl;
@@ -193,7 +194,7 @@ Server	Parser::parseServer(void) {
 
 			case 2:
 				_ss >> token;
-				servStruct.root = token;
+				servStruct.root = "." + token;
 				break;
 
 			case 3:
@@ -202,12 +203,12 @@ Server	Parser::parseServer(void) {
 
 			case 4:
 				_ss >> token;
-				servStruct.access_logs = token;
+				servStruct.access_logs = "." + token;
 				break;
 
 			case 5:
 				_ss >> token;
-				servStruct.error_logs = token;
+				servStruct.error_logs = "." + token;
 				break;
 
 			case 6:
@@ -225,14 +226,12 @@ Server	Parser::parseServer(void) {
 
 			default:
 				std::cerr << "parseServer: unexpected token. Got " << token << std::endl;
-				servStruct.serverName = "ERROR";
 				Server	output(servStruct, locs);
 				return (output);
 		}
 
-		if (!locs.empty() && !(locs[locs.size() - 1].getRoute()).compare("ERROR")) {
+		if (!locs.empty() && !(locs[locs.size() - 1].isValid())) {
 			std::cerr << "from parseServer" << std::endl;
-			servStruct.serverName = "ERROR";
 			Server	output(servStruct, locs);
 			return (output);
 		}

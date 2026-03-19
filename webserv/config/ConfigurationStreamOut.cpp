@@ -17,32 +17,34 @@ std::ostream&	operator<<(std::ostream& os, const std::vector<Location>& location
 	for (std::vector<Location>::const_iterator lit = locations.begin(); lit != locations.end(); ++lit) {
 		const Location&	loc = *lit;
 
-		os << "\t* route: " << loc.getRoute() << std::endl
-		   << "\t\t- root: " << loc.getRoot() << std::endl
-		   << "\t\t- alias: " << loc.getAlias() << std::endl
-		   << "\t\t- autoindex: " << loc.getAutoIndex() << std::endl;
+		os	<< "\t\t* route: " << loc.getRoute() << std::endl
+			<< "\t\t\t- isValid: " << loc.isValid() << std::endl
+			<< "\t\t\t- root: " << loc.getRoot() << std::endl
+			<< "\t\t\t- alias: " << loc.getAlias() << std::endl
+			<< "\t\t\t- autoindex: " << loc.getAutoIndex() << std::endl
+			<< "\t\t\t- return: " << loc.getReturn() << std::endl;
 
 		if (!loc.getLimExcept().empty()) {
 			std::vector<std::string>::const_iterator start = loc.getLimExcept().begin();
 			std::vector<std::string>::const_iterator end = loc.getLimExcept().end();
-			os << "\t\t- limit except: " << std::endl;
+			os << "\t\t\t- limit except: " << std::endl;
 			for (std::vector<std::string>::const_iterator lex = start; lex != end; ++lex) {
-				os << "\t\t\t> " << *lex << std::endl;
+				os << "\t\t\t\t> " << *lex << std::endl;
 			}
 		}
 
-		os << "\t\t- upload_path: " << loc.getUploadPath() << std::endl;
+		os << "\t\t\t- upload_path: " << loc.getUploadPath() << std::endl;
 
 		if (!loc.getCgiParams().empty()) {
 			const std::map<std::string, std::string>::const_iterator& start = loc.getCgiParams().begin();
 			const std::map<std::string, std::string>::const_iterator& end = loc.getCgiParams().end();
-			os << "\t\t- CGI params: " << std::endl;
+			os << "\t\t\t- CGI params: " << std::endl;
 			for (std::map<std::string, std::string>::const_iterator cgip = start; cgip != end; ++cgip) {
-				os << "\t\t\t> " << cgip->first << " = " << cgip->second << std::endl;
+				os << "\t\t\t\t> " << cgip->first << " = " << cgip->second << std::endl;
 			}
 		}
 
-		os << "\t\t- CGI pass: " << loc.getCgiPass() << std::endl;
+		os << "\t\t\t- CGI pass: " << loc.getCgiPass() << std::endl;
 	}
 
     return os;
@@ -54,28 +56,29 @@ std::ostream&	operator<<(std::ostream& os, const Configuration& config) {
     for (std::vector<Server>::const_iterator it = servers.begin(); it != servers.end(); ++it) {
         const Server& srv = *it;
 
-        os << "server: " << srv.getName() << std::endl
-           << "port: "   << srv.getListen().port << std::endl
-           << "root: "   << srv.getRoot() << std::endl;
+        os	<< "server: " << srv.getName() << std::endl
+			<< "\t- isValid: " << srv.isValid() << std::endl
+        	<< "\t- port: "   << srv.getListen().port << std::endl
+        	<< "\t- root: "   << srv.getRoot() << std::endl;
 
         if (!srv.getIndex().empty()) {
-            os << "index: " << *srv.getIndex().begin() << std::endl;
+            os << "\t- index: " << *srv.getIndex().begin() << std::endl;
         }
 
-        os << "access_logs: " << srv.getAccLogs() << std::endl
-           << "error_logs: "  << srv.getErrLogs() << std::endl
-           << "client max body size: " << srv.getMaxBodySize() << std::endl;
+        os	<< "\t- access_logs: " << srv.getAccLogs() << std::endl
+        	<< "\t- error_logs: "  << srv.getErrLogs() << std::endl
+        	<< "\t- client max body size: " << srv.getMaxBodySize() << std::endl;
 
         if (!srv.getErrPages().empty()) {
             const std::map<int, std::string>::const_iterator& start = srv.getErrPages().begin();
 			const std::map<int, std::string>::const_iterator& end = srv.getErrPages().end();
-            os << "error pages:" << std::endl;
+            os << "\t- error pages:" << std::endl;
 			for (std::map<int, std::string>::const_iterator errp = start; errp != end; ++errp) {
-				os << "\t* " << errp->first << " = " << errp->second << std::endl;
+				os << "\t\t* " << errp->first << " = " << errp->second << std::endl;
 			}
         }
 
-        os << "Locations:\n";
+        os << "\t- Locations:\n";
         const std::vector<Location>& locs = srv.getLocations();
         os << locs << std::endl;
     }
