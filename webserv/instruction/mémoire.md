@@ -151,3 +151,4 @@ L'humain a identifié :
 	>> recherche de bonne pratique
 	>> choix de valider URL seule (default 302), code seul (204, 4xx, 5xx) ou paire code URL (3xx, URL)
 - Default.conf ajusté pour refléter la config valide avec tous les champs possibles et minimaux
+- validation de return dans validator
