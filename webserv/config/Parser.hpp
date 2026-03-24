@@ -35,6 +35,8 @@ public:
 	std::map<int, std::string>			parseErrorPages(std::string& token);
 	Location							parseLocation(void);
 	struct s_listen						parseListen(std::string token);
+	std::pair<int, std::string>			parseReturn(std::string& token);
+	std::map<int, std::string>			parseReturns(std::string& token);
 	std::vector<std::string>			parseLimitExcept(std::string token);
 	std::pair<std::string, std::string>	parseCgiParam(std::string& token);
 	std::map<std::string, std::string>	parseCgiParams(std::string& token);
@@ -47,4 +49,3 @@ private:
 };
 
 #endif
-

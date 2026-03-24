@@ -33,7 +33,7 @@ const std::string&	Location::getAlias(void) const {
 }
 
 
-const std::string&	Location::getReturn(void) const {
+const std::map<int, std::string>&	Location::getReturn(void) const {
 	return (_return);
 }
 

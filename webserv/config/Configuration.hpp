@@ -20,6 +20,9 @@
 # include <map>
 # include "helperConfig.hpp"
 
+# define CLIENT_MAX_BODY_SIZE 10000000
+# define DEFAULT_REDIRECTION 302
+
 class Location {
 	public:
 		Location(void);
@@ -31,7 +34,7 @@ class Location {
 		const std::string&							getRoute(void) const;
 		const std::string&							getRoot(void) const;
 		const std::string&							getAlias(void) const;
-		const std::string&							getReturn(void) const;
+		const std::map<int, std::string>&			getReturn(void) const;
 		const std::vector<std::string>&				getLimExcept(void) const;
 		const bool&									getAutoIndex(void) const;
 		const std::string&							getUploadPath(void) const;
@@ -44,7 +47,7 @@ class Location {
 		const std::string							_route;
 		const std::string							_root_path;
 		const std::string							_alias;
-		const std::string							_return;
+		const std::map<int, std::string>			_return;
 		const std::vector<std::string>				_limit_except;
 		const bool									_autoindex;
 		const std::string							_upload_path;
