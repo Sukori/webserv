@@ -29,6 +29,7 @@ WebServer::WebServer(const Configuration& config) : _config(config) {
 	for (size_t i = 0; i < servers.size(); i++) {
 		service << servers[i].getListen().port;
 		errnum = getaddrinfo(servers[i].getListen().ip.c_str(), service.str().c_str(), &hints, &addrinfo);
+		service.str("");
 		if (errnum != 0) {
 			std::cerr << "WebServer constructor getaddrinfo: " << gai_strerror(errnum) << std::endl
 			<< "skipped " << servers[i].getName() << std::endl;
@@ -42,7 +43,6 @@ WebServer::WebServer(const Configuration& config) : _config(config) {
 			continue ;
 		}
 		std::cout << "Initialized server with IP: " <<servers[i].getListen().ip << " | PORT: " << servers[i].getListen().port << std::endl;
-		service.str("");
 		freeaddrinfo(addrinfo);
 	}
 }
