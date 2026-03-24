@@ -140,3 +140,12 @@ Chaque étape a son check d'erreur avec close(sockBuff) en cas d'échec.
 Prochaine étape : merge de la branche server et test en conditions réelles.
 <br/>
 
+[20260324]
+l'humain a corrigé :
+- correction du leak de données en fin de main `delete(config)`
+- correction du bug de création de socket corrompu (vidange du flux après utilisation dans `getaddrinfo()`)
+- fin de programme si aucun socket n'est créé avec succès
+
+L'humain a identifié :
+- parse return devrait être une fonction à part (code, route)
+	>> recherche de bonne pratique

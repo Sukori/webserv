@@ -19,6 +19,7 @@ HDRS		= $(WEBDIR)WebServer \
 			$(CNFDIR)Parser \
 			$(CNFDIR)validatorConfig \
 			$(CNFDIR)errPages \
+			$(CNFDIR)returnCodes \
 			$(CLIDIR)Client
 
 SRCS		= $(WEBDIR)WebServer \
@@ -34,6 +35,7 @@ SRCS		= $(WEBDIR)WebServer \
 			$(CNFDIR)ParserServer \
 			$(CNFDIR)validatorConfig \
 			$(CNFDIR)errPages \
+			$(CNFDIR)returnCodes \
 			$(CLIDIR)Client \
 			run
 

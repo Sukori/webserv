@@ -23,14 +23,16 @@ std::pair<int, std::string>	Parser::parseReturn(std::string& token) {
 
 	if (ft_isNUM(token)) {
 		retCode = ft_stoui(token);
+		_ss >> retPath;
 	} else {
-		retCode = DEFAULT_REDIRECTION;
+		std::cerr << "parseReturn: set default redirection code " << DFT_REDIR << std::endl;
+		retCode = DFT_REDIR;
+		retPath = token;
 	}
 
-	_ss >> retPath;
 	if (retPath.empty() || !retPath.compare("}")) {
 		std::cerr << "parseReturn: closed return block with an undefined page or end of file. Got " << retPath << std::endl;
-		output = std::make_pair(0, "ERROR");
+		output = std::make_pair(EN_REDIR, ERR_STR);
 		return (output);
 	} else if (!retPath.compare(";")) {
 		std::cerr << "parseReturn: closed return definition without a path. Got code " << retCode << std::endl
@@ -42,9 +44,10 @@ std::pair<int, std::string>	Parser::parseReturn(std::string& token) {
 	_ss >> token;
 	if (token.compare(";")){
 		std::cerr << "parseReturn: expected \";\". Got " << token << std::endl;
-		output = std::make_pair(0, "ERROR");
+		output = std::make_pair(EN_REDIR, ERR_STR);
 		return (output);
 	}
+
 	output = std::make_pair(retCode, retPath);
 
 	return (output);
@@ -58,7 +61,7 @@ std::map<int, std::string>	Parser::parseReturns(std::string& token) {
 	
 	if (_ss.fail() || token.compare("{")) {
 		std::cerr << "parseReturns: unexpected opening of block. Got " << token << std::endl;
-		output.insert(std::make_pair(0, "ERROR"));
+		output.insert(std::make_pair(EN_REDIR, ERR_STR));
 		return (output);
 	}
 
@@ -70,7 +73,7 @@ std::map<int, std::string>	Parser::parseReturns(std::string& token) {
 		output.insert(parseReturn(token));
 
 	} while(!_ss.fail() && token.compare("}"));
-	
+
 	return (output);
 }
 
@@ -82,22 +85,21 @@ std::pair<std::string, std::string>	Parser::parseCgiParam(std::string& token) {
 	std::string							varName = token;	
 	std::string							varVal;
 
-
 	_ss >> varVal;
 	if (varVal.empty() || !varVal.compare("}")) {
 		std::cerr << "parseCgiParam: closed CGI Params block with an undefined page or end of file. Got " << varVal << std::endl;
-		output = std::make_pair("ERROR", "ERROR");
+		output = std::make_pair(ERR_STR, ERR_STR);
 		return (output);
 	} else if (!varVal.compare(";")) {
 		std::cerr << "parseCgiParam: closed CGI Params definition without a path. Got " << varVal << std::endl;
-		output = std::make_pair("ERROR", "ERROR");
+		output = std::make_pair(ERR_STR, ERR_STR);
 		return (output);
 	}
 
 	_ss >> token;
 	if (token.compare(";")){
 		std::cerr << "parseCgiParam: expected \";\". Got " << token << std::endl;
-		output = std::make_pair("ERROR", "ERROR");
+		output = std::make_pair(ERR_STR, ERR_STR);
 		return (output);
 	}
 	output = std::make_pair(varName, varVal);
@@ -113,7 +115,7 @@ std::map<std::string, std::string>	Parser::parseCgiParams(std::string& token) {
 	
 	if (_ss.fail() || token.compare("{")) {
 		std::cerr << "parseCgiParams: unexpected opening of block. Got " << token << std::endl;
-		output.insert(std::make_pair("ERROR", "ERROR"));
+		output.insert(std::make_pair(ERR_STR, ERR_STR));
 		return (output);
 	}
 
@@ -121,7 +123,7 @@ std::map<std::string, std::string>	Parser::parseCgiParams(std::string& token) {
 		_ss >> token;
 		if (token.empty() || _ss.fail() || _ss.eof()) {
 			std::cerr << "parseCgiParams: unexpected end of stream " << std::endl;
-			output.insert(std::make_pair("ERROR", "ERROR"));
+			output.insert(std::make_pair(ERR_STR, ERR_STR));
 			return (output);
 		}
 		if (!token.compare("}")){
@@ -129,7 +131,7 @@ std::map<std::string, std::string>	Parser::parseCgiParams(std::string& token) {
 		}
 		output.insert(parseCgiParam(token));
 
-		if (output.find("ERROR") != output.end() && !(output.find("ERROR")->first).compare("ERROR")) {
+		if (output.find(ERR_STR) != output.end() && !(output.find(ERR_STR)->first).compare(ERR_STR)) {
 			std::cerr << "from parseCgiParams"<< std::endl;
 			return (output);
 		}
@@ -148,7 +150,7 @@ std::vector<std::string>	Parser::parseLimitExcept(std::string token) {
 	while (token != ";") {
 		if (_ss.fail()) {
 			std::cerr << "parseLimitExcept: unexpected end of line. Got " << token << std::endl;
-			output.insert(output.begin(), std::string("ERROR"));
+			output.insert(output.begin(), std::string(ERR_STR));
 			return (output);
 		}
 		output.push_back(token);
@@ -169,14 +171,14 @@ Location	Parser::parseLocation(void) {
 	_ss >> token;
 	if (token.empty()) {
 		std::cerr << "parseLocation: unexpected end of stream" << std::endl;
-		locStruct.route = "ERROR";
+		locStruct.route = ERR_STR;
 		Location	error(locStruct);
 		return (error);
 	}
 	
 	if (token.at(0) != '/') {
 		std::cerr << "parseLocation: path not starting from root. Got " << token << std::endl;
-		locStruct.route = "ERROR";
+		locStruct.route = ERR_STR;
 		Location	error(locStruct);
 		return (error);
 	}
@@ -257,18 +259,18 @@ Location	Parser::parseLocation(void) {
 
 		/* Do we really invalidate a location if the cgi params are wrong ?
 
-		if (!locStruct.cgi_param.empty() && locStruct.cgi_param.find("ERROR") != locStruct.cgi_param.end() && !locStruct.cgi_param.find("ERROR")->first.compare("ERROR")) {
+		if (!locStruct.cgi_param.empty() && locStruct.cgi_param.find(ERR_STR) != locStruct.cgi_param.end() && !locStruct.cgi_param.find(ERR_STR)->first.compare(ERR_STR)) {
 			std::cerr << "from parseLocation" << std::endl;
-			locStruct.route = "ERROR";
+			locStruct.route = ERR_STR;
 			Location	output(locStruct);
 			return (output);
 		}*/
 
 		/* If we got no limit except, it defaults to GET in the validator
 		
-		if (!locStruct.limit_except.empty() && !locStruct.limit_except[0].compare("ERROR")) {
+		if (!locStruct.limit_except.empty() && !locStruct.limit_except[0].compare(ERR_STR)) {
 			std::cerr << "from parseLocation" << std::endl;
-			locStruct.route = "ERROR";
+			locStruct.route = ERR_STR;
 			Location	output(locStruct);
 			return (output);
 		}*/

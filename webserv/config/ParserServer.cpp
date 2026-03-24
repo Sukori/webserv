@@ -23,7 +23,7 @@ std::pair<int, std::string>	Parser::parseErrorPage(std::string& token) {
 
 	if (!ft_isNUM(token)) {
 		std::cerr << "parseErrorPages: error number is not an unsigned int. Got " << token << std::endl;
-		output = std::make_pair(0, "ERROR");
+		output = std::make_pair(0, ERR_STR);
 		return (output);
 	} else {
 		errNum = ft_stoui(token);
@@ -31,18 +31,18 @@ std::pair<int, std::string>	Parser::parseErrorPage(std::string& token) {
 	_ss >> errPagePath;
 	if (errPagePath.empty() || !errPagePath.compare("}")) {
 		std::cerr << "parseErrorPages: closed error_pages block with an undefined page or end of file. Got " << errPagePath << std::endl;
-		output = std::make_pair(0, "ERROR");
+		output = std::make_pair(0, ERR_STR);
 		return (output);
 	} else if (!errPagePath.compare(";")) {
 		std::cerr << "parseErrorPages: closed error_pages definition without a path. Got " << errPagePath << std::endl;
-		output = std::make_pair(0, "ERROR");
+		output = std::make_pair(0, ERR_STR);
 		return (output);
 	}
 
 	_ss >> token;
 	if (token.compare(";")){
 		std::cerr << "parseErrorPages: expected \";\". Got " << token << std::endl;
-		output = std::make_pair(0, "ERROR");
+		output = std::make_pair(0, ERR_STR);
 		return (output);
 	}
 	output = std::make_pair(errNum, errPagePath);
@@ -58,7 +58,7 @@ std::map<int, std::string>	Parser::parseErrorPages(std::string& token) {
 	
 	if (_ss.fail() || token.compare("{")) {
 		std::cerr << "parseErrorPages: unexpected opening of block. Got " << token << std::endl;
-		output.insert(std::make_pair(0, "ERROR"));
+		output.insert(std::make_pair(0, ERR_STR));
 		return (output);
 	}
 
@@ -158,7 +158,7 @@ Server	Parser::parseServer(void) {
 	_ss >> token;
 	if (token.compare("{")) {
 		std::cerr << "parseServer: unexpected token. Got " << token << std::endl;
-		servStruct.serverName = "ERROR";
+		servStruct.serverName = ERR_STR;
 		return (Server(servStruct,locs));
 	}
 	
@@ -166,7 +166,7 @@ Server	Parser::parseServer(void) {
 		_ss >> token;
 		if (token.empty() || _ss.fail() || _ss.eof()) {
 			std::cerr << "parseServer: unexpected end of stream" << std::endl;
-			servStruct.serverName = "ERROR";
+			servStruct.serverName = ERR_STR;
 			Server	output(servStruct, locs);
 			return (output);
 		}

@@ -7,7 +7,7 @@
 - [x] "route" est parsé dans `Location` -> inutile !
 
 # Runtime
-- [x] Si un serveur a pour nom "ERROR", il est tout de même démarré
+- [x] Si un serveur a pour nom ERR_STR, il est tout de même démarré
 	>> Meilleure pratique d'utiliser une variable `bool` pour marquer la validité d'un serveur
 - [ ] Si une route est invalide, l'ignorer sans forcément rendre le serveur invalide ?
 	>> Besoin de rechercher la meilleure pratique
