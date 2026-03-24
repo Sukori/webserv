@@ -24,13 +24,15 @@
 # include <cerrno>
 
 # include "helperConfig.hpp"
-
-# define DEFAULT_METHOD "GET"
+# include "Configuration.hpp"
+# include "errPages.hpp"
+# include "returnCodes.hpp"
 
 //validate location
 
 bool	validLocRoute(std::string& route);
 bool	validLocRoot(std::string& root);
+void	validReturns(std::map<int, std::string>& locReturn);
 void	validLimitExcept(std::vector<std::string>& limitExcept);
 bool	validUploadPath(std::string& uploadPath);
 //cgi_params ? subject to deletion

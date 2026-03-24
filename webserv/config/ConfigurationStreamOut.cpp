@@ -21,8 +21,17 @@ std::ostream&	operator<<(std::ostream& os, const std::vector<Location>& location
 			<< "\t\t\t- isValid: " << loc.isValid() << std::endl
 			<< "\t\t\t- root: " << loc.getRoot() << std::endl
 			<< "\t\t\t- alias: " << loc.getAlias() << std::endl
-			<< "\t\t\t- autoindex: " << loc.getAutoIndex() << std::endl
-			<< "\t\t\t- return: " << loc.getReturn() << std::endl;
+			<< "\t\t\t- autoindex: " << loc.getAutoIndex() << std::endl;
+
+		std::map<int, std::string>	redirections = loc.getReturn();
+        if (!redirections.empty()) {
+            const std::map<int, std::string>::const_iterator& start = redirections.begin();
+			const std::map<int, std::string>::const_iterator& end = redirections.end();
+            os << "\t\t\t- return:" << std::endl;
+			for (std::map<int, std::string>::const_iterator redir = start; redir != end; ++redir) {
+				os << "\t\t\t\t> " << redir->first << " = " << redir->second << std::endl;
+			}
+        }
 
 		if (!loc.getLimExcept().empty()) {
 			std::vector<std::string>::const_iterator start = loc.getLimExcept().begin();
@@ -69,9 +78,10 @@ std::ostream&	operator<<(std::ostream& os, const Configuration& config) {
         	<< "\t- error_logs: "  << srv.getErrLogs() << std::endl
         	<< "\t- client max body size: " << srv.getMaxBodySize() << std::endl;
 
-        if (!srv.getErrPages().empty()) {
-            const std::map<int, std::string>::const_iterator& start = srv.getErrPages().begin();
-			const std::map<int, std::string>::const_iterator& end = srv.getErrPages().end();
+		std::map<int, std::string>	errPages = srv.getErrPages();
+        if (!errPages.empty()) {
+            const std::map<int, std::string>::const_iterator& start = errPages.begin();
+			const std::map<int, std::string>::const_iterator& end = errPages.end();
             os << "\t- error pages:" << std::endl;
 			for (std::map<int, std::string>::const_iterator errp = start; errp != end; ++errp) {
 				os << "\t\t* " << errp->first << " = " << errp->second << std::endl;

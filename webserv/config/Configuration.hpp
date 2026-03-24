@@ -21,7 +21,10 @@
 # include "helperConfig.hpp"
 
 # define CLIENT_MAX_BODY_SIZE 10000000
-# define DEFAULT_REDIRECTION 302
+# define DFT_REDIR 302
+# define EN_REDIR 0
+# define DFT_METHOD "GET"
+# define ERR_STR "ERROR"
 
 class Location {
 	public:

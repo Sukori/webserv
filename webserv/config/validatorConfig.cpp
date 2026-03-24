@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "validatorConfig.hpp"
-#include "errPages.hpp"
 
 //validate location
 
@@ -61,6 +60,32 @@ bool	validLocRoot(std::string& root) {
 	return (S_ISDIR(buf.st_mode));
 }
 
+/// @brief checks if a return rule meets requirements
+/// @param locReturn 
+void	validReturns(std::map<int, std::string>& locReturn) {
+
+	//Remove error
+	std::map<int, std::string>::iterator toErase = locReturn.find(0);
+	if (toErase != locReturn.end()) {
+		std::cerr << "validReturns: removed error placeholder" << std::endl;
+		locReturn.erase(toErase);
+	}
+
+	for (std::map<int, std::string>::iterator pair = locReturn.begin(); pair != locReturn.end(); ) {
+		if (needUrlCode(pair->first) && pair->second == ""){
+			std::cerr << "validReturns: missing mandatory redirection path for code " << pair->first << std::endl
+				<< "skip" << std::endl;
+			locReturn.erase(pair++);
+		} else if (!standaloneCode(pair->first) && !needUrlCode(pair->first)) {
+			std::cerr << "validReturns: Unknown code " << pair->first << std::endl
+				<< "skip" << std::endl;
+			locReturn.erase(pair++);
+		} else {
+			++pair;
+		}
+	}
+}
+
 /// @brief checks if the method is accepted by the server
 /// @param method 
 /// @return bool
@@ -96,8 +121,8 @@ void	validLimitExcept(std::vector<std::string>& limitExcept) {
 	if (!limitExcept.empty()) {
 		removeDuplicates(limitExcept);
 	} else {
-		std::cerr << "validLimitExcept: empty list of allowed methods, default to " << DEFAULT_METHOD << std::endl;
-		limitExcept.push_back(DEFAULT_METHOD);
+		std::cerr << "validLimitExcept: empty list of allowed methods, default to " << DFT_METHOD << std::endl;
+		limitExcept.push_back(DFT_METHOD);
 		return ;
 	}
 
@@ -115,8 +140,8 @@ void	validLimitExcept(std::vector<std::string>& limitExcept) {
 	}
 
 	if (limitExcept.empty()) {
-		std::cerr << "validLimitExcept: empty list of allowed methods, default to " << DEFAULT_METHOD << std::endl;
-		limitExcept.push_back(DEFAULT_METHOD);
+		std::cerr << "validLimitExcept: empty list of allowed methods, default to " << DFT_METHOD << std::endl;
+		limitExcept.push_back(DFT_METHOD);
 	}
 }
 
@@ -160,6 +185,8 @@ void	validateLocation(s_location& locStruct) {
 		std::cerr << "Root: not a valid root for location " <<  locStruct.root_path << std::endl;
 		locStruct.valid = false;
 	}
+
+	validReturns(locStruct.locReturn);
 	
 	validLimitExcept(locStruct.limit_except);
 	

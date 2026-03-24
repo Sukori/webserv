@@ -14,9 +14,9 @@
 
 Location::Location(void): _valid(false), _autoindex(true) {}
 
-Location::Location(const struct s_location location): _valid(location.valid), _route(location.route), _root_path(location.root_path), _alias(location.alias), _limit_except(location.limit_except), _autoindex(location.autoindex), _upload_path(location.upload_path), _cgi_param(location.cgi_param), _cgi_pass(location.cgi_pass) {}
+Location::Location(const struct s_location location): _valid(location.valid), _route(location.route), _root_path(location.root_path), _alias(location.alias), _return(location.locReturn), _limit_except(location.limit_except), _autoindex(location.autoindex), _upload_path(location.upload_path), _cgi_param(location.cgi_param), _cgi_pass(location.cgi_pass) {}
 
-Location::Location(const Location& rhs): _valid(rhs._valid), _route(rhs._route), _root_path(rhs._root_path), _alias(rhs._alias), _limit_except(rhs._limit_except), _autoindex(rhs._autoindex), _upload_path(rhs._upload_path), _cgi_param(rhs._cgi_param), _cgi_pass(rhs._cgi_pass) {}
+Location::Location(const Location& rhs): _valid(rhs._valid), _route(rhs._route), _root_path(rhs._root_path), _alias(rhs._alias), _return(rhs._return), _limit_except(rhs._limit_except), _autoindex(rhs._autoindex), _upload_path(rhs._upload_path), _cgi_param(rhs._cgi_param), _cgi_pass(rhs._cgi_pass) {}
 
 Location::~Location(void) {}
 
