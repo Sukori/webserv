@@ -1,4 +1,4 @@
-NAME		= webServ_0-1
+NAME		= webServ
 
 CXX			= c++
 CXXFLAGS	= -Wall -Wextra -Werror -g3
