@@ -16,7 +16,6 @@
 /// @param  none
 void	WebServer::run(void) {
 
-    std::cout << "run" << std::endl;
 	int	ctrlno;
 	_fds.clear();
 
@@ -35,6 +34,11 @@ void	WebServer::run(void) {
 		pfd.events = POLLIN;
 		pfd.revents = 0;
 		_fds.push_back(pfd);
+	}
+
+	if (_fds.empty()){
+		std::cerr << "No valid server to start. program ended." << std::endl;
+		return ;
 	}
 
 	//Main loop

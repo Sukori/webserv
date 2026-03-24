@@ -14,7 +14,7 @@
 - [x] Ne pas bloquer le parsing du serveur 2 si serveur 1 avait une erreur
 - [ ] Gérer les `req/res` à l'aide des fonctions `http` (merge effectué)
 - [x] Si deux serveurs valides sont démarrés, l'un ne répond plus
-- [ ] Segfault si tous les serveurs sont skip (tous invalides)
+- [x] Segfault si tous les serveurs sont skip (tous invalides)
 
 # CGI
 - [ ] Supprimer `cgi_pass` de la config ?
