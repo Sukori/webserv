@@ -149,3 +149,5 @@ l'humain a corrigé :
 L'humain a identifié :
 - parse return devrait être une fonction à part (code, route)
 	>> recherche de bonne pratique
+	>> choix de valider URL seule (default 302), code seul (204, 4xx, 5xx) ou paire code URL (3xx, URL)
+- Default.conf ajusté pour refléter la config valide avec tous les champs possibles et minimaux

@@ -3,7 +3,7 @@
 - [x] Les chemins vers les fichiers ont besoin d'un prepend "." pour garantir leur accès
 - [x] Définition "/" == "." prepend automatique, ne pas écrire dans la config explicitement
 - [x] "return" n'est pas parsé
-- [ ] parse return (code, route)
+- [x] parse return (code, route)
 - [x] "route" est parsé dans `Location` -> inutile !
 
 # Runtime
