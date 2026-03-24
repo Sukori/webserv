@@ -230,12 +230,6 @@ Server	Parser::parseServer(void) {
 				return (output);
 		}
 
-		if (!locs.empty() && !(locs[locs.size() - 1].isValid())) {
-			std::cerr << "from parseServer" << std::endl;
-			Server	output(servStruct, locs);
-			return (output);
-		}
-
 	} while (!_ss.fail());
 
 	validateServer(servStruct);

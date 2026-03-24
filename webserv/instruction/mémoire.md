@@ -145,10 +145,10 @@ l'humain a corrigé :
 - correction du leak de données en fin de main `delete(config)`
 - correction du bug de création de socket corrompu (vidange du flux après utilisation dans `getaddrinfo()`)
 - fin de programme si aucun socket n'est créé avec succès
-
-L'humain a identifié :
+- Default.conf ajusté pour refléter la config valide avec tous les champs possibles et minimaux
+- validation de return dans validator
+- location invalide est non bloquante pour démarrer un serveur
+	>> la route est marquée invalide et peut être ignorée en cas de tentative d'accès
 - parse return devrait être une fonction à part (code, route)
 	>> recherche de bonne pratique
 	>> choix de valider URL seule (default 302), code seul (204, 4xx, 5xx) ou paire code URL (3xx, URL)
-- Default.conf ajusté pour refléter la config valide avec tous les champs possibles et minimaux
-- validation de return dans validator

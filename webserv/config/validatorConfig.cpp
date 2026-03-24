@@ -319,6 +319,18 @@ void	validErrorPages(std::map<int, std::string>& errorPages) {
 	errorPages.insert(m.begin(), m.end());
 }
 
+/// @brief ignores invalid location routes
+/// @param locObjs 
+void	validLocations(std::vector<Location>& locObjs) {
+	for (std::vector<Location>::iterator loc = locObjs.begin(); loc != locObjs.end();) {
+		if (!(*loc).isValid()) {
+			loc = locObjs.erase(loc);
+			continue;
+		}
+		++loc;
+	}
+}
+
 /// @brief checks the server block
 /// @param servStruct 
 void	validateServer(s_server& servStruct) {
