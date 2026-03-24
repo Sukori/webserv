@@ -51,6 +51,6 @@ int	main(int argc, char *argv[]) {
 	
 	WebServer	webserv(*config);
 	webserv.run();
-
+	delete(config);
 	return (0);
 }
