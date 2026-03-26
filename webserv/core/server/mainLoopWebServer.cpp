@@ -88,7 +88,8 @@ void	WebServer::run(void) {
 							}
 	
 							if (it->second.isRequestComplete()) {
-								_handleRequest(it);
+								
+								_handleRequest(it, *_sockets.find(_fds[i].fd)->second);
 								_fds[i].events = POLLOUT;
 							}
 

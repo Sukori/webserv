@@ -74,6 +74,7 @@ class Server {
 		const unsigned int&					getMaxBodySize(void) const;
 		const std::map<int, std::string>&	getErrPages(void) const;
 		const std::vector<Location>&		getLocations(void) const;
+		const Location&						getLocation(const std::string& route) const;
 		const bool&							isValid(void) const;
 		void								setNotValid(void);
 

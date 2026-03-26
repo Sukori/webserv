@@ -54,4 +54,5 @@ Helpful documentation we used
 * [ipv4 - ipv6 converter](https://dnschecker.org/ipv4-to-ipv6.php)
 * [Building an http server from scratch in c++](https://osasazamegbe.medium.com/showing-building-an-http-server-from-scratch-in-c-2da7c0db6cb7)
 * [mozilla http reference (headers list, request methods and response status)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference)
->>>>>>>>> Temporary merge branch 2
+* [MDN - focus on GET method](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods/GET)
+* [http.dev 1.1](https://http.dev/1.1)

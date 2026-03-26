@@ -19,6 +19,7 @@
 # include <cstring>
 # include <vector>
 # include <map>
+# include <set>
 # include <cerrno>
 # include <cstdlib>
 # include <fcntl.h>
@@ -33,7 +34,7 @@
 # include "../../config/Parser.hpp"
 # include "../client/Client.hpp"
 # include "helperWebServer.hpp"
-# include "../http/Http.hpp"
+# include "../http/Http copy.hpp"
 
 # define BUFFER_SIZE 4096
 # define BACKLOG 1024
@@ -55,7 +56,7 @@ class WebServer {
 		int						_initServer(const struct addrinfo* addrinfo, Server* server);
 		void					_closeServer(void);
 		int						_acceptConnection(int fd);
-		void					_handleRequest(std::map<int, Client>::iterator& client);
+		void					_handleRequest(std::map<int, Client>::iterator& client, const Server& server);
 		const Server*			_findBestConfig(std::string host, int port); //rename ServerConfig when merge with config branch
 };
 

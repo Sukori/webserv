@@ -2,6 +2,9 @@
 #include "../cgi/Cgi.hpp"
 #include <ctime>
 
+//Plutôt que lire le socket ici, nous pourrions lire `std::string client.getRequestIn()`
+//Puis parser les éléments (header, méhode, body)
+//ssize_t client.getRequestSize(); est aussi disponible
 Http::Http(int socket):
 	_socket(socket),
 	_startline(_parseStartLine(_socket)),
@@ -31,7 +34,7 @@ const Http::Header&		Http::getHeader(void) const {return _header;}
 std::string		Http::_parseNextLine(int fd) {
 	std::string ret;
 	char c;
-	while (read(fd, &c, 1) > 0)
+	while (read(fd, &c, 1) > 0) //Cette boucle est bloquante, mais le serveur doit fonctionner de manière non bloquante
 	{
 		ret += c;
 		if (c == '\n')

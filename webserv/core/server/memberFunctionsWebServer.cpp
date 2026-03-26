@@ -65,21 +65,38 @@ void	WebServer::_closeServer(void) {
 
 /// @brief handle a client request and prepares a response
 /// @param client 
-void	WebServer::_handleRequest(std::map<int, Client>::iterator& client) {
+void	WebServer::_handleRequest(std::map<int, Client>::iterator& client, const Server& server) {
 	//parse request in
 	// check config, file, cgi
 	
 	// for now: hello world
-	std::string	body = "<html><body><h1>Hello from Poll Server!</h1></body></html>";
+	/**
+	 * std::string	body = "<html><body><h1>Hello from Poll Server!</h1></body></html>";
+	 * std::ostringstream	oss;
+	 * oss << "HTTP/1.1 200 OK\r\n"
+	 * << "Content-Type: text/html\r\n"
+	 * << "Content-Length: " << body.size() << "\r\n"
+	 * << "\r\n" //!! CR LF !! RFC 2.2, 4.1 - 19.3 tolerant only, but server doesn't know
+	 * << body;
+	*/
 
-	std::ostringstream	oss;
-	oss << "HTTP/1.1 200 OK\r\n"
-	<< "Content-Type: text/html\r\n"
-	<< "Content-Length: " << body.size() << "\r\n"
-	<< "\r\n" //!! CR LF !! RFC 2.2, 4.1 - 19.3 tolerant only, but server doesn't know
-	<< body;
+	int status;
 
-	client->second.setResponse(oss.str());
+	try {
+		Http	req(client->second.getRequestIn());
+		std::string route = req.getStartLine().path; //string qui contient le chemin
+		std::set<Location>::iterator loc = server.getLocations().find(route);
+		server.getLocation(selon startline) // les allowed methods
+		req.verifyMethod(allowed_methods_de_la_Loccation);
+		/* process normal */
+		status = 200;
+	} catch (int s) {
+		status = s;
+		out = 
+	}
+	Http::buildResponse(status);
+
+	//client->second.setResponse(std::string);
 }
 
 /// @brief accepts a new connexion from a client

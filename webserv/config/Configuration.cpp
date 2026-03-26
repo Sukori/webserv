@@ -104,6 +104,15 @@ const std::vector<Location>&	Server::getLocations(void) const {
 	return (_locations);
 }
 
+const Location&	Server::getLocation(const std::string& route) const {
+	std::vector<Location>	locs = getLocations();
+
+	std::vector<Location>::iterator	it = locs.begin();
+	while ( true) {
+
+	}
+}
+
 const bool&	Server::isValid(void) const {
 	return (_valid);
 }
