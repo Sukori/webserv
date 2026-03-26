@@ -17,8 +17,7 @@ void	Http::verifyMethod(const std::set<std::string>& allowed_methods) const {
 Http::Http(const Http& o):
 	_socket(o._socket),
 	_startline(o._startline),
-	_header(o._header)
-{}
+	_header(o._header) {}
 
 Http::~Http(void) {}
 
@@ -95,10 +94,19 @@ void			Http::_splitPath(const std::string& path, StartLine& sl) {
 
 static std::string get_ext(const std::string& path) {
 	size_t sep = path.find_last_of('.');
-	if (sep == -1ul)
+	if (sep == std::string::npos)
 		return "";
 	else
 		return path.substr(sep + 1);
+}
+
+
+std::string read_all(int fd) {
+	char c;
+	std::string ret;
+	while (read(fd, &c, 1) > 0)
+		ret += c;
+	return ret;
 }
 
 std::string Http::getResponseBody(const std::string& route, const std::map<std::string, std::string>& binaries, const Server &server) {
@@ -136,13 +144,13 @@ std::string Http::getResponseBody(const std::string& route, const std::map<std::
 		std::string lines, line;
 		std::ifstream file (file_path.c_str());
 		while (std::getline(file, line))
-			lines += line + '\n';
+		lines += line + "\r\n";
 		return lines;
 	}
 	else {
 		/* cgi */
 		add_cgi_env(_header, server, _startline, file_path);
-		return exec_cgi(bin_f, file_path, Header(_header), _socket);
+		return read_all(exec_cgi(bin_f, file_path, Header(_header), _socket));
 	}
 }
 
@@ -172,7 +180,6 @@ std::string Http::buildResponse(int status, const std::string& body, const std::
 	res += "server: " + server + "\r\n";
 	if (body.length() > 0)
 	{
-		res += "\r\n";
 		res += body;
 	}
 	return res;

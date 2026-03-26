@@ -38,6 +38,7 @@ class Http {
 
 		static std::string	buildErrorHtml(int status, const Server &server);
 		static std::string	buildResponse(int status, const std::string& body, const std::string& server_name);
+
 	private:
 		Http(void);
 		
