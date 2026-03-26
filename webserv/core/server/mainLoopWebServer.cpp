@@ -76,6 +76,7 @@ void	WebServer::run(void) {
 
 				if (it != _clients.end()) {
 					if (_fds[i].revents & POLLIN) {
+
 						ssize_t read_bytes = it->second.readRequest(_fds[i].fd);
 	
 							if (read_bytes <= 0) {
@@ -87,7 +88,7 @@ void	WebServer::run(void) {
 							}
 	
 							if (it->second.isRequestComplete()) {
-								_handleRequest(it->second);
+								_handleRequest(it);
 								_fds[i].events = POLLOUT;
 							}
 

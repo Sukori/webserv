@@ -55,7 +55,7 @@ class WebServer {
 		int						_initServer(const struct addrinfo* addrinfo, Server* server);
 		void					_closeServer(void);
 		int						_acceptConnection(int fd);
-		void					_handleRequest(Client& client);
+		void					_handleRequest(std::map<int, Client>::iterator& client);
 		const Server*			_findBestConfig(std::string host, int port); //rename ServerConfig when merge with config branch
 };
 

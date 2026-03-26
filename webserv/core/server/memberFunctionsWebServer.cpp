@@ -65,7 +65,7 @@ void	WebServer::_closeServer(void) {
 
 /// @brief handle a client request and prepares a response
 /// @param client 
-void	WebServer::_handleRequest(Client& client) {
+void	WebServer::_handleRequest(std::map<int, Client>::iterator& client) {
 	//parse request in
 	// check config, file, cgi
 	
@@ -79,7 +79,7 @@ void	WebServer::_handleRequest(Client& client) {
 	<< "\r\n" //!! CR LF !! RFC 2.2, 4.1 - 19.3 tolerant only, but server doesn't know
 	<< body;
 
-	client.setResponse(oss.str());
+	client->second.setResponse(oss.str());
 }
 
 /// @brief accepts a new connexion from a client
