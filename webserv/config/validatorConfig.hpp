@@ -49,7 +49,6 @@ void	validAccessLogs(std::string& accessLogs);
 void	validErrorLogs(std::string& errorLogs);
 bool	validClientMaxBodySize(unsigned int maxBodySize);
 void	validErrorPages(std::map<int, std::string>& errorPages);
-void	validLocations(std::vector<Location>& locObjs);
 void	validateServer(s_server& servStruct);
 
 #endif

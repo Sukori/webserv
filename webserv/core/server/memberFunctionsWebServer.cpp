@@ -71,8 +71,8 @@ void	WebServer::_handleRequest(std::map<int, Client>::iterator& client, const Se
 
 	try {
 		Http					req(client->second.getRequestIn());
-		std::string				route = req.getStartLine().path; //string qui contient le chemin
-		Location 				loc = server.getLocation(route);
+		std::string				route = req.getStartLine().path;
+		Location 				loc(server.getLocation(route));
 		std::set<std::string>	methods = loc.getLimExcept();
 		req.verifyMethod(methods);
 		/* process normal */

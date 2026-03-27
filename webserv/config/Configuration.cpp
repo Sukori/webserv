@@ -105,17 +105,16 @@ const std::vector<Location>&	Server::getLocations(void) const {
 }
 
 const Location&	Server::getLocation(const std::string& route) const {
-	std::vector<Location>	locs = getLocations();
 
-	std::vector<Location>::iterator	it = locs.begin();
-	while (it != locs.end()) {
+	std::vector<Location>::const_iterator	it = _locations.begin();
+	while (it != _locations.end()) {
 		if ((*it).getRoute().compare(route) == 0) {
 			return (*it);
 		}
 		++it;
 	}
 	std::cerr << "getLocation: no location matches route " << route << std::endl;
-	return (*locs.end());
+	throw 404;
 }
 
 const bool&	Server::isValid(void) const {
