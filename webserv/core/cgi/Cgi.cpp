@@ -6,7 +6,7 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 16:17:33 by pberset           #+#    #+#             */
-/*   Updated: 2026/03/26 17:05:12 by ylabussi         ###   ########.fr       */
+/*   Updated: 2026/03/27 16:32:05 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,21 +37,17 @@ void add_cgi_env(std::map<std::string, std::string>& env, const Server& server, 
 	env["SERVER_PORT"] = ft_uint_to_string(server.getListen().port);	/* SERVER_PORT       */
 	env["REQUEST_METHOD"] = startLine.method;							/* REQUEST_METHOD    */
 	env["PATH_INFO"] = startLine.path;									/* PATH_INFO         */
-	//env["PATH_TRANSLATED"] = "";										/* PATH_TRANSLATED   */
-	env["SCRIPT_FILENAME"] = path;										/* SCRIPT_NAME       */
+	env["SCRIPT_NAME"] = path;											/* SCRIPT_NAME       */
 	if (startLine.query.length() > 0)
 		env["QUERY_STRING"] = startLine.query.substr(1);				/* QUERY_STRING      */
 	env["REMOTE_HOST"] = "localhost";									/* REMOTE_HOST       */
 	env["REMOTE_ADDR"] = "127.0.0.1";									/* REMOTE_ADDR       */
-	//env["AUTH_TYPE"] = "";											/* AUTH_TYPE         */
-	//env["REMOTE_USER"] = "";											/* REMOTE_USER       */
-	//env["REMOTE_IDENT"] = "";											/* REMOTE_IDENT      */
-	//env["CONTENT_TYPE"] = "";											/* CONTENT_TYPE      */
-	//env["CONTENT_LENGTH"] = "";										/* CONTENT_LENGTH    */
-	env["REDIRECT_STATUS"] = "true";
+	env["SCRIPT_FILENAME"] = path;										/* for php-cgi       */
+	env["REDIRECT_STATUS"] = "true";									/* for php-cgi       */
 }
 
 /*
+returns pipe fd out
 make sure first field of all env is full UPPER_SNAKE_CASE instead of lower-kebab-case
 */
 int exec_cgi(const std::string& exe, const std::string& path, std::map<std::string, std::string> env, int socketIn) {
