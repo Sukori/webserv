@@ -51,13 +51,13 @@ class WebServer {
 		Configuration					_config;
 		std::vector<pollfd>				_fds;
 		std::map<int, Client>			_clients;
-		std::map<int, const Server*>	_sockets;
+		std::map<int, const Server*>	_serverSockets;
+		std::map<int, const Server*>	_clientsServers;
 
-		int						_initServer(const struct addrinfo* addrinfo, Server* server);
+		int						_initServer(const struct addrinfo* addrinfo, const Server* server);
 		void					_closeServer(void);
 		int						_acceptConnection(int fd);
-		void					_handleRequest(std::map<int, Client>::iterator& client, const Server& server);
-		const Server*			_findBestConfig(std::string host, int port); //rename ServerConfig when merge with config branch
+		void					_handleRequest(std::map<int, Client>::iterator& client, const Server* server);
 };
 
 #endif

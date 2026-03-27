@@ -15,7 +15,7 @@
 
 #define SERVER_SOFTWARE "weebserv"
 #define GATEWAY_INTERFACE "CGI/1"
-#define SERVER_PROTOCOL "HTTP/1"
+#define SERVER_PROTOCOL "HTTP/1.1"
 
 void add_cgi_env(std::map<std::string, std::string>& env, /*const Server& server,*/ const Http::StartLine& startLine, const std::string& path) {
     env.insert(std::make_pair("SERVER_SOFTWARE", SERVER_SOFTWARE "/1"));                    /* SERVER_SOFTWARE   */
@@ -26,7 +26,7 @@ void add_cgi_env(std::map<std::string, std::string>& env, /*const Server& server
     env.insert(std::make_pair("REQUEST_METHOD", startLine.method));                         /* REQUEST_METHOD    */
     env.insert(std::make_pair("PATH_INFO", startLine.path));                                /* PATH_INFO         */
     //env.insert(std::make_pair("PATH_TRANSLATED", ""));                                      /* PATH_TRANSLATED   */
-    env.insert(std::make_pair("SCRIPT_NAME", path));                                        /* SCRIPT_NAME       */
+    env.insert(std::make_pair("SCRIPT_FILENAME", path));                                        /* SCRIPT_FILENAME       */
     env.insert(std::make_pair("QUERY_STRING", startLine.query));                            /* QUERY_STRING      */
     env.insert(std::make_pair("REMOTE_HOST", ""));                                          /* REMOTE_HOST       */
     env.insert(std::make_pair("REMOTE_ADDR", ""));                                          /* REMOTE_ADDR       */

@@ -18,6 +18,7 @@
 - [x] Si deux serveurs valides sont démarrés, l'un ne répond plus
 - [x] Segfault si tous les serveurs sont skip (tous invalides)
 - [x] Trouver la route pour handle request
+- [x] Segfault
 
 # CGI
 - [ ] Supprimer `cgi_pass` de la config ?

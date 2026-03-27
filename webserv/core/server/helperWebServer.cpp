@@ -19,9 +19,9 @@ void	putLog(const std::string& message) {
 }
 
 /// @brief closes all sockets
-/// @param sockets 
-void	closeAllSockets(std::map<int, const Server*> sockets) {
-	for (std::map<int, const Server*>::iterator it = sockets.begin(); it != sockets.end(); ++it) {
+/// @param serverSockets 
+void	closeAllSockets(std::map<int, const Server*> serverSockets) {
+	for (std::map<int, const Server*>::iterator it = serverSockets.begin(); it != serverSockets.end(); ++it) {
 		close(it->first);
 	}
 }

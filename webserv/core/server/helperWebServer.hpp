@@ -22,7 +22,7 @@
 # include "../../config/Configuration.hpp"
 
 void	putLog(const std::string& message);
-void	closeAllSockets(std::map<int, const Server*> sockets);
+void	closeAllSockets(std::map<int, const Server*> serverSockets);
 void	closeAllPollFds(std::vector<pollfd> fds);
 void	exitWithError(const std::string& funct,const std::string& message);
 

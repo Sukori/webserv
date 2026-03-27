@@ -14,9 +14,9 @@
 
 WebServer::WebServer(const Configuration& config) : _config(config) {
     std::cout << "Config WebServer constructor" << std::endl;
-	int					errnum;
-	std::ostringstream	service;
-	std::vector<Server>	servers = _config.getServers();
+	int							errnum;
+	std::ostringstream			service;
+	const std::vector<Server>&	servers = _config.getServers();
 	
 	struct addrinfo hints;
 	hints.ai_family = AF_INET;
@@ -49,6 +49,6 @@ WebServer::WebServer(const Configuration& config) : _config(config) {
 
 WebServer::~WebServer(void) {
     std::cout << "WebServer destructor" << std::endl;
-	closeAllSockets(_sockets);
+	closeAllSockets(_serverSockets);
 	_closeServer();
 }

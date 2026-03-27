@@ -20,7 +20,7 @@ void	WebServer::run(void) {
 	_fds.clear();
 
 	//listen to each sockets and populate the pollfd struct foreach sockets
-	for (std::map<int, const Server*>::iterator it = _sockets.begin(); it != _sockets.end(); ++it) {
+	for (std::map<int, const Server*>::iterator it = _serverSockets.begin(); it != _serverSockets.end(); ++it) {
 		
 		ctrlno = listen(it->first, BACKLOG);
 		if (ctrlno < 0) {
@@ -46,7 +46,7 @@ void	WebServer::run(void) {
     std::cout << "===== Listening =====" << std::endl;
 		ctrlno = poll(&_fds[0], _fds.size(), -1);
 		if (ctrlno < 0) {
-			closeAllSockets(_sockets);
+			closeAllSockets(_serverSockets);
 			closeAllPollFds(_fds);
 			exitWithError("poll", strerror(errno));
 		} else if (ctrlno == 0) {
@@ -57,10 +57,12 @@ void	WebServer::run(void) {
 			if (_fds[i].revents == 0) {
 				continue ;
 			}
-			if (_sockets.find(_fds[i].fd) != _sockets.end()) {
+			if (_serverSockets.find(_fds[i].fd) != _serverSockets.end()) {
 				int newSocket = _acceptConnection(_fds[i].fd);
 				if (newSocket > 0) {
-					_clients.insert(std::pair<int, Client>(newSocket, Client()));
+					const Server*			serv = _serverSockets.find(_fds[i].fd)->second;
+					_clients.insert(std::make_pair(newSocket, Client()));
+					_clientsServers.insert(std::make_pair(newSocket, serv));
 					struct pollfd	npfd;
 					npfd.fd = newSocket;
 					npfd.events = POLLIN;
@@ -82,14 +84,14 @@ void	WebServer::run(void) {
 							if (read_bytes <= 0) {
 								close(_fds[i].fd);
 								_clients.erase(it);
+								_clientsServers.erase(_fds[i].fd);
 								_fds.erase(_fds.begin() + i);
 								i--;
 								continue ;
 							}
 	
 							if (it->second.isRequestComplete()) {
-								
-								_handleRequest(it, *_sockets.find(_fds[i].fd)->second);
+								_handleRequest(it, _clientsServers.find(_fds[i].fd)->second);
 								_fds[i].events = POLLOUT;
 							}
 
@@ -97,6 +99,7 @@ void	WebServer::run(void) {
 						if (it->second.writeResponse(_fds[i].fd)) { //for now, we close
 							close(_fds[i].fd);
 							_clients.erase(it);
+							_clientsServers.erase(_fds[i].fd);
 							_fds.erase(_fds.begin() + i);
 							i--;
 							/*personal assumption
