@@ -81,6 +81,8 @@ void	WebServer::_handleRequest(std::map<int, Client>::iterator& client, const Se
 		status = s;
 	}
 
+	ici il faut encore verifier le status. puis rebuild le header a append a la response
+
 	client->second.setResponse(Http::buildResponse(status, client->first, server->getName()));
 }
 

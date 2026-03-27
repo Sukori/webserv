@@ -38,14 +38,14 @@ class Http {
 		std::string			getResponseBody(const std::string& root, const std::map<std::string, std::string>& binaries, const std::vector<std::string>& indexes, int socket);
 		void				verifyMethod(const std::set<std::string>& allowed_methods) const;
 
-		static std::string	buildResponse(int status, const int fd, const std::string& server);
+		static std::string	buildResponse(int status, , const std::string& server);
 	private:
 		Http(void);
 		
 		//static StartLine	_parseStartLine(int fd);
 		StartLine			_parseStartLine(const std::string& message);
 		//static Header		_parseHeaders(int fd);
-		Header		_parseHeaders(const std::string& message);
+		Header				_parseHeaders(const std::string& message);
 		//static std::string	_parseNextLine(int fd);
 		static void			_splitPath(const std::string& path, StartLine& sl);
 

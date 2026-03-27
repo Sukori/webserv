@@ -62,6 +62,10 @@ ssize_t	Client::readRequest(int socket) {
            _requestComplete = true;
         }
     }
+
+	read request ne lit que le header. Il faut aussi lire le body et le stocker ailleurs.
+	Comment on trouve la fin d'une png ?
+
     return (bytes_read);
 }
 
