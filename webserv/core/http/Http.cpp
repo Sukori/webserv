@@ -1,17 +1,15 @@
 #include "Http.hpp"
 #include "../cgi/Cgi.hpp"
-#include <ctime>
 
-//Plutôt que lire le socket ici, nous pourrions lire `std::string client.getRequestIn()`
-//Puis parser les éléments (header, méhode, body)
-//ssize_t client.getRequestSize(); est aussi disponible
-Http::Http(int socket):
-	_socket(socket),
-	_startline(_parseStartLine(_socket)),
-	_header(_parseHeaders(_socket)) {
+Http::Http(const std::string& message):
+	_pos(0),
+	_startline(_parseStartLine(message)),
+	_header(_parseHeaders(message)) {
 	/* check for 400 Bad Request, 411 Length Required */
-	if (_header.count("CONTENT_LENGTH") == 0)
-		throw 411; // Length Required
+	/*if (_header.count("CONTENT_LENGTH") == 0)
+		throw 411; // Length Required*/
+	//GET without length is valid. https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods/GET
+	//POST, PUT without length are not valid
 }
 
 void	Http::verifyMethod(const std::set<std::string>& allowed_methods) const {
@@ -20,37 +18,38 @@ void	Http::verifyMethod(const std::set<std::string>& allowed_methods) const {
 }
 
 Http::Http(const Http& o):
-	_socket(o._socket),
+	_pos(o._pos),
 	_startline(o._startline),
 	_header(o._header)
 {}
 
 Http::~Http(void) {}
 
-int						Http::getSocket(void) const {return _socket;}
 const Http::StartLine&	Http::getStartLine(void) const {return _startline;}
 const Http::Header&		Http::getHeader(void) const {return _header;}
 
-std::string		Http::_parseNextLine(int fd) {
-	std::string ret;
-	char c;
-	while (read(fd, &c, 1) > 0) //Cette boucle est bloquante, mais le serveur doit fonctionner de manière non bloquante
-	{
-		ret += c;
-		if (c == '\n')
-			break;
-	}
-	return ret;
-}
+Http::StartLine	Http::_parseStartLine(const std::string& message) {
+	StartLine	ret;
+	size_t		lineEnd = message.find("\r\n", _pos);
+	if (lineEnd == message.npos)
+		throw 400;
+	
+	size_t	methodEnd = message.find(' ', _pos);
+	if (methodEnd == message.npos || methodEnd >= lineEnd)
+		throw 400;
+	ret.method = message.substr(_pos, methodEnd - _pos);
 
-Http::StartLine	Http::_parseStartLine(int fd) {
-	StartLine ret;
-	std::string line = _parseNextLine(fd);
-	size_t	end = line.find(' '), start = 0;
-	ret.method = line.substr(start, end - start);
-	start = line.find_first_not_of(' ', end);
-	end = line.find_first_of(' ', start);
-	_splitPath(line.substr(start, end - start), ret);
+	size_t	targetStart = message.find_first_not_of(' ', methodEnd);
+	if (targetStart == message.npos || targetStart >= lineEnd)
+		throw 400;
+	
+	size_t	targetEnd = message.find(' ', targetStart);
+	if (targetEnd == message.npos || targetEnd >= lineEnd)
+		throw 400;
+	
+	_splitPath(message.substr(targetStart, targetEnd - targetStart), ret);
+
+	_pos = lineEnd + 2;
 	return ret;
 }
 
@@ -58,25 +57,43 @@ static int toUPPER_SNAKE_CASE(int c) {
 	if (c == '-')
 		return '_';
 	else
-		return std::toupper(c);
+		return std::toupper(static_cast<unsigned char>(c));
 }
 
-Http::Header	Http::_parseHeaders(int fd) {
-	Header ret;
-	std::string line, key, val;
-	size_t sep;
-	while ((line = _parseNextLine(fd)).length() > 1)
-	{
-		sep = line.find(':');
-		if (sep == line.npos)
+Http::Header	Http::_parseHeaders(const std::string& message) {
+	Header	ret;
+	size_t	lineEnd = message.find("\r\n", _pos);
+
+	if (lineEnd == message.npos)
+		throw 400; // Bad Request
+	
+	while (_pos < message.size()) {
+		lineEnd = message.find("\r\n", _pos);
+		if (lineEnd == message.npos)
 			throw 400; // Bad Request
-		key = line.substr(0, sep);
+		
+		//empty line => end of headers
+		if (lineEnd == _pos) {
+			_pos = lineEnd + 2;
+            break;
+		}
+
+		std::string	line = message.substr(_pos, lineEnd - _pos);
+		size_t		sep = line.find(':');
+		if (sep == line.npos || sep == 0)
+			throw 400;
+
+		std::string	key = line.substr(0, sep);
 		std::transform(key.begin(), key.end(), key.begin(), toUPPER_SNAKE_CASE);
-		sep++;
-		while (isspace(line[sep]))
-			sep++;
-		val = line.substr(sep, line.find('\n') - sep);
+		
+		size_t	valueStart = sep + 1;
+		while (valueStart < line.size() && std::isspace(static_cast<unsigned char>(line[valueStart])))
+			++valueStart;
+
+		std::string	val = line.substr(valueStart);
 		ret.insert(std::make_pair(key, val));
+
+		_pos = lineEnd + 2;
 	}
 	return ret;
 }
@@ -84,14 +101,14 @@ Http::Header	Http::_parseHeaders(int fd) {
 void			Http::_splitPath(const std::string& path, StartLine& sl) {
 	size_t extra, query;
 	extra = path.find_first_of(".?");
-	if (extra == -1ul)
+	if (extra == path.npos)
 		extra = path.size();
-	if (path[extra] == '.')
+	if (extra < path.size() && path[extra] == '.')
 		extra = path.find_first_of("/?", extra);
-	if (extra == -1ul)
+	if (extra == path.npos)
 		extra = path.size();
 	query = path.find('?', extra);
-	if (query == -1ul)
+	if (query == path.npos)
 		query = path.size();
 	sl.path = path.substr(0, extra);
 	sl.extra = path.substr(extra, query-extra);
@@ -100,16 +117,16 @@ void			Http::_splitPath(const std::string& path, StartLine& sl) {
 
 static std::string get_ext(const std::string& path) {
 	size_t sep = path.find('.');
-	if (sep == -1ul)
+	if (sep == path.npos)
 		return "";
 	else
 		return path.substr(sep + 1);
 }
 
-std::string Http::getResponseBody(const std::string& root, const std::map<std::string, std::string>& binaries, const std::vector<std::string>& indexes) {
+std::string Http::getResponseBody(const std::string& root, const std::map<std::string, std::string>& binaries, const std::vector<std::string>& indexes, int socket) {
 	std::string file_path;
 	file_path = root + _startline.path;
-	if (_startline.path.find('.') == -1ul)
+	if (_startline.path.find('.') == _startline.path.npos)
 	{
 		bool found (false);
 		for (std::vector<std::string>::const_iterator it = indexes.begin(); it != indexes.end(); it++)
@@ -143,7 +160,7 @@ std::string Http::getResponseBody(const std::string& root, const std::map<std::s
 	else {
 		/* cgi */
 		add_cgi_env(_header, _startline, file_path);
-		return exec_cgi(bin_f, file_path, _header, _socket);
+		return exec_cgi(bin_f, file_path, _header, socket);
 	}
 }
 
@@ -159,32 +176,59 @@ static std::string ft_uint_to_string(unsigned int n) {
 	return ret;
 }
 
-std::string Http::buildResponse(int status, const std::string& body, const std::string& server) {
+static std::string	reasonPhrase(int status) {
+	switch (status) {
+        case 200: return " OK";
+        case 201: return " Created";
+        case 204: return " No Content";
+        case 400: return " Bad Request";
+        case 403: return " Forbidden";
+        case 404: return " Not Found";
+        case 405: return " Method Not Allowed";
+        case 411: return " Length Required";
+        case 500: return " Internal Server Error";
+        default:  return " Unknown";
+	}
+}
+
+std::string Http::buildResponse(int status, const int fd, const std::string& server) {
 	/**
-	 * startline: HTTP/1 status ~status-desc(optional)~
+	 * startline: HTTP/1.1 status ~status-desc(optional)~
 	 * headers:
-	 * 		date:
-	 * 		server:
-	 * 		content-length:
+	 * 		Date:
+	 * 		Server:
+	 * 		Content-Length:
+	 * 		Content-Type:
 	 * 
 	 * body: ez, just paste
 	 */
 
+	std::string	body;
+	char		c;
+
+	while (read(fd, &c, 1) > 0) //Cette boucle est bloquante, mais le serveur doit fonctionner de manière non bloquante
+	{
+		body += c;
+	}
+
 	std::string res;
-	res += "HTTP/1 ";
+	res += "HTTP/1.1 "; //https://http.dev/1.1
 	res += ft_uint_to_string(status);
-	res += "\r\ncontent-length: ";
+	res += reasonPhrase(status);
+	res += "\r\nContent-Length: ";
 	res += ft_uint_to_string(body.length());
-	res += "\r\ndate: ";
+	res += "\r\nContent-Type: text/html; charset=UTF-8";
+	res += "\r\nDate: ";
 	{
 		time_t t = time(NULL);
-		res += ctime(&t);
+		std::string	d = ctime(&t); //appends a '\n' we do not want
+		if (!d.empty() && d[d.size() - 1] == '\n')
+			d.erase(d[d.size() - 1]);
+		res += d;
 	}
-	res += "server: " + server + "\r\n";
-	if (body.length() > 0)
-	{
-		res += "\r\n";
-		res += body;
-	}
+	res += "\r\nServer: " + server;
+	res += "\r\n\r\n";
+	res += body;
+
 	return res;
 }

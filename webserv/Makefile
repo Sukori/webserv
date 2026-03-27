@@ -23,7 +23,7 @@ HDRS		= $(WEBDIR)WebServer \
 			$(CNFDIR)errPages \
 			$(CNFDIR)returnCodes \
 			$(CLIDIR)Client \
-			$(HTTDIR)Http_copy \
+			$(HTTDIR)Http \
 			$(CGIDIR)Cgi
 
 SRCS		= $(WEBDIR)WebServer \
@@ -41,7 +41,7 @@ SRCS		= $(WEBDIR)WebServer \
 			$(CNFDIR)errPages \
 			$(CNFDIR)returnCodes \
 			$(CLIDIR)Client \
-			$(HTTDIR)Http_copy \
+			$(HTTDIR)Http \
 			$(CGIDIR)Cgi \
 			run
 
