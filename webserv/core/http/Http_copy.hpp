@@ -14,6 +14,7 @@
 #include <exception>
 #include <ctime>
 #include <cctype>
+#include "../../config/Configuration.hpp"
 
 class Http {
 	public:
@@ -37,7 +38,7 @@ class Http {
 		std::string			getResponseBody(const std::string& root, const std::map<std::string, std::string>& binaries, const std::vector<std::string>& indexes, int socket);
 		void				verifyMethod(const std::set<std::string>& allowed_methods) const;
 
-		static std::string	buildResponse(int status, const std::string& body, const std::string& server);
+		static std::string	buildResponse(int status, const int fd, const std::string& server);
 	private:
 		Http(void);
 		

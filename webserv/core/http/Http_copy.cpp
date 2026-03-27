@@ -1,4 +1,4 @@
-#include "Http copy.hpp"
+#include "Http_copy.hpp"
 #include "../cgi/Cgi.hpp"
 
 Http::Http(const std::string& message):
@@ -191,7 +191,7 @@ static std::string	reasonPhrase(int status) {
 	}
 }
 
-std::string Http::buildResponse(int status, const std::string& body, const std::string& server) {
+std::string Http::buildResponse(int status, const int fd, const std::string& server) {
 	/**
 	 * startline: HTTP/1.1 status ~status-desc(optional)~
 	 * headers:
@@ -202,6 +202,14 @@ std::string Http::buildResponse(int status, const std::string& body, const std::
 	 * 
 	 * body: ez, just paste
 	 */
+
+	std::string	body;
+	char		c;
+
+	while (read(fd, &c, 1) > 0) //Cette boucle est bloquante, mais le serveur doit fonctionner de manière non bloquante
+	{
+		body += c;
+	}
 
 	std::string res;
 	res += "HTTP/1.1 "; //https://http.dev/1.1
