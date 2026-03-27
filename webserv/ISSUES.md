@@ -5,7 +5,7 @@
 - [x] "return" n'est pas parsé
 - [x] parse return (code, route)
 - [x] "route" est parsé dans `Location` -> inutile !
-- [ ] limit_except doit être un set, pas vector
+- [x] limit_except doit être un set, pas vector
 
 # Runtime
 - [x] Si un serveur a pour nom ERR_STR, il est tout de même démarré
@@ -17,7 +17,7 @@
 - [ ] Gérer les `req/res` à l'aide des fonctions `http` (merge effectué)
 - [x] Si deux serveurs valides sont démarrés, l'un ne répond plus
 - [x] Segfault si tous les serveurs sont skip (tous invalides)
-- [ ] Trouver la route pour handle request
+- [x] Trouver la route pour handle request
 
 # CGI
 - [ ] Supprimer `cgi_pass` de la config ?

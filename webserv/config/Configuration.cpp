@@ -37,7 +37,7 @@ const std::map<int, std::string>&	Location::getReturn(void) const {
 	return (_return);
 }
 
-const std::vector<std::string>&	Location::getLimExcept(void) const {
+const std::set<std::string>&	Location::getLimExcept(void) const {
 	return (_limit_except);
 }
 
@@ -108,9 +108,14 @@ const Location&	Server::getLocation(const std::string& route) const {
 	std::vector<Location>	locs = getLocations();
 
 	std::vector<Location>::iterator	it = locs.begin();
-	while ( true) {
-
+	while (it != locs.end()) {
+		if ((*it).getRoute().compare(route) == 0) {
+			return (*it);
+		}
+		++it;
 	}
+	std::cerr << "getLocation: no location matches route " << route << std::endl;
+	return (*locs.end());
 }
 
 const bool&	Server::isValid(void) const {

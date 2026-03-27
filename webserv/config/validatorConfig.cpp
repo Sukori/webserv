@@ -14,16 +14,19 @@
 
 //validate location
 
-/// @brief checks if given route exists. Directory or file
+/// @brief checks if given route is a duplicate
 /// @param route 
 /// @return bool 
 bool	validLocRoute(std::string& route) {
 
-	if (route.empty()) {
+	if (route.empty()) { //should never happen
 		std::cerr << "validLocRoute: empty route token" << std::endl;
 		return (false);
 	}
+	return (true);
 
+	/* Actually, need to test root, but not route
+	 * Not necessarily an existing folder
 	struct stat	buf;
 	int status = stat(route.c_str(), &buf);
 
@@ -35,6 +38,7 @@ bool	validLocRoute(std::string& route) {
 	}
 
 	return (S_ISDIR(buf.st_mode) || S_ISREG(buf.st_mode));
+	*/
 }
 
 /// @brief checks if the giver root is valid. Directory only
@@ -95,9 +99,9 @@ static bool	isValidMethod(const std::string& method) {
 
 /// @brief removes any duplicates of valid method from the vector methods
 /// @param methods 
-static void	removeDuplicates(std::vector<std::string>& methods) {
+static void	removeDuplicates(std::set<std::string>& methods) {
 
-	std::vector<std::string>::iterator	method = methods.begin();
+	std::set<std::string>::iterator	method = methods.begin();
 	std::map<std::string, bool>			seen;
 
 	while (method != methods.end()) {
@@ -105,7 +109,7 @@ static void	removeDuplicates(std::vector<std::string>& methods) {
 		//if the method is not valid, It will be deleted by the validator
 		if (validMethod && seen[*method]) {
 				std::cerr << "removeDuplicates: duplicate valid method ignored " << *method<< std::endl;
-				method = methods.erase(method);
+				methods.erase(method++);
 		} else {
 			if (validMethod)
 				seen[*method] = true;
@@ -116,24 +120,24 @@ static void	removeDuplicates(std::vector<std::string>& methods) {
 
 /// @brief Removes invalid methods found in the limitExcept parameter defaults to "GET" if empty
 /// @param limitExcept 
-void	validLimitExcept(std::vector<std::string>& limitExcept) {
+void	validLimitExcept(std::set<std::string>& limitExcept) {
 
 	if (!limitExcept.empty()) {
 		removeDuplicates(limitExcept);
 	} else {
 		std::cerr << "validLimitExcept: empty list of allowed methods, default to " << DFT_METHOD << std::endl;
-		limitExcept.push_back(DFT_METHOD);
+		limitExcept.insert(DFT_METHOD);
 		return ;
 	}
 
-	std::vector<std::string>::iterator method = limitExcept.begin();
+	std::set<std::string>::iterator method = limitExcept.begin();
 
 	while (method != limitExcept.end()) {
 		bool	validMethod = isValidMethod(*method);
 		
 		if (!validMethod) {
 			std::cerr << "validLimitExcept: invalid method ignored " << *method << std::endl;
-			method = limitExcept.erase(method);
+			limitExcept.erase(method++);
 			continue ;
 		}
 		method++;
@@ -141,7 +145,7 @@ void	validLimitExcept(std::vector<std::string>& limitExcept) {
 
 	if (limitExcept.empty()) {
 		std::cerr << "validLimitExcept: empty list of allowed methods, default to " << DFT_METHOD << std::endl;
-		limitExcept.push_back(DFT_METHOD);
+		limitExcept.insert(DFT_METHOD);
 	}
 }
 

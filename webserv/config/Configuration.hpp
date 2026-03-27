@@ -18,6 +18,7 @@
 # include <string>
 # include <vector>
 # include <map>
+# include <set>
 # include "helperConfig.hpp"
 
 # define CLIENT_MAX_BODY_SIZE 10000000
@@ -38,7 +39,7 @@ class Location {
 		const std::string&							getRoot(void) const;
 		const std::string&							getAlias(void) const;
 		const std::map<int, std::string>&			getReturn(void) const;
-		const std::vector<std::string>&				getLimExcept(void) const;
+		const std::set<std::string>&				getLimExcept(void) const;
 		const bool&									getAutoIndex(void) const;
 		const std::string&							getUploadPath(void) const;
 		const std::map<std::string, std::string>&	getCgiParams(void) const;
@@ -51,7 +52,7 @@ class Location {
 		const std::string							_root_path;
 		const std::string							_alias;
 		const std::map<int, std::string>			_return;
-		const std::vector<std::string>				_limit_except;
+		const std::set<std::string>					_limit_except;
 		const bool									_autoindex;
 		const std::string							_upload_path;
 		const std::map<std::string, std::string>	_cgi_param;

@@ -19,6 +19,7 @@
 # include <sstream>
 # include <vector>
 # include <map>
+# include <set>
 # include <utility>
 # include <cctype>
 
@@ -28,7 +29,7 @@ struct s_location {
 	std::string							root_path; // root "/var/www"; for instance
 	std::string							alias;
 	std::map<int, std::string>			locReturn;
-	std::vector<std::string>			limit_except;
+	std::set<std::string>				limit_except;
 	bool								autoindex;
 	std::string							upload_path;
 	std::map<std::string, std::string>	cgi_param;

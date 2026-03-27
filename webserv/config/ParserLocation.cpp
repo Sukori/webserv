@@ -144,8 +144,8 @@ std::map<std::string, std::string>	Parser::parseCgiParams(std::string& token) {
 /// @brief parses the limitExcept parameter list
 /// @param token 
 /// @return vector of string for allowed methods. Defaults to "GET" if no config
-std::vector<std::string>	Parser::parseLimitExcept(std::string token) {
-	std::vector<std::string>	output;
+std::set<std::string>	Parser::parseLimitExcept(std::string token) {
+	std::set<std::string>	output;
 
 	while (token != ";") {
 		if (_ss.fail()) {
@@ -153,7 +153,7 @@ std::vector<std::string>	Parser::parseLimitExcept(std::string token) {
 			output.insert(output.begin(), std::string(ERR_STR));
 			return (output);
 		}
-		output.push_back(token);
+		output.insert(token);
 		_ss >> token;
 	}
 	return (output);
@@ -177,13 +177,13 @@ Location	Parser::parseLocation(void) {
 	}
 	
 	if (token.at(0) != '/') {
-		std::cerr << "parseLocation: path not starting from root. Got " << token << std::endl;
+		std::cerr << "parseLocation: route not starting from '/'. Got " << token << std::endl;
 		locStruct.route = ERR_STR;
 		Location	error(locStruct);
 		return (error);
 	}
 
-	locStruct.route = "." + token;
+	locStruct.route = token;
 	_ss >> token;
 	
 	if (token.empty() || token.at(0) != '{') {

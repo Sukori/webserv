@@ -34,10 +34,10 @@ std::ostream&	operator<<(std::ostream& os, const std::vector<Location>& location
         }
 
 		if (!loc.getLimExcept().empty()) {
-			std::vector<std::string>::const_iterator start = loc.getLimExcept().begin();
-			std::vector<std::string>::const_iterator end = loc.getLimExcept().end();
+			std::set<std::string>::const_iterator start = loc.getLimExcept().begin();
+			std::set<std::string>::const_iterator end = loc.getLimExcept().end();
 			os << "\t\t\t- limit except: " << std::endl;
-			for (std::vector<std::string>::const_iterator lex = start; lex != end; ++lex) {
+			for (std::set<std::string>::const_iterator lex = start; lex != end; ++lex) {
 				os << "\t\t\t\t> " << *lex << std::endl;
 			}
 		}

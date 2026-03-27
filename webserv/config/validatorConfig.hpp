@@ -33,7 +33,7 @@
 bool	validLocRoute(std::string& route);
 bool	validLocRoot(std::string& root);
 void	validReturns(std::map<int, std::string>& locReturn);
-void	validLimitExcept(std::vector<std::string>& limitExcept);
+void	validLimitExcept(std::set<std::string>& limitExcept);
 bool	validUploadPath(std::string& uploadPath);
 //cgi_params ? subject to deletion
 //cgi_pass ? subject to deletion
