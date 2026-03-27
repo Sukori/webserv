@@ -106,7 +106,7 @@ const std::vector<Location>&	Server::getLocations(void) const {
 
 const Location&	Server::getLocation(const std::string& route) const {
 
-	std::vector<Location>::const_iterator	it = _locations.begin();
+	std::vector<Location>::const_iterator	it(_locations.begin());
 	while (it != _locations.end()) {
 		if ((*it).getRoute().compare(route) == 0) {
 			return (*it);

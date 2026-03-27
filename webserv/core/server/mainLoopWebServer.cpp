@@ -42,10 +42,13 @@ void	WebServer::run(void) {
 	}
 
 	//Main loop
-	while (true) {
+	while (!_stopRequested) {
     std::cout << "===== Listening =====" << std::endl;
 		ctrlno = poll(&_fds[0], _fds.size(), -1);
 		if (ctrlno < 0) {
+			if (errno == EINTR) {
+				continue ;
+			}
 			closeAllSockets(_serverSockets);
 			closeAllPollFds(_fds);
 			exitWithError("poll", strerror(errno));
@@ -61,7 +64,7 @@ void	WebServer::run(void) {
 				int newSocket = _acceptConnection(_fds[i].fd);
 				if (newSocket > 0) {
 					const Server*			serv = _serverSockets.find(_fds[i].fd)->second;
-					_clients.insert(std::make_pair(newSocket, Client()));
+					_clients[newSocket];
 					_clientsServers.insert(std::make_pair(newSocket, serv));
 					struct pollfd	npfd;
 					npfd.fd = newSocket;

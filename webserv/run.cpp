@@ -50,6 +50,7 @@ int	main(int argc, char *argv[]) {
 	}
 	
 	WebServer	webserv(*config);
+	WebServer::installSignalHandlers();
 	webserv.run();
 	delete(config);
 	return (0);

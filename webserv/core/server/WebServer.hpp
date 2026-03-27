@@ -30,6 +30,7 @@
 # include <netdb.h>
 # include <arpa/inet.h>
 # include <unistd.h>
+# include <signal.h>
 # include "../../config/Configuration.hpp"
 # include "../../config/Parser.hpp"
 # include "../client/Client.hpp"
@@ -43,6 +44,8 @@ class WebServer {
 	public:
 		WebServer(const Configuration& config);
 		~WebServer(void);
+
+		static void	installSignalHandlers(void);
 	
 		void	run(void);
 	
@@ -53,6 +56,9 @@ class WebServer {
 		std::map<int, Client>			_clients;
 		std::map<int, const Server*>	_serverSockets;
 		std::map<int, const Server*>	_clientsServers;
+
+		static volatile sig_atomic_t	_stopRequested;
+		static void					_handleSignal(int sig);
 
 		int						_initServer(const struct addrinfo* addrinfo, const Server* server);
 		void					_closeServer(void);

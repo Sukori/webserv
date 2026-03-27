@@ -14,6 +14,8 @@
 
 Client::Client(void) {
     std::cout << "Default Client constructor" << std::endl;
+	_requestSize = 0;
+	_requestComplete = false;
 }
 
 Client::~Client(void) {

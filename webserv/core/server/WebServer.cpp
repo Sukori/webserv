@@ -12,6 +12,26 @@
 
 #include "WebServer.hpp"
 
+volatile sig_atomic_t	WebServer::_stopRequested = 0;
+
+void	WebServer::_handleSignal(int sig) {
+	if (sig == SIGINT || sig == SIGTERM) {
+		_stopRequested = 1;
+	}
+}
+
+void	WebServer::installSignalHandlers(void) {
+	struct sigaction	sa;
+
+	std::memset(&sa, 0, sizeof(sa));
+	sa.sa_handler = &WebServer::_handleSignal;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = 0;
+
+	sigaction(SIGINT, &sa, NULL);
+	sigaction(SIGTERM, &sa, NULL);
+}
+
 WebServer::WebServer(const Configuration& config) : _config(config) {
     std::cout << "Config WebServer constructor" << std::endl;
 	int							errnum;
