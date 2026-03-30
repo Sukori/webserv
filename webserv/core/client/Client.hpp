@@ -17,6 +17,8 @@
 # include <string>
 # include <sys/socket.h>
 # include <arpa/inet.h>
+# include "../http/Http.hpp"
+# include "../../config/helperParser.hpp"
 
 # define BUFFER_SIZE 4096
 
@@ -25,21 +27,28 @@ class Client {
 		Client(void);
 		~Client(void);
 
-		ssize_t				readRequest(int socket);
-		bool				writeResponse(int socket);
+		ssize_t		readRequest(int socket);
+		bool		writeResponse(int socket);
 
-		std::string			getRequestIn(void);
-		std::string			getResponseOut(void);
-		ssize_t				getRequestSize(void);
-		bool				isRequestComplete(void);
+		std::string	getRequestIn(void);
+		std::string	getResponseOut(void);
+		ssize_t		getHeaderSize(void);
+		ssize_t		getBodySize(void);
+		bool		isRequestComplete(void);
 
-		void				setResponse(const std::string& response);
+		void		setResponse(const std::string& response);
 
 	private:
-		std::string			_requestIn;
-		std::string			_responseOut;
-		ssize_t				_requestSize;
-		bool				_requestComplete;
+		std::string	_requestIn;
+		std::string	_responseOut;
+		std::string	_rawHeaderIn;
+		ssize_t		_headerSize;
+		bool		_headerComplete;
+		bool		_alreadyChecked;
+		bool		_expectsBody;
+		ssize_t		_expectedBodySize;
+		ssize_t		_bodySize;
+		bool		_bodyComplete;
 };
 
 
