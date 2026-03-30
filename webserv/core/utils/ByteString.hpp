@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <cstddef>
 #include <cstring>
+#include <iostream>
 
 typedef uint8_t byte;
 
@@ -16,7 +17,7 @@ class ByteString
 
 	ByteString&	operator=(const ByteString&);
 
-	size_t		append(byte*, size_t);
+	size_t		append(const byte*, size_t);
 	const byte*	data(void) const;
 
 	const byte&	operator[](size_t) const;
@@ -26,7 +27,7 @@ class ByteString
 	size_t		length(void) const;
 	size_t		capacity(void) const;
 
-	size_t		reserve(void);
+	size_t		reserve(size_t new_cap);
 	size_t		shrink_to_fit(void);
 
 	void		clear(void);
@@ -36,5 +37,7 @@ class ByteString
 	size_t	_len;
 	size_t	_cur;
 };
+
+std::ostream& operator<<(std::ostream& os, const ByteString&);
 
 #endif
