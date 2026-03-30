@@ -191,7 +191,7 @@ static std::string	reasonPhrase(int status) {
 	}
 }
 
-std::string Http::buildResponse(int status, , const std::string& server) {
+std::string Http::buildResponse(int status, const std::string& server) {
 	/**
 	 * startline: HTTP/1.1 status ~status-desc(optional)~
 	 * headers:
@@ -202,6 +202,8 @@ std::string Http::buildResponse(int status, , const std::string& server) {
 	 * 
 	 * body: ez, just paste
 	 */
+
+	std::string	body = "hello world";
 
 	std::string res;
 	res += "HTTP/1.1 "; //https://http.dev/1.1

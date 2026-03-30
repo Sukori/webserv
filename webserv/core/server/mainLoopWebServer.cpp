@@ -81,22 +81,26 @@ void	WebServer::run(void) {
 
 				if (it != _clients.end()) {
 					if (_fds[i].revents & POLLIN) {
+						ssize_t readBytes;
+						try {
+							readBytes = it->second.readRequest(_fds[i].fd);
+						} catch (int status) {
+							std::cerr << "log temporaire: " << status << std::endl;
+						}
+	
+						if (readBytes <= 0) {
+							close(_fds[i].fd);
+							_clients.erase(it);
+							_clientsServers.erase(_fds[i].fd);
+							_fds.erase(_fds.begin() + i);
+							i--;
+							continue ;
+						}
 
-						ssize_t read_bytes = it->second.readRequest(_fds[i].fd);
-	
-							if (read_bytes <= 0) {
-								close(_fds[i].fd);
-								_clients.erase(it);
-								_clientsServers.erase(_fds[i].fd);
-								_fds.erase(_fds.begin() + i);
-								i--;
-								continue ;
-							}
-	
-							if (it->second.isRequestComplete()) {
-								_handleRequest(it, _clientsServers.find(_fds[i].fd)->second);
-								_fds[i].events = POLLOUT;
-							}
+						if (it->second.isRequestComplete()) {
+							_handleRequest(it, _clientsServers.find(_fds[i].fd)->second);
+							_fds[i].events = POLLOUT;
+						}
 
 					} else if (_fds[i].revents & POLLOUT) {
 						if (it->second.writeResponse(_fds[i].fd)) { //for now, we close
