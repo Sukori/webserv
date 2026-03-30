@@ -203,7 +203,7 @@ std::string Http::buildResponse(int status, const std::string& server) {
 	 * body: ez, just paste
 	 */
 
-	std::string	body = "hello world";
+	std::string	body = reasonPhrase(status);
 
 	std::string res;
 	res += "HTTP/1.1 "; //https://http.dev/1.1

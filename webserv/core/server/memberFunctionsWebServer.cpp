@@ -6,7 +6,7 @@
 /*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 17:46:35 by pberset           #+#    #+#             */
-/*   Updated: 2026/03/18 17:46:38 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/03/30 15:33:49 by pberset          ###   Lausanne.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ void	WebServer::_handleRequest(std::map<int, Client>::iterator& client, const Se
 	} catch (int s) {
 		status = s;
 	}
-
+	std::cout << "status " << status << std::endl;
 	//ici il faut encore verifier le status. puis rebuild le header a append a la response
 
 	client->second.setResponse(Http::buildResponse(status, server->getName()));

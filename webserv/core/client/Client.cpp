@@ -6,7 +6,7 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 14:11:31 by pberset           #+#    #+#             */
-/*   Updated: 2026/01/24 15:51:44 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/03/30 15:24:44 by pberset          ###   Lausanne.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,6 @@ ssize_t	Client::readRequest(int socket) {
 			}
 			_alreadyChecked = true;
 		}
-		std::cout << "ensuite" << std::endl;
 		if (!_bodyComplete && _expectsBody) {
 			bytesRead = recv(socket, temp_buffer, BUFFER_SIZE, 0);
     		if (bytesRead < 0) {
