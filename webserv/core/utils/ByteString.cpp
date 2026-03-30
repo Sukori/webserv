@@ -1,11 +1,14 @@
 #include "ByteString.hpp"
 
+const size_t ByteString::npos = -1;
+
 ByteString::ByteString(void): _len(0), _cur(0), _data(0) {}
 ByteString::ByteString(size_t l): _len(l), _cur(0), _data(new byte[l]) {}
+ByteString::ByteString(const byte* s, size_t l): _len(l), _cur(l), _data(new byte[l]) {std::memmove(_data, s, l);}
 ByteString::ByteString(const ByteString& o): _len(o._len), _cur(o._cur), _data(new byte[o._len]) {std::memmove(_data, o._data, _cur);}
 ByteString::~ByteString(void) {delete[] _data;}
 
-ByteString&		ByteString::operator=(const ByteString& o) {
+ByteString&	ByteString::operator=(const ByteString& o) {
 	if (&o == this)
 		return *this;
 	_len = o._len;
@@ -17,12 +20,16 @@ ByteString&		ByteString::operator=(const ByteString& o) {
 	return *this;
 }
 
-size_t	ByteString::append(const byte* s, size_t len) {
+size_t		ByteString::append(const byte* s, size_t len) {
 	if (_cur + len > _len)
 		reserve(_cur + len);
 	std::memmove(_data + _cur, s, len);
 	_cur += len;
 	return _len;
+}
+
+size_t		ByteString::append(const ByteString& s) {
+	append(s._data, s._cur);
 }
 
 const byte*	ByteString::data(void) const {
@@ -64,6 +71,22 @@ size_t		ByteString::shrink_to_fit(void) {
 
 void		ByteString::clear(void) {
 	_cur = 0;
+}
+
+ByteString	ByteString::substr(size_t pos, size_t len = npos) {
+	len = (_cur> len) ? len : _cur;
+	return ByteString(_data + pos, len);
+}
+
+size_t		ByteString::find(const byte* s, size_t len, size_t pos = 0) {
+	for (size_t i = pos; i + len < _cur; i++)
+		if (std::memcmp(s, _data + i, len) == 0)
+			return i;
+	return npos;
+}
+
+size_t		ByteString::find(byte c, size_t pos = 0) {
+	return find(&c, 1, pos);
 }
 
 std::ostream& operator<<(std::ostream& os, const ByteString& s) {
