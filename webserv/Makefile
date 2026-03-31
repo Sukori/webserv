@@ -12,6 +12,7 @@ CNFDIR		= config/
 CLIDIR		= core/client/
 HTTDIR		= core/http/
 CGIDIR		= core/cgi/
+UTIDIR		= core/utils/
 
 HDRS		= $(WEBDIR)WebServer \
 			$(WEBDIR)helperWebServer \
@@ -24,7 +25,8 @@ HDRS		= $(WEBDIR)WebServer \
 			$(CNFDIR)returnCodes \
 			$(CLIDIR)Client \
 			$(HTTDIR)Http \
-			$(CGIDIR)Cgi
+			$(CGIDIR)Cgi \
+			$(UTIDIR)ByteString
 
 SRCS		= $(WEBDIR)WebServer \
 			$(WEBDIR)helperWebServer \
@@ -43,6 +45,7 @@ SRCS		= $(WEBDIR)WebServer \
 			$(CLIDIR)Client \
 			$(HTTDIR)Http \
 			$(CGIDIR)Cgi \
+			$(UTIDIR)ByteString \
 			run
 
 HDR			= $(addsuffix .hpp, $(HDRS))
@@ -70,6 +73,9 @@ $(ODIR)%.o: $(HTTDIR)%.cpp $(HDR) | $(ODIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(ODIR)%.o: $(CGIDIR)%.cpp $(HDR) | $(ODIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(ODIR)%.o: $(UTIDIR)%.cpp $(HDR) | $(ODIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(ODIR)%.o: %.cpp $(HDR) | $(ODIR)

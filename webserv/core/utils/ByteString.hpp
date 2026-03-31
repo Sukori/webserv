@@ -1,11 +1,10 @@
 #ifndef BYTESTRING_HPP
 #define BYTESTRING_HPP
-#include <cstdint>
 #include <cstddef>
 #include <cstring>
 #include <iostream>
 
-typedef uint8_t byte;
+typedef unsigned char byte;
 
 class ByteString
 {

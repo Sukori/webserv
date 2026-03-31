@@ -2,10 +2,10 @@
 
 const size_t ByteString::npos = -1;
 
-ByteString::ByteString(void): _len(0), _cur(0), _data(0) {}
-ByteString::ByteString(size_t l): _len(l), _cur(0), _data(new byte[l]) {}
-ByteString::ByteString(const byte* s, size_t l): _len(l), _cur(l), _data(new byte[l]) {std::memmove(_data, s, l);}
-ByteString::ByteString(const ByteString& o): _len(o._len), _cur(o._cur), _data(new byte[o._len]) {std::memmove(_data, o._data, _cur);}
+ByteString::ByteString(void): _data(0), _len(0), _cur(0) {}
+ByteString::ByteString(size_t l): _data(new byte[l]), _len(l), _cur(0) {}
+ByteString::ByteString(const byte* s, size_t l): _data(new byte[l]), _len(l), _cur(l) {std::memmove(_data, s, l);}
+ByteString::ByteString(const ByteString& o): _data(new byte[o._len]), _len(o._len), _cur(o._cur) {std::memmove(_data, o._data, _cur);}
 ByteString::~ByteString(void) {delete[] _data;}
 
 ByteString&	ByteString::operator=(const ByteString& o) {
@@ -29,7 +29,7 @@ size_t		ByteString::append(const byte* s, size_t len) {
 }
 
 size_t		ByteString::append(const ByteString& s) {
-	append(s._data, s._cur);
+	return append(s._data, s._cur);
 }
 
 const byte*	ByteString::data(void) const {
@@ -73,19 +73,19 @@ void		ByteString::clear(void) {
 	_cur = 0;
 }
 
-ByteString	ByteString::substr(size_t pos, size_t len = npos) {
+ByteString	ByteString::substr(size_t pos, size_t len) {
 	len = (_cur> len) ? len : _cur;
 	return ByteString(_data + pos, len);
 }
 
-size_t		ByteString::find(const byte* s, size_t len, size_t pos = 0) {
+size_t		ByteString::find(const byte* s, size_t len, size_t pos) {
 	for (size_t i = pos; i + len < _cur; i++)
 		if (std::memcmp(s, _data + i, len) == 0)
 			return i;
 	return npos;
 }
 
-size_t		ByteString::find(byte c, size_t pos = 0) {
+size_t		ByteString::find(byte c, size_t pos) {
 	return find(&c, 1, pos);
 }
 
