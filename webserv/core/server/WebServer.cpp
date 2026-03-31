@@ -6,209 +6,69 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 14:11:12 by pberset           #+#    #+#             */
-/*   Updated: 2026/03/25 16:57:25 by ylabussi         ###   ########.fr       */
+/*   Updated: 2026/03/31 17:50:39 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServer.hpp"
 
-void	putLog(const std::string& message) {
-	std::cout << message << std::endl;
+volatile sig_atomic_t	WebServer::_stopRequested = 0;
+
+void	WebServer::_handleSignal(int sig) {
+	if (sig == SIGINT || sig == SIGTERM) {
+		_stopRequested = 1;
+	}
 }
 
-void	exitWithError(const std::string& funct, const std::string& message) {
-	putLog(funct +": " + message);
-	exit(1);
+void	WebServer::installSignalHandlers(void) {
+	struct sigaction	sa;
+
+	std::memset(&sa, 0, sizeof(sa));
+	sa.sa_handler = &WebServer::_handleSignal;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = 0;
+
+	sigaction(SIGINT, &sa, NULL);
+	sigaction(SIGTERM, &sa, NULL);
 }
 
 WebServer::WebServer(const Configuration& config) : _config(config) {
     std::cout << "Config WebServer constructor" << std::endl;
+	int							errnum;
+	std::ostringstream			service;
+	const std::vector<Server>&	servers = _config.getServers();
 	
-	_socketAddress.sin_family = AF_INET;
-	_socketAddress.sin_port = htons(_config.getServers().front().getListen().port);
-	_socketAddress.sin_addr.s_addr = inet_addr(_config.getServers().front().getListen().ip.c_str()); //not allowed, must find alt
-
-	if (_initServer() != 0) {
-		std::ostringstream ss;
-		ss << "failed to initialize server with PORT: " << ntohs(_socketAddress.sin_port);
-		putLog(ss.str());
+	struct addrinfo hints;
+	hints.ai_family = AF_INET;
+	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_flags = AI_PASSIVE;
+	hints.ai_protocol = IPPROTO_TCP;
+	
+	struct addrinfo*	addrinfo;
+	
+	for (size_t i = 0; i < servers.size(); i++) {
+		service << servers[i].getListen().port;
+		errnum = getaddrinfo(servers[i].getListen().ip.c_str(), service.str().c_str(), &hints, &addrinfo);
+		service.str("");
+		if (errnum != 0) {
+			std::cerr << "WebServer constructor getaddrinfo: " << gai_strerror(errnum) << std::endl
+			<< "skipped " << servers[i].getName() << std::endl;
+			freeaddrinfo(addrinfo);
+			continue ;
+		}
+		if (_initServer(addrinfo, &servers[i]) != 0) {
+			freeaddrinfo(addrinfo);
+			std::cerr << "WebServer constructor _initServer: failed init" << std::endl
+			<< "skipped " << servers[i].getName() << std::endl;
+			continue ;
+		}
+		std::cout << "Initialized server with IP: " <<servers[i].getListen().ip << " | PORT: " << servers[i].getListen().port << std::endl;
+		freeaddrinfo(addrinfo);
 	}
-    std::cout << "Initialized server with IP: " <<_config.getServers().front().getListen().ip << " | PORT: " << _config.getServers().front().getListen().port << std::endl;
 }
 
 WebServer::~WebServer(void) {
     std::cout << "WebServer destructor" << std::endl;
+	closeAllSockets(_serverSockets);
 	_closeServer();
 }
-
-int	WebServer::_initServer(void) {
-    std::cout << "initServer" << std::endl;
-	_socket = socket(AF_INET, SOCK_STREAM, 0);
-	if (_socket < 0) {
-		exitWithError("_initServer", "create socket failed");
-		return (1);
-	}
-	if (bind(_socket, (sockaddr *)&_socketAddress, sizeof(_socketAddress)) < 0) {
-		exitWithError("_initServer", "failed to bind socket");
-		return (2);
-	}
-	return (0);
-}
-
-int	WebServer::_closeServer(void) {
-	close(_socket);
-	exit(0);
-}
-
-void	WebServer::_handleRequest(Client& client) {
-	//parse request in
-	// check config, file, cgi
-	
-	// for now: hello world
-	std::string	body = "<html><body><h1>Hello from Poll Server!</h1></body></html>";
-
-	std::ostringstream	oss;
-	oss << "HTTP/1.1 200 OK\r\n"
-	<< "Content-Type: text/html\r\n"
-	<< "Content-Length: " << body.size() << "\r\n"
-	<< "\r\n" //!! CR LF !! RFC 2.2, 4.1 - 19.3 tolerant only, but server doesn't know
-	<< body;
-
-	client.setResponse(oss.str());
-}
-
-void	WebServer::run(void) {
-
-    std::cout << "run" << std::endl;
-	int	ctrlno;
-
-	ctrlno = listen(_socket, BACKLOG);
-	if (ctrlno < 0) {
-		exitWithError("listen", strerror(errno));
-	}
-
-	_fds.clear();
-	struct pollfd	pfd;
-	pfd.fd = _socket;
-	pfd.events = POLLIN;
-	pfd.revents = 0;
-	_fds.push_back(pfd);
-
-	while (true) {
-    std::cout << "===== Listening =====" << std::endl;
-		ctrlno = poll(&_fds[0], _fds.size(), -1);
-		if (ctrlno < 0) {
-			exitWithError("poll", strerror(errno));
-		} else if (ctrlno == 0) {
-			continue ;
-		}
-
-		for (size_t i = 0; i < _fds.size(); i++) {
-			if (_fds[i].revents == 0) {
-				continue ;
-			}
-			if (_fds[i].fd == _socket) {
-				int newSocket = _acceptConnection();
-				if (newSocket > 0) {
-					_clients.insert(std::make_pair(newSocket, Client(newSocket)));
-					struct pollfd	npfd;
-					npfd.fd = newSocket;
-					npfd.events = POLLIN;
-					npfd.revents = 0;
-					_fds.push_back(npfd);
-
-					putLog("New client");
-				} else {
-					continue ;
-				}
-			} else {
-				std::map<int, Client>::iterator	it = _clients.find(_fds[i].fd);
-
-				if (it != _clients.end()) {
-					if (_fds[i].revents & POLLIN) {
-						/* definitely need to put this in its own function TODO */
-						int status;
-						std::string out;
-						try {
-							Http req(it->second.getSocket());
-							const Http::Header h (req.getHeader());
-							const Http::StartLine& sl (req.getStartLine());
-							
-							std::cout << "path:\t" + sl.path + '\n';
-							std::cout << "extra:\t" + sl.extra + '\n';
-							std::cout << "query:\t" + sl.query + '\n';
-							std::cout << "method:\t" + sl.method + '\n';
-							std::cout << "headers:\n";
-							for (Http::Header::const_iterator it = h.begin(); it != h.end();it++)
-								std::cout << '\t' + it->first + '=' + it->second + '\n';
-							std::cout << '\n';
-
-							std::string route ("/www/html"); /* from location TODO */
-							std::map<std::string, std::string> bin; /* need to figure out where to define that TODO */
-							bin.insert(std::make_pair("py", "/usr/bin/python3"));
-							bin.insert(std::make_pair("php", "/usr/bin/php-cgi"));
-							(void)sl;
-							/* TODO replace [0] with index */
-							out = req.getResponseBody(route, bin, _config.getServers()[0]);
-							status = 200;
-						} catch (int s) {
-							status = s;
-							out = Http::buildErrorHtml(status, _config.getServers()[0]);
-						}
-						std::cout << status << '\n';
-						//std::cout << out << std::endl;
-						it->second.setResponse(Http::buildResponse(status, out, _config.getServers()[0].getName()));
-						_fds[i].events = POLLOUT;
-
-						/*ssize_t read_bytes = it->second.readRequest();
-
-							if (read_bytes <= 0) {
-								close(_fds[i].fd);
-								_clients.erase(it);
-								_fds.erase(_fds.begin() + i);
-								i--;
-								continue ;
-							}
-
-							if (it->second.isRequestComplete()) {
-								_handleRequest(it->second);
-								std::cout << it->second.getRequestIn() << std::endl;
-								std::cout << (int)_socketAddress.sin_port << std::endl;
-								_fds[i].events = POLLOUT;
-							}*/
-					} else if (_fds[i].revents & POLLOUT) {
-						if (it->second.writeResponse()) { //for now, we close
-							close(_fds[i].fd);
-							_clients.erase(it);
-							_fds.erase(_fds.begin() + i);
-							i--;
-							/*personal assumption
-							 * it->second.events = POLLIN;
-							 * clear the read write containers*/
-						}
-					}
-				}
-			}
-		}
-	}
-}
-
-int	WebServer::_acceptConnection(void) {
-
-	socklen_t	addrLen = sizeof(_socketAddress);
-
-	int newSocket = accept(_socket, (sockaddr *)&_socketAddress, &addrLen);
-	if (newSocket < 0) {
-		putLog("accept: " + std::string(strerror(errno)));
-		return (-1);
-	}
-	
-	int	ctrlno = fcntl(newSocket, F_SETFL, O_NONBLOCK);
-	if (ctrlno < 0) {
-		putLog("fcntl: " + std::string(strerror(errno)));
-		close(newSocket);
-		return (-2);
-	}
-	return (newSocket);
-}
-

@@ -12,9 +12,11 @@
 
 #include "Configuration.hpp"
 
-Location::Location(const struct s_location location): _route(location.route), _root_path(location.root_path), _alias(location.alias), _limit_except(location.limit_except), _autoindex(location.autoindex), _upload_path(location.upload_path), _cgi_param(location.cgi_param), _cgi_pass(location.cgi_pass) {
-	(void)_autoindex;
-}
+Location::Location(void): _valid(false), _autoindex(true) {}
+
+Location::Location(const struct s_location location): _valid(location.valid), _route(location.route), _root_path(location.root_path), _alias(location.alias), _return(location.locReturn), _limit_except(location.limit_except), _autoindex(location.autoindex), _upload_path(location.upload_path), _cgi_param(location.cgi_param), _cgi_pass(location.cgi_pass) {}
+
+Location::Location(const Location& rhs): _valid(rhs._valid), _route(rhs._route), _root_path(rhs._root_path), _alias(rhs._alias), _return(rhs._return), _limit_except(rhs._limit_except), _autoindex(rhs._autoindex), _upload_path(rhs._upload_path), _cgi_param(rhs._cgi_param), _cgi_pass(rhs._cgi_pass) {}
 
 Location::~Location(void) {}
 
@@ -30,7 +32,12 @@ const std::string&	Location::getAlias(void) const {
 	return (_alias);
 }
 
-const std::vector<std::string>&	Location::getLimExcept(void) const {
+
+const std::map<int, std::string>&	Location::getReturn(void) const {
+	return (_return);
+}
+
+const std::set<std::string>&	Location::getLimExcept(void) const {
 	return (_limit_except);
 }
 
@@ -50,9 +57,14 @@ const std::string&	Location::getCgiPass(void) const {
 	return (_cgi_pass);
 }
 
-Server::Server(const struct s_server server, const std::vector<Location> locations): _listen(server.listen), _serverName(server.serverName), _root(server.root), _index(server.index), _access_logs(server.access_logs), _error_logs(server.error_logs), _client_max_body_size(server.client_max_body_size), _error_pages(server.error_pages), _locations(locations) {
-	(void)_client_max_body_size;
+const bool&	Location::isValid(void) const {
+	return (_valid);
 }
+
+Server::Server(const struct s_server server, const std::vector<Location> locations): _valid(server.valid), _listen(server.listen), _serverName(server.serverName), _root(server.root), _index(server.index), _access_logs(server.access_logs), _error_logs(server.error_logs), _client_max_body_size(server.client_max_body_size), _error_pages(server.error_pages), _locations(locations) {
+}
+
+Server::Server(const Server& rhs): _valid(rhs._valid), _listen(rhs._listen), _serverName(rhs._serverName), _root(rhs._root), _index(rhs._index), _access_logs(rhs._access_logs), _error_logs(rhs._error_logs), _client_max_body_size(rhs._client_max_body_size), _error_pages(rhs._error_pages), _locations(rhs._locations) {}
 
 Server::~Server(void) {}
 
@@ -60,27 +72,27 @@ const s_listen&	Server::getListen(void) const{
 	return (_listen);
 }
 
-const std::string&					Server::getName(void) const {
+const std::string&	Server::getName(void) const {
 	return (_serverName);
 }
 
-const std::string&					Server::getRoot(void) const {
+const std::string&	Server::getRoot(void) const {
 	return (_root);
 }
 
-const std::vector<std::string>&		Server::getIndex(void) const{
+const std::vector<std::string>&	Server::getIndex(void) const{
 	return (_index);
 }
 
-const std::string&					Server::getAccLogs(void) const {
+const std::string&	Server::getAccLogs(void) const {
 	return (_access_logs);
 }
 
-const std::string&					Server::getErrLogs(void) const {
+const std::string&	Server::getErrLogs(void) const {
 	return (_error_logs);
 }
 
-const unsigned int&					Server::getMaxBodySize(void) const {
+const unsigned int&	Server::getMaxBodySize(void) const {
 	return (_client_max_body_size);
 }
 
@@ -88,8 +100,29 @@ const std::map<int, std::string>&	Server::getErrPages(void) const {
 	return (_error_pages);
 }
 
-const std::vector<Location>&		Server::getLocations(void) const {
+const std::vector<Location>&	Server::getLocations(void) const {
 	return (_locations);
+}
+
+const Location&	Server::getLocation(const std::string& route) const {
+
+	std::vector<Location>::const_iterator	it(_locations.begin());
+	while (it != _locations.end()) {
+		if ((*it).getRoute().compare(route) == 0) {
+			return (*it);
+		}
+		++it;
+	}
+	std::cerr << "getLocation: no location matches route " << route << std::endl;
+	throw 404;
+}
+
+const bool&	Server::isValid(void) const {
+	return (_valid);
+}
+
+void	Server::setNotValid(void) {
+	_valid = false;
 }
 
 Configuration::Configuration(const std::vector<Server> servers): _servers(servers) {
@@ -99,75 +132,4 @@ Configuration::~Configuration(void) {}
 
 const std::vector<Server>&	Configuration::getServers(void) const {
 	return (_servers);
-}
-
-std::ostream&	operator<<(std::ostream& os, const std::vector<Location>& locations) {
-
-	for (std::vector<Location>::const_iterator lit = locations.begin(); lit != locations.end(); ++lit) {
-		const Location&	loc = *lit;
-
-		os << "\t* route: " << loc.getRoute() << std::endl
-		   << "\t\t- root: " << loc.getRoot() << std::endl
-		   << "\t\t- alias: " << loc.getAlias() << std::endl
-		   << "\t\t- autoindex: " << loc.getAutoIndex() << std::endl;
-
-		if (!loc.getLimExcept().empty()) {
-			std::vector<std::string>::const_iterator start = loc.getLimExcept().begin();
-			std::vector<std::string>::const_iterator end = loc.getLimExcept().end();
-			os << "\t\t- limit except: " << std::endl;
-			for (std::vector<std::string>::const_iterator lex = start; lex != end; ++lex) {
-				os << "\t\t\t> " << *lex << std::endl;
-			}
-		}
-
-		os << "\t\t- upload_path: " << loc.getUploadPath() << std::endl;
-
-		if (!loc.getCgiParams().empty()) {
-			const std::map<std::string, std::string>::const_iterator& start = loc.getCgiParams().begin();
-			const std::map<std::string, std::string>::const_iterator& end = loc.getCgiParams().end();
-			os << "\t\t- CGI params: " << std::endl;
-			for (std::map<std::string, std::string>::const_iterator cgip = start; cgip != end; ++cgip) {
-				os << "\t\t\t> " << cgip->first << " = " << cgip->second << std::endl;
-			}
-		}
-
-		os << "\t\t- CGI pass: " << loc.getCgiPass() << std::endl;
-	}
-
-    return os;
-}
-
-std::ostream&	operator<<(std::ostream& os, const Configuration& config) {
-	const std::vector<Server>& servers = config.getServers();
-
-    for (std::vector<Server>::const_iterator it = servers.begin(); it != servers.end(); ++it) {
-        const Server& srv = *it;
-
-        os << "server: " << srv.getName() << std::endl
-           << "port: "   << srv.getListen().port << std::endl
-           << "root: "   << srv.getRoot() << std::endl;
-
-        if (!srv.getIndex().empty()) {
-            os << "index: " << *srv.getIndex().begin() << std::endl;
-        }
-
-        os << "access_logs: " << srv.getAccLogs() << std::endl
-           << "error_logs: "  << srv.getErrLogs() << std::endl
-           << "client max body size: " << srv.getMaxBodySize() << std::endl;
-
-        if (!srv.getErrPages().empty()) {
-            const std::map<int, std::string>::const_iterator& start = srv.getErrPages().begin();
-			const std::map<int, std::string>::const_iterator& end = srv.getErrPages().end();
-            os << "error pages:" << std::endl;
-			for (std::map<int, std::string>::const_iterator errp = start; errp != end; ++errp) {
-				os << "\t* " << errp->first << " = " << errp->second << std::endl;
-			}
-        }
-
-        os << "Locations:\n";
-        const std::vector<Location>& locs = srv.getLocations();
-        os << locs << std::endl;
-    }
-
-    return os;
 }

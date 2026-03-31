@@ -18,28 +18,41 @@
 # include <string>
 # include <vector>
 # include <map>
+# include <set>
 # include "helperConfig.hpp"
+
+# define CLIENT_MAX_BODY_SIZE 10000000
+# define DFT_REDIR 302
+# define EN_REDIR 0
+# define DFT_METHOD "GET"
+# define ERR_STR "ERROR"
 
 class Location {
 	public:
+		Location(void);
 		Location(const struct s_location location);
+		Location(const Location& rhs);
 		~Location(void);
 
 		//getters
 		const std::string&							getRoute(void) const;
 		const std::string&							getRoot(void) const;
 		const std::string&							getAlias(void) const;
-		const std::vector<std::string>&				getLimExcept(void) const;
+		const std::map<int, std::string>&			getReturn(void) const;
+		const std::set<std::string>&				getLimExcept(void) const;
 		const bool&									getAutoIndex(void) const;
 		const std::string&							getUploadPath(void) const;
 		const std::map<std::string, std::string>&	getCgiParams(void) const;
 		const std::string&							getCgiPass(void) const;
+		const bool&									isValid(void) const;
 
 	private:
+		bool										_valid;
 		const std::string							_route;
 		const std::string							_root_path;
 		const std::string							_alias;
-		const std::vector<std::string>				_limit_except;
+		const std::map<int, std::string>			_return;
+		const std::set<std::string>					_limit_except;
 		const bool									_autoindex;
 		const std::string							_upload_path;
 		const std::map<std::string, std::string>	_cgi_param;
@@ -49,6 +62,7 @@ class Location {
 class Server {
 	public:
 		Server(const struct s_server server, const std::vector<Location> locations);
+		Server(const Server& rhs);
 		~Server(void);
 
 		//getters
@@ -61,8 +75,12 @@ class Server {
 		const unsigned int&					getMaxBodySize(void) const;
 		const std::map<int, std::string>&	getErrPages(void) const;
 		const std::vector<Location>&		getLocations(void) const;
+		const Location&						getLocation(const std::string& route) const;
+		const bool&							isValid(void) const;
+		void								setNotValid(void);
 
 	private:
+		bool								_valid;
 		s_listen							_listen;
 		const std::string					_serverName;
 		const std::string					_root;
@@ -90,4 +108,3 @@ std::ostream&	operator<<(std::ostream& os, const Configuration& config);
 std::ostream&	operator<<(std::ostream& os, const std::vector<Location>& locations);
 
 #endif
-

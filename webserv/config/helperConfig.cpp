@@ -12,6 +12,9 @@
 
 #include "helperConfig.hpp"
 
+/// @brief stores a config file's content into a stringstream
+/// @param file 
+/// @return 
 std::string	readFile(const char* file) {
 	std::ifstream	fs(file);
 	if (!fs.is_open()) {
@@ -27,6 +30,9 @@ std::string	readFile(const char* file) {
 	return (output);
 }
 
+/// @brief removes all comments (# lines) from a string
+/// @param str 
+/// @return string with the full content of the file read
 std::string	filterComments(std::string& str) {
 	std::string			output;
 	std::istringstream	is(str);
@@ -47,6 +53,9 @@ std::string	filterComments(std::string& str) {
 	return (output);
 }
 
+/// @brief inserts a blank space (ASCII 32) before every ';', '{' and '}'
+/// @param str 
+/// @return formatted string of the file content read
 std::string	insertSpaces(std::string& str) {
 	std::string	output;
 	
@@ -62,4 +71,3 @@ std::string	insertSpaces(std::string& str) {
 
 	return (output);
 }
-

@@ -1,50 +1,85 @@
-NAME		= webServ_0-1
+NAME		= webServ
 
 CXX			= c++
-CXXFLAGS	= -Wall -Wextra -Werror
+CXXFLAGS	= -Wall -Wextra -Werror -g3
 
 CXX			+= -std=c++98
-
 
 ODIR		= obj/
 
 WEBDIR		= core/server/
 CNFDIR		= config/
 CLIDIR		= core/client/
-HTPDIR		= core/http/
+HTTDIR		= core/http/
 CGIDIR		= core/cgi/
+UTIDIR		= core/utils/
 
 HDRS		= $(WEBDIR)WebServer \
+			$(WEBDIR)helperWebServer \
 			$(CNFDIR)Configuration \
 			$(CNFDIR)helperConfig \
+			$(CNFDIR)helperParser \
 			$(CNFDIR)Parser \
+			$(CNFDIR)validatorConfig \
+			$(CNFDIR)errPages \
+			$(CNFDIR)returnCodes \
 			$(CLIDIR)Client \
-			$(HTPDIR)Http \
+			$(HTTDIR)Http \
 			$(CGIDIR)Cgi \
+			$(UTIDIR)ByteString
 
 SRCS		= $(WEBDIR)WebServer \
+			$(WEBDIR)helperWebServer \
+			$(WEBDIR)memberFunctionsWebServer \
+			$(WEBDIR)mainLoopWebServer \
 			$(CNFDIR)Configuration \
+			$(CNFDIR)ConfigurationStreamOut \
 			$(CNFDIR)helperConfig \
+			$(CNFDIR)helperParser \
 			$(CNFDIR)Parser \
+			$(CNFDIR)ParserLocation \
+			$(CNFDIR)ParserServer \
+			$(CNFDIR)validatorConfig \
+			$(CNFDIR)errPages \
+			$(CNFDIR)returnCodes \
 			$(CLIDIR)Client \
-			$(HTPDIR)Http \
+			$(HTTDIR)Http \
 			$(CGIDIR)Cgi \
-			run \
+			$(UTIDIR)ByteString \
+			run
 
 HDR			= $(addsuffix .hpp, $(HDRS))
 SRC			= $(addsuffix .cpp, $(SRCS))
-OBJ			= $(addsuffix .o, $(SRCS))
+OBJ			= $(addprefix $(ODIR), $(notdir $(addsuffix .o, $(SRCS))))
 
 all: $(NAME)
 
 $(NAME): $(OBJ)
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
-$(ODIR)%.o: $(WEBDIR)%.cpp $(CNFDIR)%.cpp $(CLIDIR)%.cpp $(HDR) | $(ODIR)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
 $(ODIR):
 	mkdir -p $(ODIR)
+
+$(ODIR)%.o: $(WEBDIR)%.cpp $(HDR) | $(ODIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(ODIR)%.o: $(CNFDIR)%.cpp $(HDR) | $(ODIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(ODIR)%.o: $(CLIDIR)%.cpp $(HDR) | $(ODIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(ODIR)%.o: $(HTTDIR)%.cpp $(HDR) | $(ODIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(ODIR)%.o: $(CGIDIR)%.cpp $(HDR) | $(ODIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(ODIR)%.o: $(UTIDIR)%.cpp $(HDR) | $(ODIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(ODIR)%.o: %.cpp $(HDR) | $(ODIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
 	rm -rf $(ODIR)

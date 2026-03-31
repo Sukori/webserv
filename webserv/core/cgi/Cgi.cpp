@@ -6,7 +6,7 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 16:17:33 by pberset           #+#    #+#             */
-/*   Updated: 2026/03/27 16:32:05 by ylabussi         ###   ########.fr       */
+/*   Updated: 2026/03/31 17:51:25 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,27 @@
 //#include "../../config/Configuration.hpp"
 
 #define SERVER_SOFTWARE "weebserv"
-#define GATEWAY_INTERFACE "CGI/1.0"
-#define SERVER_PROTOCOL "HTTP/1.0"
+#define GATEWAY_INTERFACE "CGI/1"
+#define SERVER_PROTOCOL "HTTP/1.1"
 
-static std::string ft_uint_to_string(unsigned int n) {
-	std::string ret;
-	if (n == 0)
-		return "0";
-	while (n > 0)
-	{
-		ret.insert(ret.begin(), n%10 + '0');
-		n = n/10;
-	}
-	return ret;
+void add_cgi_env(std::map<std::string, std::string>& env, /*const Server& server,*/ const Http::StartLine& startLine, const std::string& path) {
+    env.insert(std::make_pair("SERVER_SOFTWARE", SERVER_SOFTWARE "/1"));                    /* SERVER_SOFTWARE   */
+    //env.insert(std::make_pair("SERVER_NAME", server.getName()));                            /* SERVER_NAME       */
+    env.insert(std::make_pair("GATEWAY_INTERFACE", GATEWAY_INTERFACE));                     /* GATEWAY_INTERFACE */
+    env.insert(std::make_pair("SERVER_PROTOCOL", SERVER_PROTOCOL));                         /* SERVER_PROTOCOL   */
+    //env.insert(std::make_pair("SERVER_PORT", ft_uint_to_string(server.getListen().port)));  /* SERVER_PORT       */
+    env.insert(std::make_pair("REQUEST_METHOD", startLine.method));                         /* REQUEST_METHOD    */
+    env.insert(std::make_pair("PATH_INFO", startLine.path));                                /* PATH_INFO         */
+    //env.insert(std::make_pair("PATH_TRANSLATED", ""));                                      /* PATH_TRANSLATED   */
+    env.insert(std::make_pair("SCRIPT_FILENAME", path));                                        /* SCRIPT_FILENAME       */
+    env.insert(std::make_pair("QUERY_STRING", startLine.query));                            /* QUERY_STRING      */
+    env.insert(std::make_pair("REMOTE_HOST", ""));                                          /* REMOTE_HOST       */
+    env.insert(std::make_pair("REMOTE_ADDR", ""));                                          /* REMOTE_ADDR       */
+    //env.insert(std::make_pair("AUTH_TYPE", "?"));                                           /* AUTH_TYPE         */
+    //env.insert(std::make_pair("REMOTE_USER", "?"));                                         /* REMOTE_USER       */
+    //env.insert(std::make_pair("REMOTE_IDENT", "?"));                                        /* REMOTE_IDENT      */
+    //env.insert(std::make_pair("CONTENT_TYPE", ""));                                         /* CONTENT_TYPE      */
+    //env.insert(std::make_pair("CONTENT_LENGTH", ""));                                       /* CONTENT_LENGTH    */
 }
 
 void add_cgi_env(std::map<std::string, std::string>& env, const Server& server, const Http::StartLine& startLine, const std::string& path) {

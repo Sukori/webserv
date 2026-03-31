@@ -6,7 +6,7 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 16:12:29 by pberset           #+#    #+#             */
-/*   Updated: 2026/01/24 15:50:38 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/03/30 15:22:55 by pberset          ###   Lausanne.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,34 +15,47 @@
 
 # include <iostream>
 # include <string>
+# include <cstring>
 # include <sys/socket.h>
+# include <arpa/inet.h>
+# include "../http/Http.hpp"
+# include "../../config/helperParser.hpp"
+# include "../utils/ByteString.hpp"
 
 # define BUFFER_SIZE 4096
 
 class Client {
 	public:
-		Client(int socket);
+		Client(void);
 		~Client(void);
 
-		ssize_t			readRequest(void);
-		bool			writeResponse(void);
+		std::size_t			readRequest(int socket);
+		bool				writeResponse(int socket);
 
-		std::string		getRequestIn(void);
-		std::string		getResponseOut(void);
-		ssize_t			getRequestSize(void);
-		bool			isRequestComplete(void);
-		int				getSocketStatus(void);
-		int				getSocket(void);
+		const ByteString&	getRequestBodyIn(void) const;
+		const ByteString&	getResponseBodyOut(void) const;
+		const std::string&	getrawHeaderIn(void) const;
+		const std::string&	getRawHeaderOut(void) const;
+		std::size_t			getHeaderSize(void) const;
+		std::size_t			getBodySize(void) const;
+		bool				isRequestComplete(void) const;
 
-		void			setResponse(const std::string& response);
+		void				setResponse(const std::string& header, const ByteString& body);
 
 	private:
-		Client(void);
-		std::string		_requestIn;
-		std::string		_responseOut;
-		ssize_t			_requestSize;
-		bool			_requestComplete;
-		int				_socket;
+		//std::string	_requestIn;
+		//std::string	_responseOut;
+		ByteString	_requestBodyIn;
+		ByteString	_responseBodyOut;
+		std::string	_rawHeaderIn;
+		std::string	_rawHeaderOut;
+		std::size_t	_headerSize;
+		bool		_headerComplete;
+		bool		_alreadyChecked;
+		bool		_expectsBody;
+		std::size_t	_expectedBodySize;
+		std::size_t	_bodySize;
+		bool		_bodyComplete;
 };
 
 

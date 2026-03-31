@@ -1,5 +1,4 @@
 #include "ByteString.hpp"
-#include <string>
 
 int main(void)
 {

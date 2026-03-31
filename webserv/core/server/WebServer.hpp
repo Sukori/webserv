@@ -19,16 +19,22 @@
 # include <cstring>
 # include <vector>
 # include <map>
+# include <set>
 # include <cerrno>
 # include <cstdlib>
 # include <fcntl.h>
 # include <poll.h>
 # include <sys/socket.h>
+# include <sys/types.h>
+# include <sys/time.h>
+# include <netdb.h>
 # include <arpa/inet.h>
 # include <unistd.h>
-# include <sys/time.h>
-# include "../../config/Parser.hpp" 
+# include <signal.h>
+# include "../../config/Configuration.hpp"
+# include "../../config/Parser.hpp"
 # include "../client/Client.hpp"
+# include "helperWebServer.hpp"
 # include "../http/Http.hpp"
 
 # define BUFFER_SIZE 4096
@@ -38,26 +44,26 @@ class WebServer {
 	public:
 		WebServer(const Configuration& config);
 		~WebServer(void);
+
+		static void	installSignalHandlers(void);
 	
 		void	run(void);
 	
 	private:
 		WebServer(void); 
-		Configuration			_config;
-		std::vector<pollfd>		_fds;
-		std::map<int, Client>	_clients;
-		int						_socket;
+		Configuration					_config;
+		std::vector<pollfd>				_fds;
+		std::map<int, Client>			_clients;
+		std::map<int, const Server*>	_serverSockets;
+		std::map<int, const Server*>	_clientsServers;
 
-		struct sockaddr_in		_socketAddress;
+		static volatile sig_atomic_t	_stopRequested;
+		static void					_handleSignal(int sig);
 
-		int						_initServer(void);
-		int						_closeServer(void);
-		int						_acceptConnection(void);
-		void					_handleRequest(Client& client);
-		const Server*			_findBestConfig(std::string host, int port); //rename ServerConfig when merge with config branch
+		int						_initServer(const struct addrinfo* addrinfo, const Server* server);
+		void					_closeServer(void);
+		int						_acceptConnection(int fd);
+		void					_handleRequest(std::map<int, Client>::iterator& client, const Server* server);
 };
-
-void	putLog(const std::string& message);
-void	exitWithError(const std::string& funct,const std::string& message);
 
 #endif
