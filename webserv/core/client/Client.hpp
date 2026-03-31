@@ -15,10 +15,12 @@
 
 # include <iostream>
 # include <string>
+# include <cstring>
 # include <sys/socket.h>
 # include <arpa/inet.h>
 # include "../http/Http.hpp"
 # include "../../config/helperParser.hpp"
+# include "../utils/ByteString.hpp"
 
 # define BUFFER_SIZE 4096
 
@@ -27,21 +29,26 @@ class Client {
 		Client(void);
 		~Client(void);
 
-		ssize_t		readRequest(int socket);
-		bool		writeResponse(int socket);
+		ssize_t				readRequest(int socket);
+		bool				writeResponse(int socket);
 
-		std::string	getRequestIn(void);
-		std::string	getResponseOut(void);
-		ssize_t		getHeaderSize(void);
-		ssize_t		getBodySize(void);
-		bool		isRequestComplete(void);
+		const ByteString&	getRequestBodyIn(void) const;
+		const ByteString&	getResponseBodyOut(void) const;
+		const std::string&	getrawHeaderIn(void) const;
+		const std::string&	getRawHeaderOut(void) const;
+		ssize_t				getHeaderSize(void) const;
+		ssize_t				getBodySize(void) const;
+		bool				isRequestComplete(void) const;
 
-		void		setResponse(const std::string& response);
+		void				setResponse(const std::string& header, const ByteString& body);
 
 	private:
-		std::string	_requestIn;
-		std::string	_responseOut;
+		//std::string	_requestIn;
+		ByteString	_requestBodyIn;
+		//std::string	_responseOut;
+		ByteString	_responseBodyOut;
 		std::string	_rawHeaderIn;
+		std::string	_rawHeaderOut;
 		ssize_t		_headerSize;
 		bool		_headerComplete;
 		bool		_alreadyChecked;

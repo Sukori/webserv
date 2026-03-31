@@ -2,6 +2,7 @@
 #define BYTESTRING_HPP
 #include <cstddef>
 #include <cstring>
+#include <string>
 #include <iostream>
 
 typedef unsigned char byte;
@@ -32,7 +33,7 @@ class ByteString
 	size_t		shrink_to_fit(void);
 	void		clear(void);
 
-	ByteString	substr(size_t pos, size_t len = npos);
+	ByteString	substr(size_t pos, size_t len = std::string::npos);
 
 	size_t		find(const byte*, size_t len, size_t pos = 0);
 	size_t		find(byte, size_t pos = 0);

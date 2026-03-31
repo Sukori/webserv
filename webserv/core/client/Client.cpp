@@ -25,39 +25,55 @@ Client::Client(void) {
 Client::~Client(void) {
 }
 
-std::string	Client::getRequestIn(void) {
-    return (_requestIn);
+const ByteString&	Client::getRequestBodyIn(void) const {
+    return (_requestBodyIn);
 }
 
-std::string	Client::getResponseOut(void) {
-    return (_responseOut);
+const ByteString&	Client::getResponseBodyOut(void) const {
+    return (_responseBodyOut);
 }
 
-ssize_t	Client::getHeaderSize(void) {
+const std::string&	Client::getrawHeaderIn(void) const {
+	return (_rawHeaderIn);
+}
+
+const std::string&	Client::getRawHeaderOut(void) const {
+	return (_rawHeaderOut);
+}
+
+ssize_t	Client::getHeaderSize(void) const {
     return (_headerSize);
 }
 
-ssize_t	Client::getBodySize(void) {
+ssize_t	Client::getBodySize(void) const {
     return (_bodySize);
 }
 
-bool    Client::isRequestComplete(void) {
+bool    Client::isRequestComplete(void) const {
     return (_headerComplete && _bodyComplete);
 }
 
-void	Client::setResponse(const std::string& response) {
-	_responseOut = response;
+void	Client::setResponse(const std::string& header, const ByteString& body) {
+	_rawHeaderOut = header;
+	_responseBodyOut = body;
+}
+
+static byte*	strToByte(const char *str, std::size_t len) {
+	byte*	out = new byte[len];
+	std::memcpy(out, str, len);
+	return (out);
 }
 
 /// @brief reads a request until RFC end of header flag from a client and stores it 
 /// @param  none
 /// @return bytes read
 ssize_t	Client::readRequest(int socket) {
-    char    temp_buffer[BUFFER_SIZE] = {0};
+    //char    temp_buffer[BUFFER_SIZE] = {0};
+	byte	temp_buffer(BUFFER_SIZE);
 	ssize_t	bytesRead = 0;
 
 	if (!_headerComplete) {
-    	bytesRead = recv(socket, temp_buffer, BUFFER_SIZE, 0);
+    	bytesRead = recv(socket, &temp_buffer, BUFFER_SIZE, 0);
     	if (bytesRead < 0) {
     	    std::cerr << "recv read error" << std::endl;
     	} else if (bytesRead == 0) {
@@ -69,9 +85,10 @@ ssize_t	Client::readRequest(int socket) {
     	    if ( clrf != std::string::npos) {
 				_headerComplete = true;
 				clrf += 4;
-				_requestIn.append(_rawHeaderIn);
 				std::string	sub = _rawHeaderIn.substr(clrf, std::string::npos);
 				_bodySize += sub.length();
+				byte* rawSub= strToByte(sub.c_str(), sub.length());
+				_requestBodyIn.append(rawSub, sub.length());
 				_rawHeaderIn.erase(clrf, std::string::npos);
     	    }
     	}
@@ -110,13 +127,13 @@ ssize_t	Client::readRequest(int socket) {
 			_alreadyChecked = true;
 		}
 		if (!_bodyComplete && _expectsBody) {
-			bytesRead = recv(socket, temp_buffer, BUFFER_SIZE, 0);
+			bytesRead = recv(socket, &temp_buffer, BUFFER_SIZE, 0);
     		if (bytesRead < 0) {
     		    std::cerr << "recv read error" << std::endl;
     		} else if (bytesRead == 0) {
     		    std::cerr << "client closed the connection" << std::endl;
     		} else {
-    		    _requestIn.append(temp_buffer, bytesRead);
+    		    _requestBodyIn.append(&temp_buffer, bytesRead);
     		    _bodySize += bytesRead;
     		    if (_bodySize == _expectedBodySize) {
 					_bodyComplete = true;
@@ -134,18 +151,18 @@ ssize_t	Client::readRequest(int socket) {
 /// @param  none
 /// @return bool. True if response was successfully sent
 bool	Client::writeResponse(int socket) {
-	if (_responseOut.empty()) {
+	if (_responseBodyOut.empty()) {
 		return (false);
 	}
 
-	ssize_t	bytes_sent = send(socket, _responseOut.c_str(), _responseOut.size(), 0);
+	ssize_t	bytes_sent = send(socket, _responseBodyOut.data(), _responseBodyOut.length(), 0);
 	if (bytes_sent < 0 ) {
 		std::cout << "send error" << std::endl;
 	} else if (bytes_sent == 0) {
 		std::cout << "client has closed the connection" << std::endl;
 	} else {
 		std::cout << "write " << bytes_sent << "bytes" << std::endl; //debug
-		_responseOut.erase(0, bytes_sent);
+		_responseBodyOut.clear();
 	}
-	return (_responseOut.empty());
+	return (_responseBodyOut.empty());
 }
