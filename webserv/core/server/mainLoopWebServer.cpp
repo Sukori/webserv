@@ -81,7 +81,7 @@ void	WebServer::run(void) {
 
 				if (it != _clients.end()) {
 					if (_fds[i].revents & POLLIN) {
-						ssize_t readBytes;
+						std::size_t readBytes;
 						try {
 							readBytes = it->second.readRequest(_fds[i].fd);
 						} catch (int status) {

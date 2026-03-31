@@ -41,11 +41,11 @@ const std::string&	Client::getRawHeaderOut(void) const {
 	return (_rawHeaderOut);
 }
 
-ssize_t	Client::getHeaderSize(void) const {
+std::size_t	Client::getHeaderSize(void) const {
     return (_headerSize);
 }
 
-ssize_t	Client::getBodySize(void) const {
+std::size_t	Client::getBodySize(void) const {
     return (_bodySize);
 }
 
@@ -67,10 +67,10 @@ static byte*	strToByte(const char *str, std::size_t len) {
 /// @brief reads a request until RFC end of header flag from a client and stores it 
 /// @param  none
 /// @return bytes read
-ssize_t	Client::readRequest(int socket) {
+std::size_t	Client::readRequest(int socket) {
     //char    temp_buffer[BUFFER_SIZE] = {0};
 	byte	temp_buffer(BUFFER_SIZE);
-	ssize_t	bytesRead = 0;
+	std::size_t	bytesRead = 0;
 
 	if (!_headerComplete) {
     	bytesRead = recv(socket, &temp_buffer, BUFFER_SIZE, 0);
@@ -155,7 +155,7 @@ bool	Client::writeResponse(int socket) {
 		return (false);
 	}
 
-	ssize_t	bytes_sent = send(socket, _responseBodyOut.data(), _responseBodyOut.length(), 0);
+	std::size_t	bytes_sent = send(socket, _responseBodyOut.data(), _responseBodyOut.length(), 0);
 	if (bytes_sent < 0 ) {
 		std::cout << "send error" << std::endl;
 	} else if (bytes_sent == 0) {
