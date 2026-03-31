@@ -1,5 +1,5 @@
-#include "Http.hpp"
-#include "../cgi/Cgi.hpp"
+#include <Http.hpp>
+#include <Cgi.hpp>
 
 Http::Http(const std::string& message):
 	_pos(0),

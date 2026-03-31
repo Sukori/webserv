@@ -14,6 +14,10 @@ HTTDIR		= core/http/
 CGIDIR		= core/cgi/
 UTIDIR		= core/utils/
 
+INCLUDES	= -I$(WEBDIR) -I$(CNFDIR) -I$(CLIDIR) -I$(HTTDIR) -I$(CGIDIR) -I$(UTIDIR)
+
+CXXFLAGS	+= $(INCLUDES)
+
 HDRS		= $(WEBDIR)WebServer \
 			$(WEBDIR)helperWebServer \
 			$(CNFDIR)Configuration \

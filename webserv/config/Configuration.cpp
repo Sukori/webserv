@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Configuration.hpp"
+#include <Configuration.hpp>
 
 Location::Location(void): _valid(false), _autoindex(true) {}
 
