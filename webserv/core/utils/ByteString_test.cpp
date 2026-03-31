@@ -1,4 +1,5 @@
 #include "ByteString.hpp"
+#include <string>
 
 int main(void)
 {
@@ -16,6 +17,11 @@ int main(void)
 	std::cout << s2 << '\n';
 	s2.clear();
 	std::cout << s2 << '\n';
+	ByteString s3 ("haiii123f321");
+	std::cout << s3 << '\n';
+	std::cout << s3.substr(s3.find("23")) << '\n';
+	std::cout << s3.substr(s3.find_first_of("f3")) << '\n';
+	std::cout << s3.substr(s3.find_last_not_of("123")) << '\n';
 	return 0;
 }
 
