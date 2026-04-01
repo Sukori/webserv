@@ -63,7 +63,7 @@ void	WebServer::run(void) {
 			if (_serverSockets.find(_fds[i].fd) != _serverSockets.end()) {
 				int newSocket = _acceptConnection(_fds[i].fd);
 				if (newSocket > 0) {
-					const Server*			serv = _serverSockets.find(_fds[i].fd)->second;
+					const Server*	serv = _serverSockets.find(_fds[i].fd)->second;
 					_clients[newSocket];
 					_clientsServers.insert(std::make_pair(newSocket, serv));
 					struct pollfd	npfd;
@@ -81,14 +81,14 @@ void	WebServer::run(void) {
 
 				if (it != _clients.end()) {
 					if (_fds[i].revents & POLLIN) {
-						std::size_t readBytes;
+						ssize_t readBytes;
 						try {
 							readBytes = it->second.readRequest(_fds[i].fd);
 						} catch (int status) {
 							std::cerr << "log temporaire: " << status << std::endl;
 						}
 	
-						if (readBytes <= 0) {
+						if (readBytes < 0) {
 							close(_fds[i].fd);
 							_clients.erase(it);
 							_clientsServers.erase(_fds[i].fd);

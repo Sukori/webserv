@@ -50,6 +50,8 @@ std::size_t	Client::readRequest(int socket) {
         std::cerr << "client closed the connection" << std::endl;
     } else {
         _request.append(temp_buffer, bytesRead);
+		if (bytesRead < BUFFER_SIZE)
+			_requestComplete = true;
     }
 
 	return (bytesRead);
