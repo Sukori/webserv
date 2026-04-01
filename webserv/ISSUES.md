@@ -15,7 +15,7 @@
 	>> Décision, la route invalide n'est pas bloquante. Vérifier le flag `isValid()` dans req/resp
 - [x] Ne pas bloquer le parsing du serveur 2 si serveur 1 avait une erreur
 - [ ] Gérer les `req/res` à l'aide des fonctions `http` (merge effectué)
-	>> [ ] Client doit seulement lire l'ensemble de la communication sans separer header et body (request complete quand recv() == 0)
+	>> [x] Client doit seulement lire l'ensemble de la communication sans separer header et body (request complete quand recv() == 0)
 	>> [ ] Handle request doit créer un Http(Bytestring)
 	>> [ ] Handle request va ensuite build response et la stocker dans un ByteString
 	>> [ ] Finalement, stocker dans Client::_responseOut

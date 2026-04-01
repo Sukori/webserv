@@ -32,30 +32,17 @@ class Client {
 		std::size_t			readRequest(int socket);
 		bool				writeResponse(int socket);
 
-		const ByteString&	getRequestBodyIn(void) const;
-		const ByteString&	getResponseBodyOut(void) const;
-		const std::string&	getrawHeaderIn(void) const;
-		const std::string&	getRawHeaderOut(void) const;
-		std::size_t			getHeaderSize(void) const;
-		std::size_t			getBodySize(void) const;
+		const ByteString&	getRequest(void) const;
+		const ByteString&	getResponse(void) const;
+
 		bool				isRequestComplete(void) const;
 
-		void				setResponse(const std::string& header, const ByteString& body);
+		void				setResponse(const ByteString& response);
 
 	private:
-		//std::string	_requestIn;
-		//std::string	_responseOut;
-		ByteString	_requestBodyIn;
-		ByteString	_responseBodyOut;
-		std::string	_rawHeaderIn;
-		std::string	_rawHeaderOut;
-		std::size_t	_headerSize;
-		bool		_headerComplete;
-		bool		_alreadyChecked;
-		bool		_expectsBody;
-		std::size_t	_expectedBodySize;
-		std::size_t	_bodySize;
-		bool		_bodyComplete;
+		ByteString	_request;
+		ByteString	_response;
+		bool		_requestComplete;
 };
 
 
