@@ -35,23 +35,18 @@ void	Client::setResponse(const ByteString& response) {
 	_response = response;
 }
 
-static byte*	strToByte(const char *str, std::size_t len) {
-	byte*	out = new byte[len];
-	std::memcpy(out, str, len);
-	return (out);
-}
-
 /// @brief reads a request until recv is empty from a client and stores it 
 /// @param  none
 /// @return bytes read
 std::size_t	Client::readRequest(int socket) {
 	byte	temp_buffer[BUFFER_SIZE];
-	std::size_t	bytesRead = 0;
+	ssize_t	bytesRead = 0;
 
     bytesRead = recv(socket, &temp_buffer, BUFFER_SIZE, 0);
     if (bytesRead < 0) {
         std::cerr << "recv read error" << std::endl;
     } else if (bytesRead == 0) {
+		_requestComplete = true;
         std::cerr << "client closed the connection" << std::endl;
     } else {
         _request.append(temp_buffer, bytesRead);
@@ -68,7 +63,7 @@ bool	Client::writeResponse(int socket) {
 		return (false);
 	}
 
-	std::size_t	bytes_sent = send(socket, _response.data(), _response.length(), 0);
+	ssize_t	bytes_sent = send(socket, _response.data(), _response.length(), 0);
 	if (bytes_sent < 0 ) {
 		std::cout << "send error" << std::endl;
 	} else if (bytes_sent == 0) {
