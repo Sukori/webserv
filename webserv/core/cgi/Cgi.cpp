@@ -6,7 +6,7 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 16:17:33 by pberset           #+#    #+#             */
-/*   Updated: 2026/03/31 17:51:25 by ylabussi         ###   ########.fr       */
+/*   Updated: 2026/04/01 16:57:27 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,20 @@ void add_cgi_env(std::map<std::string, std::string>& env, /*const Server& server
     //env.insert(std::make_pair("CONTENT_LENGTH", ""));                                       /* CONTENT_LENGTH    */
 }
 
+static std::string ft_uint_to_string(unsigned int i) {
+	if (i == 0)
+		return "0";
+	std::string ret;
+	char s[] = "0";
+	while (i > 0)
+	{
+		*s = (char) i%10 + '0';
+		ret.insert(0, s);
+		i /=10;
+	}
+	return ret;
+}
+
 void add_cgi_env(std::map<std::string, std::string>& env, const Server& server, const Http::StartLine& startLine, const std::string& path) {
 	env["SERVER_SOFTWARE"] = SERVER_SOFTWARE "/1.0";					/* SERVER_SOFTWARE   */
 	env["SERVER_NAME"] = server.getName();								/* SERVER_NAME       */
@@ -58,7 +72,7 @@ void add_cgi_env(std::map<std::string, std::string>& env, const Server& server, 
 returns pipe fd out
 make sure first field of all env is full UPPER_SNAKE_CASE instead of lower-kebab-case
 */
-int exec_cgi(const std::string& exe, const std::string& path, std::map<std::string, std::string> env, int socketIn) {
+int exec_cgi(const std::string& exe, const std::string& path, std::map<std::string, std::string> env, int fdIn) {
 	typedef std::map<std::string, std::string> env_map;
 	int		pfds[2];
 	if (pipe(pfds))
@@ -78,7 +92,7 @@ int exec_cgi(const std::string& exe, const std::string& path, std::map<std::stri
 		for (env_map::iterator it = env.begin(); it != env.end(); it++)
 			envp[std::distance(env.begin(), it)] = strdup((it->first + '=' + it->second).c_str());
 		std::cout << argv[0] << ' ' << argv[1] << '\n';
-		dup2(socketIn, 0);
+		dup2(fdIn, 0);
 		dup2(pfds[1], 1);
 		close(pfds[0]);
 		execve(argv[0], argv, envp);

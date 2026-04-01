@@ -3,8 +3,9 @@
 #include <cstddef>
 #include <cstring>
 #include <iostream>
+#include <string>
 
-typedef char byte;
+typedef unsigned char byte;
 
 class ByteString
 {
@@ -15,6 +16,8 @@ class ByteString
 	ByteString(const char* s);
 	ByteString(const ByteString&);
 	~ByteString(void);
+
+	std::string	to_string(void) const;
 
 	ByteString&	operator=(const ByteString&);
 
@@ -35,29 +38,32 @@ class ByteString
 	size_t		shrink_to_fit(void);
 	void		clear(void);
 
-	ByteString	substr(size_t pos, size_t len = npos);
+	ByteString	substr(size_t pos, size_t len = npos) const;
 
 	size_t		find(const byte*, size_t len, size_t pos = 0) const;
-	size_t		find(byte, size_t pos = 0) const;
-
 	size_t		find_first_not_of(const byte*, size_t len, size_t pos = 0) const;
 	size_t		find_last_not_of(const byte*, size_t len, size_t pos = 0) const;
 	size_t		find_first_of(const byte*, size_t len, size_t pos = 0) const;
 	size_t		find_last_of(const byte*, size_t len, size_t pos = 0) const;
-
 	
 	size_t		find(const char*, size_t pos = 0) const;
 	size_t		find_first_not_of(const char*, size_t pos = 0) const;
 	size_t		find_last_not_of(const char*, size_t pos = 0) const;
 	size_t		find_first_of(const char*, size_t pos = 0) const;
 	size_t		find_last_of(const char*, size_t pos = 0) const;
+	
+	size_t		find(byte, size_t pos = 0) const;
+	size_t		find_first_not_of(byte, size_t pos = 0) const;
+	size_t		find_last_not_of(byte, size_t pos = 0) const;
+	size_t		find_first_of(byte, size_t pos = 0) const;
+	size_t		find_last_of(byte, size_t pos = 0) const;
 
 	static const size_t npos;
 
 	private:
-	byte*	_data;
 	size_t	_len;
 	size_t	_cur;
+	byte*	_data;
 };
 
 std::ostream&	operator<<(std::ostream& os, const ByteString&);

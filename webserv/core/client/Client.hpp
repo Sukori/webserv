@@ -6,7 +6,7 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 16:12:29 by pberset           #+#    #+#             */
-/*   Updated: 2026/03/30 15:22:55 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/04/01 15:52:59 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,30 +32,20 @@ class Client {
 		std::size_t			readRequest(int socket);
 		bool				writeResponse(int socket);
 
-		const ByteString&	getRequestBodyIn(void) const;
-		const ByteString&	getResponseBodyOut(void) const;
-		const std::string&	getrawHeaderIn(void) const;
-		const std::string&	getRawHeaderOut(void) const;
+		const ByteString&	getRequestIn(void) const;
+		const ByteString&	getResponseOut(void) const;
 		std::size_t			getHeaderSize(void) const;
 		std::size_t			getBodySize(void) const;
 		bool				isRequestComplete(void) const;
 
-		void				setResponse(const std::string& header, const ByteString& body);
+		void				setResponse(const ByteString& message);
 
 	private:
 		//std::string	_requestIn;
 		//std::string	_responseOut;
-		ByteString	_requestBodyIn;
-		ByteString	_responseBodyOut;
-		std::string	_rawHeaderIn;
-		std::string	_rawHeaderOut;
-		std::size_t	_headerSize;
-		bool		_headerComplete;
-		bool		_alreadyChecked;
-		bool		_expectsBody;
-		std::size_t	_expectedBodySize;
-		std::size_t	_bodySize;
-		bool		_bodyComplete;
+		ByteString	_requestIn;
+		ByteString	_responseOut;
+		bool		_requestComplete;
 };
 
 

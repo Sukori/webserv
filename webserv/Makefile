@@ -3,7 +3,7 @@ NAME		= webServ
 CXX			= c++
 CXXFLAGS	= -Wall -Wextra -Werror -g3
 
-CXX			+= -std=c++98
+CXX			+= -std=c++98 -pedantic
 
 ODIR		= obj/
 

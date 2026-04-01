@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Configuration.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
+/*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/12 18:23:28 by pberset           #+#    #+#             */
-/*   Updated: 2026/01/24 16:27:12 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/04/01 19:15:55 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,9 +108,12 @@ const Location&	Server::getLocation(const std::string& route) const {
 
 	std::vector<Location>::const_iterator	it(_locations.begin());
 	while (it != _locations.end()) {
-		if ((*it).getRoute().compare(route) == 0) {
+		/*if ((*it).getRoute().compare(route) == 0) {
 			return (*it);
-		}
+		}*/
+		/* TODO implement a proper route check ABSOLUTELY */
+		if (route.rfind(it->getRoute(), 0) == 0) // check if route starts with the location's route
+			return *it;
 		++it;
 	}
 	std::cerr << "getLocation: no location matches route " << route << std::endl;
