@@ -6,14 +6,13 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 14:11:31 by pberset           #+#    #+#             */
-/*   Updated: 2026/03/30 15:24:44 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/04/01 16:48:58 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Client.hpp"
 
-Client::Client(void) {
-	_requestComplete = false;
+Client::Client(void): _requestComplete(false) {
 }
 
 Client::~Client(void) {
@@ -28,6 +27,7 @@ const ByteString&	Client::getResponse(void) const {
 }
 
 bool    Client::isRequestComplete(void) const {
+    return (_requestComplete);
     return (_requestComplete);
 }
 
@@ -57,7 +57,7 @@ std::size_t	Client::readRequest(int socket) {
         _request.append(temp_buffer, bytesRead);
     }
 
-    return (bytesRead);
+	return (bytesRead);
 }
 
 /// @brief writes a server response to a client

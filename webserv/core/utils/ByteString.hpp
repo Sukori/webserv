@@ -2,8 +2,8 @@
 #define BYTESTRING_HPP
 #include <cstddef>
 #include <cstring>
-#include <string>
 #include <iostream>
+#include <string>
 
 typedef unsigned char byte;
 
@@ -13,12 +13,17 @@ class ByteString
 	ByteString(void);
 	ByteString(size_t);
 	ByteString(const byte* s, size_t len);
+	ByteString(const char* s);
 	ByteString(const ByteString&);
 	~ByteString(void);
+
+	std::string	to_string(void) const;
 
 	ByteString&	operator=(const ByteString&);
 
 	size_t		append(const byte*, size_t);
+	size_t		append(const char*);
+	size_t		append(const byte);
 	size_t		append(const ByteString&);
 	const byte*	data(void) const;
 
@@ -33,19 +38,34 @@ class ByteString
 	size_t		shrink_to_fit(void);
 	void		clear(void);
 
-	ByteString	substr(size_t pos, size_t len = std::string::npos);
+	ByteString	substr(size_t pos, size_t len = npos) const;
 
-	size_t		find(const byte*, size_t len, size_t pos = 0);
-	size_t		find(byte, size_t pos = 0);
+	size_t		find(const byte*, size_t len, size_t pos = 0) const;
+	size_t		find_first_not_of(const byte*, size_t len, size_t pos = 0) const;
+	size_t		find_last_not_of(const byte*, size_t len, size_t pos = 0) const;
+	size_t		find_first_of(const byte*, size_t len, size_t pos = 0) const;
+	size_t		find_last_of(const byte*, size_t len, size_t pos = 0) const;
+	
+	size_t		find(const char*, size_t pos = 0) const;
+	size_t		find_first_not_of(const char*, size_t pos = 0) const;
+	size_t		find_last_not_of(const char*, size_t pos = 0) const;
+	size_t		find_first_of(const char*, size_t pos = 0) const;
+	size_t		find_last_of(const char*, size_t pos = 0) const;
+	
+	size_t		find(byte, size_t pos = 0) const;
+	size_t		find_first_not_of(byte, size_t pos = 0) const;
+	size_t		find_last_not_of(byte, size_t pos = 0) const;
+	size_t		find_first_of(byte, size_t pos = 0) const;
+	size_t		find_last_of(byte, size_t pos = 0) const;
 
 	static const size_t npos;
 
 	private:
-	byte*	_data;
 	size_t	_len;
 	size_t	_cur;
+	byte*	_data;
 };
 
-std::ostream& operator<<(std::ostream& os, const ByteString&);
+std::ostream&	operator<<(std::ostream& os, const ByteString&);
 
 #endif

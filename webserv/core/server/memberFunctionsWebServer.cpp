@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   memberFunctionsWebServer.cpp                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
+/*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 17:46:35 by pberset           #+#    #+#             */
-/*   Updated: 2026/03/30 15:33:49 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/04/01 19:16:20 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,8 @@ void	WebServer::_closeServer(void) {
 void	WebServer::_handleRequest(std::map<int, Client>::iterator& client, const Server* server) {
 
 	int status;
-
+	ByteString out;
+	std::cerr << client->second.getRequestIn() << '\n';
 	try {
 		Http					req(client->second.getRequestIn());
 		std::string				route = req.getStartLine().path;
@@ -76,14 +77,19 @@ void	WebServer::_handleRequest(std::map<int, Client>::iterator& client, const Se
 		std::set<std::string>	methods = loc.getLimExcept();
 		req.verifyMethod(methods);
 		/* process normal */
+		std::map<std::string, std::string>	bin;
+		bin["py"] = "/usr/bin/python3";
+		bin["php"] = "/usr/bin/php-cgi";
+		out = req.getResponseBody(loc.getRoot(), bin, *server);
 		status = 200;
 	} catch (int s) {
 		status = s;
+		out = Http::buildErrorHtml(status, *server);
 	}
 	std::cout << "status " << status << std::endl;
 	//ici il faut encore verifier le status. puis rebuild le header a append a la response
 
-	client->second.setResponse(Http::buildResponse(status, server->getName()));
+	client->second.setResponse(Http::buildResponse(out, status, server->getName()));
 }
 
 /// @brief accepts a new connexion from a client

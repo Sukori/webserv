@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ParserServer.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
+/*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 17:09:15 by pberset           #+#    #+#             */
-/*   Updated: 2026/03/18 17:09:21 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/04/01 18:38:59 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,7 +194,7 @@ Server	Parser::parseServer(void) {
 
 			case 2:
 				_ss >> token;
-				servStruct.root = "." + token;
+				servStruct.root = "." + token; // need to remove trailing / if there is one
 				break;
 
 			case 3:
