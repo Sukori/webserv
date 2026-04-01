@@ -69,9 +69,9 @@ void	WebServer::_handleRequest(std::map<int, Client>::iterator& client, const Se
 
 	int status;
 	ByteString out;
-	std::cerr << client->second.getRequestIn() << '\n';
+	std::cerr << client->second.getRequest() << '\n';
 	try {
-		Http					req(client->second.getRequestIn());
+		Http					req(client->second.getRequest());
 		std::string				route = req.getStartLine().path;
 		Location 				loc(server->getLocation(route));
 		std::set<std::string>	methods = loc.getLimExcept();
