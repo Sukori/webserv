@@ -1,5 +1,6 @@
 #include <Http.hpp>
 #include <Cgi.hpp>
+#include <Client.hpp>
 
 Http::Http(const ByteString& message):
 	_pos(0),
@@ -130,7 +131,6 @@ static std::string get_ext(const std::string& path) {
 		return path.substr(sep + 1);
 }
 
-#define BUFFER_SIZE 16
 /* reads all data on fd and closes it */
 static ByteString	read_all(int fd) {
 	byte	buf[BUFFER_SIZE];
