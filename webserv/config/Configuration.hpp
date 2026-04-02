@@ -21,7 +21,6 @@
 # include <set>
 # include <helperConfig.hpp>
 
-# define CLIENT_MAX_BODY_SIZE 10000000
 # define DFT_REDIR 302
 # define EN_REDIR 0
 # define DFT_METHOD "GET"

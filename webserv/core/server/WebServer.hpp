@@ -37,7 +37,6 @@
 # include "helperWebServer.hpp"
 # include "../http/Http.hpp"
 
-# define BUFFER_SIZE 4096
 # define BACKLOG 1024
 
 class WebServer {
