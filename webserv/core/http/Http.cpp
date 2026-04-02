@@ -8,10 +8,6 @@ Http::Http(const ByteString& message):
 	_header(_parseHeaders(message)),
 	_body(_parseBody(message)) {
 	/* check for 400 Bad Request, 411 Length Required */
-	/*if (_header.count("CONTENT_LENGTH") == 0)
-		throw 411; // Length Required*/
-	//GET without length is valid. https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods/GET
-	//POST, PUT without length are not valid
 }
 
 void	Http::verifyMethod(const std::set<std::string>& allowed_methods) const {
@@ -34,20 +30,20 @@ Http::StartLine	Http::_parseStartLine(const ByteString& message) {
 	StartLine	ret;
 	size_t		lineEnd = message.find("\r\n", _pos);
 	if (lineEnd == message.npos)
-		throw 400;
+		throw 400; // Bad Request
 	
 	size_t	methodEnd = message.find(' ', _pos);
 	if (methodEnd == message.npos || methodEnd >= lineEnd)
-		throw 400;
+		throw 400; // Bad Request
 	ret.method = message.substr(_pos, methodEnd - _pos).to_string();
 	
 	size_t	targetStart = message.find_first_not_of(' ', methodEnd);
 	if (targetStart == message.npos || targetStart >= lineEnd)
-		throw 400;
+		throw 400; // Bad Request
 	
 	size_t	targetEnd = message.find(' ', targetStart);
 	if (targetEnd == message.npos || targetEnd >= lineEnd)
-		throw 400;
+		throw 400; // Bad Request
 	
 	_splitPath(message.substr(targetStart, targetEnd - targetStart), ret);
 	
@@ -83,7 +79,7 @@ Http::Header	Http::_parseHeaders(const ByteString& message) {
 		std::string	line = message.substr(_pos, lineEnd - _pos).to_string();
 		size_t		sep = line.find(':');
 		if (sep == line.npos || sep == 0)
-			throw 400;
+			throw 400; // Bad Request
 
 		std::string	key = line.substr(0, sep);
 		std::transform(key.begin(), key.end(), key.begin(), toUPPER_SNAKE_CASE);
@@ -102,16 +98,21 @@ Http::Header	Http::_parseHeaders(const ByteString& message) {
 
 void			Http::_splitPath(const ByteString& path, StartLine& sl) {
 	size_t extra, query;
+
 	extra = path.find_first_of(".?");
 	if (extra == path.npos)
 		extra = path.length();
+
 	if (extra < path.length() && path[extra] == '.')
 		extra = path.find_first_of("/?", extra);
+
 	if (extra == path.npos)
 		extra = path.length();
+
 	query = path.find('?', extra);
 	if (query == path.npos)
 		query = path.length();
+
 	sl.path = path.substr(0, extra).to_string();
 	sl.extra = path.substr(extra, query-extra).to_string();
 	sl.query = path.substr(query).to_string();
@@ -143,10 +144,10 @@ static ByteString	read_all(int fd) {
 }
 
 ByteString	Http::getResponseBody(const std::string& route, const std::map<std::string, std::string>& binaries, const Server& server) {
-	std::string file_path;
 	std::string root = server.getRoot() + route;
-	file_path = root + _startline.path;
-	if (_startline.path.rfind('.') == _startline.path.npos)
+	std::string file_path = root + _startline.path;
+
+	if (_startline.path.find('.') == _startline.path.npos)
 	{
 		bool found (false);
 		const std::vector<std::string> &indexes = server.getIndex();
@@ -159,10 +160,11 @@ ByteString	Http::getResponseBody(const std::string& route, const std::map<std::s
 		}
 		if (!found)
 			throw 404; // Not Found
-		}
+	}
+	else if (access(file_path.c_str(), R_OK) == -1)
+			throw 404; // Not Found
 	std::cout << "getting file " << file_path << '\n';
-	if (access(file_path.c_str(), R_OK) == -1)
-		throw 404; // Not Found
+
 	std::string ext (get_ext(file_path));
 	std::string bin_f;
 
@@ -255,7 +257,6 @@ ByteString Http::buildErrorHtml(int status, const Server &server) {
 	std::string path;
 	std::cout << server.getRoot();
 	path = server.getRoot() + server.getErrPages().at(status);
-	std::cout << "error: " << path << '\n';
 	int fd = open(path.c_str(), O_RDONLY);
 	if (fd < 0)
 		return ByteString();

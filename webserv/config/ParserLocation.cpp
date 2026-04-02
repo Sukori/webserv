@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ParserLocation.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
+/*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 17:09:31 by pberset           #+#    #+#             */
-/*   Updated: 2026/03/18 17:09:33 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/04/02 20:18:22 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,7 +218,7 @@ Location	Parser::parseLocation(void) {
 
 		case 1:
 			_ss >> token;
-			locStruct.root_path = "." + token;
+			locStruct.root_path = token; // no need to prepend '.' here
 			break;
 
 		case 2:

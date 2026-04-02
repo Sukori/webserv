@@ -6,7 +6,7 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 17:09:15 by pberset           #+#    #+#             */
-/*   Updated: 2026/04/01 18:38:59 by ylabussi         ###   ########.fr       */
+/*   Updated: 2026/04/02 20:18:56 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,6 +145,13 @@ struct s_listen	Parser::parseListen(std::string token) {
 	return (output);
 }
 
+/* idk where to put this */
+static std::string&	trimLastSlash(std::string& s) {
+	if (!s.empty() && s[s.length() - 1] == '/')
+		s.erase(s.length() - 1);
+	return s;
+}
+
 /// @brief parses the tokens found int the server block
 /// @param  none
 /// @return Server object
@@ -194,7 +201,7 @@ Server	Parser::parseServer(void) {
 
 			case 2:
 				_ss >> token;
-				servStruct.root = "." + token; // need to remove trailing / if there is one
+				servStruct.root = "." + trimLastSlash(token); // need to remove trailing '/' if there is one
 				break;
 
 			case 3:
