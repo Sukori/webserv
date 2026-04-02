@@ -308,11 +308,11 @@ bool	validClientMaxBodySize(unsigned int maxBodySize) {
 	if (maxBodySize == 0) {
 		std::cerr << "Warning! You are running with client_max_body_size = 0 (disabled)" << std::endl;
 		std::cerr << "if this is not your intention, modify the config and reboot the server" << std::endl;
-	} /*else if (maxBodySize > CLIENT_MAX_BODY_SIZE) { Should we really do that ?
+	} else if (maxBodySize > CLIENT_MAX_BODY_SIZE) {
 		std::cerr << "validClientMaxBodySize: set client_max_body_size is too large" << std::endl;
 		std::cerr << "maximum allowed: " << CLIENT_MAX_BODY_SIZE << std::endl;
 		return (false);
-	}*/
+	}
 	return (true);
 }
 

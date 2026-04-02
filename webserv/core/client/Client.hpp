@@ -22,7 +22,7 @@
 # include "../../config/helperParser.hpp"
 # include "../utils/ByteString.hpp"
 
-# define BUFFER_SIZE 1048576
+# define BUFFER_SIZE 1048576 //1MB
 
 class Client {
 	public:

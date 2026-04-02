@@ -28,6 +28,8 @@
 # include "errPages.hpp"
 # include "returnCodes.hpp"
 
+# define CLIENT_MAX_BODY_SIZE (int)67108864 //67MB
+
 //validate location
 
 bool	validLocRoute(std::string& route);
