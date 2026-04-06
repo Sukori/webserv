@@ -31,11 +31,11 @@
 # include <arpa/inet.h>
 # include <unistd.h>
 # include <signal.h>
-# include "../../config/Configuration.hpp"
-# include "../../config/Parser.hpp"
-# include "../client/Client.hpp"
-# include "helperWebServer.hpp"
-# include "../http/Http.hpp"
+# include <Configuration.hpp>
+# include <Parser.hpp>
+# include <Client.hpp>
+# include <helperWebServer.hpp>
+# include <Http.hpp>
 
 # define BACKLOG 1024
 

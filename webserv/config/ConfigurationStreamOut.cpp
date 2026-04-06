@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Configuration.hpp"
+#include <Configuration.hpp>
 
 std::ostream&	operator<<(std::ostream& os, const std::vector<Location>& locations) {
 

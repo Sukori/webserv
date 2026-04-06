@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Client.hpp"
+#include <Client.hpp>
 
 Client::Client(void): _requestComplete(false) {
 }

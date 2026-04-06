@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Parser.hpp"
+#include <Parser.hpp>
 
 Parser::Parser(const std::string data): _ss(data) {}
 

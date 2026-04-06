@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "helperConfig.hpp"
+#include <helperConfig.hpp>
 
 /// @brief stores a config file's content into a stringstream
 /// @param file 

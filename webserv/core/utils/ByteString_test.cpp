@@ -1,4 +1,4 @@
-#include "ByteString.hpp"
+#include <ByteString.hpp>
 
 int main(void)
 {

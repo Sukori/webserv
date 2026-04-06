@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Parser.hpp"
-#include "validatorConfig.hpp"
+#include <Parser.hpp>
+#include <validatorConfig.hpp>
 
 /// @brief parses an error page code and path
 /// @param token 

@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "WebServer.hpp"
+#include <WebServer.hpp>
 
 /// @brief Initializes the server from its constructor
 /// @param addrinfo 
