@@ -6,7 +6,7 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/12 18:23:28 by pberset           #+#    #+#             */
-/*   Updated: 2026/04/01 19:15:55 by ylabussi         ###   ########.fr       */
+/*   Updated: 2026/04/07 16:28:42 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,18 +107,28 @@ const std::vector<Location>&	Server::getLocations(void) const {
 const Location&	Server::getLocation(const std::string& route) const {
 
 	std::vector<Location>::const_iterator	it(_locations.begin());
+	const Location* ret = NULL;
+	size_t length = 0;
 	while (it != _locations.end()) {
 		/*if ((*it).getRoute().compare(route) == 0) {
 			return (*it);
 		}*/
 		/* TODO implement a proper route check ABSOLUTELY */
-		if (route.rfind(it->getRoute(), 0) == 0) // check if route starts with the location's route
-			return *it;
+		if ((route + '/').rfind(it->getRoute() + '/', 0) == 0 && it->getRoute().length() >= length) // check if route starts with the location's route
+		{
+			ret = &*it;
+			length = ret->getRoute().length();
+		}
 		++it;
 	}
-	std::cerr << "getLocation: no location matches route " << route << std::endl;
-	throw 404;
-}
+	if (ret == NULL)
+	{
+		std::cerr << "getLocation: no location matches route " << route << '\n';
+		throw 404;
+	}
+	std::cout << "getLocation: route match found: " << ret->getRoute() << '\n';
+	return *ret;
+}		
 
 const bool&	Server::isValid(void) const {
 	return (_valid);

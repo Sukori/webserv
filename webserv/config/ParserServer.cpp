@@ -6,7 +6,7 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 17:09:15 by pberset           #+#    #+#             */
-/*   Updated: 2026/04/02 20:18:56 by ylabussi         ###   ########.fr       */
+/*   Updated: 2026/04/07 15:40:18 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,13 +143,6 @@ struct s_listen	Parser::parseListen(std::string token) {
 	port = ft_stoui(token);
 	output.port = port;
 	return (output);
-}
-
-/* idk where to put this */
-static std::string&	trimLastSlash(std::string& s) {
-	if (!s.empty() && s[s.length() - 1] == '/')
-		s.erase(s.length() - 1);
-	return s;
 }
 
 /// @brief parses the tokens found int the server block

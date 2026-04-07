@@ -6,7 +6,7 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 17:46:35 by pberset           #+#    #+#             */
-/*   Updated: 2026/04/01 19:16:20 by ylabussi         ###   ########.fr       */
+/*   Updated: 2026/04/07 17:58:25 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,16 +72,17 @@ void	WebServer::_handleRequest(std::map<int, Client>::iterator& client, const Se
 	std::cerr << client->second.getRequest() << '\n';
 	try {
 		Http					req(client->second.getRequest());
-		std::string				route = req.getStartLine().path;
-		Location 				loc(server->getLocation(route));
+		std::string				route(req.getStartLine().path);
+		Location				loc(server->getLocation(route));
+		if (req.getRequestBody().length() > server->getMaxBodySize())
+			throw 413;
 		std::set<std::string>	methods = loc.getLimExcept();
 		req.verifyMethod(methods);
 		/* process normal */
 		std::map<std::string, std::string>	bin;
 		bin["py"] = "/usr/bin/python3";
 		bin["php"] = "/usr/bin/php-cgi";
-		out = req.getResponseBody(loc.getRoot(), bin, *server);
-		status = 200;
+		out = req.getResponseBody(loc, bin, *server, status);
 	} catch (int s) {
 		status = s;
 		out = Http::buildErrorHtml(status, *server);

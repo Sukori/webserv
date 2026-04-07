@@ -6,7 +6,7 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 17:09:31 by pberset           #+#    #+#             */
-/*   Updated: 2026/04/02 20:18:22 by ylabussi         ###   ########.fr       */
+/*   Updated: 2026/04/07 15:44:04 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,7 +183,7 @@ Location	Parser::parseLocation(void) {
 		return (error);
 	}
 
-	locStruct.route = token;
+	locStruct.route = trimLastSlash(token);
 	_ss >> token;
 	
 	if (token.empty() || token.at(0) != '{') {
@@ -218,7 +218,7 @@ Location	Parser::parseLocation(void) {
 
 		case 1:
 			_ss >> token;
-			locStruct.root_path = token; // no need to prepend '.' here
+			locStruct.root_path = trimLastSlash(token); // no need to prepend '.' here
 			break;
 
 		case 2:

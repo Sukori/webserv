@@ -6,7 +6,7 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 16:17:33 by pberset           #+#    #+#             */
-/*   Updated: 2026/04/01 16:57:27 by ylabussi         ###   ########.fr       */
+/*   Updated: 2026/04/07 16:33:51 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ void add_cgi_env(std::map<std::string, std::string>& env, const Server& server, 
 	env["REMOTE_ADDR"] = "127.0.0.1";									/* REMOTE_ADDR       */
 	env["SCRIPT_FILENAME"] = path;										/* for php-cgi       */
 	env["REDIRECT_STATUS"] = "true";									/* for php-cgi       */
+	// TODO; add upload path
 }
 
 /*
