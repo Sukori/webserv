@@ -6,7 +6,7 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 14:11:31 by pberset           #+#    #+#             */
-/*   Updated: 2026/04/01 16:48:58 by ylabussi         ###   ########.fr       */
+/*   Updated: 2026/04/07 15:54:59 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,11 +67,11 @@ bool	Client::writeResponse(int socket) {
 
 	ssize_t	bytes_sent = send(socket, _response.data(), _response.length(), 0);
 	if (bytes_sent < 0 ) {
-		std::cout << "send error" << std::endl;
+		std::cout << "send error\n";
 	} else if (bytes_sent == 0) {
-		std::cout << "client has closed the connection" << std::endl;
+		std::cout << "client has closed the connection\n";
 	} else {
-		std::cout << "write " << bytes_sent << "bytes" << std::endl; //debug
+		std::cout << "write " << bytes_sent << " bytes\n"; //debug
 		_response.clear();
 	}
 	return (_response.empty());

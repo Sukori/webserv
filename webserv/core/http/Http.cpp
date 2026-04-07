@@ -25,6 +25,7 @@ Http::~Http(void) {}
 
 const Http::StartLine&	Http::getStartLine(void) const {return _startline;}
 const Http::Header&		Http::getHeader(void) const {return _header;}
+const ByteString&		Http::getRequestBody(void) const {return _body;}
 
 Http::StartLine	Http::_parseStartLine(const ByteString& message) {
 	StartLine	ret;
@@ -143,26 +144,46 @@ static ByteString	read_all(int fd) {
 	return ret;
 }
 
-ByteString	Http::getResponseBody(const std::string& route, const std::map<std::string, std::string>& binaries, const Server& server) {
-	std::string root = server.getRoot() + route;
-	std::string file_path = root + _startline.path;
+ByteString	Http::getResponseBody(const Location& loc, const std::map<std::string, std::string>& binaries, const Server& server, int& status) {
+	std::string new_path (_startline.path);
+	new_path.replace(0, loc.getRoute().length(), loc.getRoot()); // replace the user route with the actual root
+	std::string root (server.getRoot());
+	std::string file_path (root + new_path);
 
-	if (_startline.path.find('.') == _startline.path.npos)
+	if (_startline.method == "DELETE")
+	{
+		if (access(file_path.c_str(), W_OK) != -1)
+		{
+			std::remove(file_path.c_str());
+			throw 204;
+		}
+		else
+			throw 404;
+	}
+
+	if (loc.getReturn().begin()->second.length() > 0)
+	{
+		status = loc.getReturn().begin()->first;
+		return ByteString("location:").append(loc.getReturn().begin()->second.c_str()).append("\r\n");
+	}
+
+	if (new_path.find('.') == new_path.npos)
 	{
 		bool found (false);
 		const std::vector<std::string> &indexes = server.getIndex();
 		for (std::vector<std::string>::const_iterator it = indexes.begin(); it != indexes.end(); it++)
 		{
-			file_path = root + _startline.path + (*(_startline.path.end() - 1) != '/' ? "/" : "") + *it;
+			file_path = root + new_path + '/' + *it;
 			found = access(file_path.c_str(), R_OK) != -1;
 			if (found)
 				break;
 		}
-		if (!found)
+		if (!found && !loc.getAutoIndex())
 			throw 404; // Not Found
 	}
 	else if (access(file_path.c_str(), R_OK) == -1)
 			throw 404; // Not Found
+
 	std::cout << "getting file " << file_path << '\n';
 
 	std::string ext (get_ext(file_path));
@@ -174,6 +195,7 @@ ByteString	Http::getResponseBody(const std::string& route, const std::map<std::s
 		bin_f = "";
 	}
 
+	status = 200;
 	if (bin_f == "") {
 		/* hmtl */
 		int	fd = open(file_path.c_str(), O_RDONLY);
@@ -212,6 +234,7 @@ static std::string	reasonPhrase(int status) {
 		case 404: return " Not Found";
 		case 405: return " Method Not Allowed";
 		case 411: return " Length Required";
+		case 413: return " Request Entity Too Large";
 		case 500: return " Internal Server Error";
 		default:  return " Unknown";
 	}
@@ -237,7 +260,7 @@ ByteString	Http::buildResponse(const ByteString& body, int status, const std::st
 	res.append(reasonPhrase(status).c_str());
 	res.append("\r\nContent-Length: ");
 	res.append(ft_uint_to_string(body.length()).c_str());
-	/* res.append("\r\nContent-Type: text/html; charset=UTF-8"); */ // we don't necessarly pass html
+	/* res.append("\r\nContent-Type: text/html; charset=UTF-8"); */ // we don't necessarily pass html
 	res.append("\r\nDate: ");
 	{
 		time_t t = time(NULL);
