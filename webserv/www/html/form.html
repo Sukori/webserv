@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Fichier – Webserv</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+    <header>
+        <h1>📤 Télécharger un Fichier</h1>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="/">Accueil</a></li>
+            <li><a href="/form.html">Formulaire</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <h2>Formulaire POST – Upload Fichier</h2>
+        
+        <form action="/uploads/" method="POST" enctype="multipart/form-data">
+            <fieldset>
+                <legend>Choisir un fichier à télécharger</legend>
+                <label for="file">Fichier:</label>
+                <input type="file" id="file" name="file" required>
+                <button type="submit">Télécharger</button>
+            </fieldset>
+        </form>
+
+        <hr>
+
+        <h2>Alternative: Ligne de Commande</h2>
+        <p>Utilisez <code>curl</code> pour tester manuellement:</p>
+        <pre><code># Tester avec un fichier binaire
+echo "Contenu test" | curl -X POST --data-binary @- http://localhost:8081/uploads/test.txt
+
+# Tester avec un formulaire multipart/form-data
+curl -F "file=@/path/to/file.txt" http://localhost:8081/uploads/
+
+# Vérifier que le fichier a été créé
+curl http://localhost:8081/uploads/</code></pre>
+
+        <h2>Spécifications POST</h2>
+        <ul>
+            <li><strong>Endpoint</strong>: <code>http://localhost:8081/uploads/</code></li>
+            <li><strong>Méthode</strong>: POST</li>
+            <li><strong>Content-Type</strong>: application/x-www-form-urlencoded ou multipart/form-data</li>
+            <li><strong>Réponse attendue</strong>: 201 Created ou 200 OK</li>
+            <li><strong>Lieu sauvegarde</strong>: <code>/uploads/</code> du serveur</li>
+        </ul>
+
+        <h2>Tests Automatisés</h2>
+        <pre><code># Test 1: Fichier simple texte
+echo "Hello Webserv" > /tmp/test.txt
+curl -X POST --data-binary @/tmp/test.txt http://localhost:8081/uploads/
+curl http://localhost:8081/uploads/  # Vérifier présence
+
+# Test 2: Fichier volumineux (test client_max_body_size)
+dd if=/dev/zero bs=1M count=100 of=/tmp/bigfile.bin
+curl --upload-file /tmp/bigfile.bin http://localhost:8081/uploads/
+
+# Test 3: Erreur 413 si dépassement client_max_body_size
+curl -X POST --data "$(head -c 100000000 /dev/zero | base64)" http://localhost:8081/uploads/</code></pre>
+
+        <p><a href="/">← Retour à l'accueil</a></p>
+    </main>
+
+    <footer>
+        <p>© 2026 Webserv Development</p>
+    </footer>
+</body>
+</html>

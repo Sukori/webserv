@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>À Propos – Webserv</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+    <header>
+        <h1>À Propos de Webserv</h1>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="/">Accueil</a></li>
+            <li><a href="/about.html">À propos</a></li>
+            <li><a href="/files/">Dossier</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <h2>Qu'est-ce que Webserv?</h2>
+        <p>
+            Webserv est un serveur HTTP écrit en <strong>C++98</strong> conforme à la plupart des spécifications du sujet 42.
+            Il supporte:
+        </p>
+        <ul>
+            <li>✅ GET, POST, DELETE</li>
+            <li>✅ Configuration multi-serveur NGINX-like</li>
+            <li>✅ Locations avec règles par route</li>
+            <li>✅ Upload automatique de fichiers</li>
+            <li>✅ Exécution CGI (PHP, Python)</li>
+            <li>✅ Pages d'erreur personnalisées</li>
+            <li>⏳ Redirections HTTP</li>
+            <li>⏳ Directory listing (autoindex)</li>
+        </ul>
+
+        <h2>Architecture</h2>
+        <p>
+            Webserv utilise une <strong>boucle événementielle poll-based</strong> pour gérer tous les I/O
+            de façon non-bloquante. Les clients sont maintenus dans une map avec état (requête incomplète, réponse en attente).
+        </p>
+
+        <h2>Configuration</h2>
+        <p>
+            Le serveur est configuré via un fichier config au format inspiré de NGINX:
+        </p>
+        <pre><code>server {
+    listen 8081;
+    server_name webserv;
+    root /;
+    
+    location / {
+        root /www/html;
+        limit_except GET POST;
+        autoindex true;
+    }
+    
+    location /uploads {
+        limit_except POST;
+        upload_path /uploads;
+    }
+}</code></pre>
+
+        <h2>Points Clés du Sujet</h2>
+        <ul>
+            <li><strong>Non-bloquant obligatoire</strong>: Tous les I/O passent par poll(), jamais de read/send direct</li>
+            <li><strong>C++98 strict</strong>: Pas de C++11, C++17 ou STL moderne</li>
+            <li><strong>Pas de fork() sauf CGI</strong>: Un seul process serveur, fork uniquement pour exécuter scripts</li>
+            <li><strong>Résilience</strong>: Le serveur continue même si un client meurt ou une location est invalide</li>
+        </ul>
+
+        <p><a href="/">← Retour à l'accueil</a></p>
+    </main>
+
+    <footer>
+        <p>© 2026 Webserv Development</p>
+    </footer>
+</body>
+</html>
