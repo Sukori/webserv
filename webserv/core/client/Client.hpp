@@ -18,9 +18,9 @@
 # include <cstring>
 # include <sys/socket.h>
 # include <arpa/inet.h>
-# include "../http/Http.hpp"
-# include "../../config/helperParser.hpp"
-# include "../utils/ByteString.hpp"
+# include <Http.hpp>
+# include <helperParser.hpp>
+# include <ByteString.hpp>
 
 # define BUFFER_SIZE 1048576 //1MB
 

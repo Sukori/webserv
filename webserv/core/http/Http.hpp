@@ -15,8 +15,8 @@
 #include <exception>
 #include <ctime>
 #include <cctype>
-#include "../utils/ByteString.hpp"
-#include "../../config/Configuration.hpp"
+#include <ByteString.hpp>
+#include <Configuration.hpp>
 
 class Http {
 	public:

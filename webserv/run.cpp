@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "core/server/WebServer.hpp"
+#include <WebServer.hpp>
 
 int	main(int argc, char *argv[]) {
 

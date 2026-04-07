@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Cgi.hpp"
-//#include "../../config/Configuration.hpp"
+#include <Cgi.hpp>
+//#include <Configuration.hpp>
 
 #define SERVER_SOFTWARE "weebserv"
 #define GATEWAY_INTERFACE "CGI/1"

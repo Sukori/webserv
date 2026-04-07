@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "WebServer.hpp"
+#include <WebServer.hpp>
 
 /// @brief Main loop server runtime
 /// @param  none

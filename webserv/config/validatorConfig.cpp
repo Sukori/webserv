@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "validatorConfig.hpp"
+#include <validatorConfig.hpp>
 
 //validate location
 

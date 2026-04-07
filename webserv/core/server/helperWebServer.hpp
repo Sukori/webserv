@@ -19,7 +19,7 @@
 # include <poll.h>
 # include <cstdlib>
 # include <unistd.h>
-# include "../../config/Configuration.hpp"
+# include <Configuration.hpp>
 
 void	putLog(const std::string& message);
 void	closeAllSockets(std::map<int, const Server*> serverSockets);

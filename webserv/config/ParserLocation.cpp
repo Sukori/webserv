@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Parser.hpp"
-#include "validatorConfig.hpp"
+#include <Parser.hpp>
+#include <validatorConfig.hpp>
 
 /// @brief parses a return code and redirection path
 /// @param token 

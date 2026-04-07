@@ -23,10 +23,10 @@
 # include <sys/stat.h>
 # include <cerrno>
 
-# include "helperConfig.hpp"
-# include "Configuration.hpp"
-# include "errPages.hpp"
-# include "returnCodes.hpp"
+# include <helperConfig.hpp>
+# include <Configuration.hpp>
+# include <errPages.hpp>
+# include <returnCodes.hpp>
 
 # define CLIENT_MAX_BODY_SIZE (int)67108864 //67MB
 

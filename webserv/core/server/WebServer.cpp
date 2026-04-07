@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "WebServer.hpp"
+#include <WebServer.hpp>
 
 volatile sig_atomic_t	WebServer::_stopRequested = 0;
 

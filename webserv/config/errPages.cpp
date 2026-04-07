@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "errPages.hpp"
+#include <errPages.hpp>
 
 /// @brief generates a map of all the default error pages
 /// @param  

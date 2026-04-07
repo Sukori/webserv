@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "returnCodes.hpp"
+#include <returnCodes.hpp>
 
 bool	needUrlCode(int code) {
 	return (code == 300 ||

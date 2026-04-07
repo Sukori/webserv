@@ -6,7 +6,7 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 14:36:55 by pberset           #+#    #+#             */
-/*   Updated: 2026/04/07 15:42:15 by ylabussi         ###   ########.fr       */
+/*   Updated: 2026/04/07 18:03:29 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,9 @@
 # include <sstream>
 # include <vector>
 # include <map>
-# include "Configuration.hpp"
-# include "helperParser.hpp"
-# include "validatorConfig.hpp"
-# include <other.hpp>
+# include <Configuration.hpp>
+# include <helperParser.hpp>
+# include <validatorConfig.hpp>
 
 class Parser {
 public:

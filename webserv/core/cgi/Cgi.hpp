@@ -22,7 +22,7 @@
 # include <map>
 # include <algorithm>
 
-#include "../http/Http.hpp"
+#include <Http.hpp>
 
 class Cgi {
 	public:
