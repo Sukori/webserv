@@ -6,7 +6,7 @@
 /*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/17 17:55:02 by pberset           #+#    #+#             */
-/*   Updated: 2026/01/25 14:58:56 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/04/07 18:20:37 by pberset          ###   Lausanne.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,6 @@ struct s_location {
 	std::set<std::string>				limit_except;
 	bool								autoindex;
 	std::string							upload_path;
-	std::map<std::string, std::string>	cgi_param;
-	std::string							cgi_pass;
 };
 
 
@@ -44,15 +42,16 @@ struct s_listen {
 };
 
 struct s_server {
-	std::string					serverName;
-	bool						valid;
-	s_listen					listen;
-	std::string					root;
-	std::vector<std::string>	index;
-	std::string					access_logs;
-	std::string					error_logs;
-	unsigned int				client_max_body_size; // convert "10m" or "10M" in bits (10000000)
-	std::map<int, std::string>	error_pages; // {error_code<int>, path_to_page<string>}, {404, "/www/error_pages/404.html"}
+	std::string							serverName;
+	bool								valid;
+	s_listen							listen;
+	std::string							root;
+	std::vector<std::string>			index;
+	std::map<std::string, std::string>	cgi_bins;
+	std::string							access_logs;
+	std::string							error_logs;
+	unsigned int						client_max_body_size; // convert "10m" or "10M" in bits (10000000)
+	std::map<int, std::string>			error_pages; // {error_code<int>, path_to_page<string>}, {404, "/www/error_pages/404.html"}
 };
 
 std::string	readFile(const char* file);
