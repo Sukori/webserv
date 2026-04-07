@@ -1,39 +1,97 @@
-<!Doctype html>
-<html lang="">
-
+<!DOCTYPE html>
+<html lang="fr">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title></title>
-  <link rel="stylesheet" href="css/style.css">
-  <meta name="description" content="">
-
-  <meta property="og:title" content="">
-  <meta property="og:type" content="">
-  <meta property="og:url" content="">
-  <meta property="og:image" content="">
-  <meta property="og:image:alt" content="">
-
-  <link rel="icon" href="/assets/img.jpeg" sizes="any">
-  <link rel="apple-touch-icon" href="icon.png">
-
-  <link rel="manifest" href="site.webmanifest">
-  <meta name="theme-color" content="#fafafa">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webserv – Site de Test</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
 </head>
-
 <body>
+    <header>
+        <h1>🌐 Webserv – Site de Test Conformité Sujet</h1>
+        <p>Bienvenue sur le serveur web C++98 en développement.</p>
+    </header>
 
-  <!-- Add your site or application content here -->
-  <div>
-  <p><span class="blink">Hello world!</span> This is HTML5 Boilerplate.</p>
-  <img src="/assets/img.jpeg">
-  <form action="u" method="post" enctype="multipart/form-data">
-    <input type="file" name="file">
-    <input type="submit">
-  </form>
-  </div>
-  <script src="js/app.js"></script>
+    <nav>
+        <ul>
+            <li><a href="/">Accueil</a></li>
+            <li><a href="/about.html">À propos</a></li>
+            <li><a href="/files/">Dossier (Autoindex)</a></li>
+            <li><a href="/form.html">Formulaire (POST)</a></li>
+            <li><a href="/download-me.txt">Fichier (GET/DELETE)</a></li>
+        </ul>
+    </nav>
 
+    <main>
+        <section id="test-get">
+            <h2>✅ Test GET – Documents Statiques</h2>
+            <p>Accédez aux pages HTML et fichiers statiques ci-dessus.</p>
+            <pre><code>curl http://localhost:8081/
+curl http://localhost:8081/about.html</code></pre>
+        </section>
+
+        <section id="test-post">
+            <h2>📤 Test POST – Téléchargement Fichier</h2>
+            <p>Utilisez le formulaire ci-dessous ou curl pour tester l'upload:</p>
+            <pre><code>curl -X POST --data-binary @file.txt http://localhost:8081/uploads/
+curl -F "file=@document.pdf" http://localhost:8081/uploads/</code></pre>
+            <p><a href="/form.html">→ Aller au formulaire</a></p>
+        </section>
+
+        <section id="test-delete">
+            <h2>🗑️ Test DELETE – Suppression Fichier</h2>
+            <p>Supprimer le fichier <code>/download-me.txt</code>:</p>
+            <pre><code>curl -X DELETE http://localhost:8081/download-me.txt</code></pre>
+            <p>Attendu: <strong>204 No Content</strong> ou <strong>200 OK</strong> si succès.</p>
+        </section>
+
+        <section id="test-autoindex">
+            <h2>📁 Test Directory Listing / Autoindex</h2>
+            <p>Listage personnalisé du dossier <code>/files/</code>:</p>
+            <pre><code>curl http://localhost:8081/files/</code></pre>
+            <p>Attendu: <strong>HTML ou liste texte</strong> des fichiers du répertoire.</p>
+        </section>
+
+        <section id="test-redirect">
+            <h2>↩️ Test Redirections HTTP (return)</h2>
+            <p>La location <code>/tests</code> est configurée pour rediriger:</p>
+            <pre><code>curl -L http://localhost:8081/tests
+curl -v http://localhost:8081/tests  # Voir les headers 301/302</code></pre>
+        </section>
+
+        <section id="test-cgi">
+            <h2>⚙️ Test CGI / Scripts Dynamiques</h2>
+            <p>Sujets aux binaires python3 et php-cgi:</p>
+            <ul>
+                <li><a href="/index.php">index.php</a> (depuis /www/php/)</li>
+                <li><code>curl http://localhost:8081/index.py</code> (Python)</li>
+            </ul>
+        </section>
+
+        <section id="test-errors">
+            <h2>❌ Test Pages d'Erreur</h2>
+            <p>Testez les erreurs HTTP 4xx/5xx:</p>
+            <pre><code>curl http://localhost:8081/nonexistent.html    # 404
+curl -X PUT http://localhost:8081/file.txt      # 405
+curl -X POST http://localhost:8081/about.html   # 405 (GET only)</code></pre>
+        </section>
+
+        <section id="test-multiport">
+            <h2>🔌 Test Multi-Port</h2>
+            <p>Trois serveurs écoutent:</p>
+            <ul>
+                <li><strong>Port 8080</strong>: root /core (minimal)</li>
+                <li><strong>Port 8081</strong>: root / + locations complexes (main)</li>
+                <li><strong>Port 8082</strong>: root /core (minimal)</li>
+            </ul>
+            <pre><code>curl http://localhost:8080/
+curl http://localhost:8081/
+curl http://localhost:8082/</code></pre>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2026 Webserv Development | Site de test conformité sujet HTTP</p>
+    </footer>
 </body>
-
 </html>

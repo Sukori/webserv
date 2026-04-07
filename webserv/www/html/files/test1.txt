@@ -1,0 +1,9 @@
+Ceci est un fichier de test pour le répertoire /files/.
+
+Ce dossier peut être navigué avec:
+  curl http://localhost:8081/files/
+
+Si l'autoindex est activé (configuration location /), vous devriez voir
+une liste des fichiers dans ce répertoire.
+
+Fichier créé: 2026-04-06
