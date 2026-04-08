@@ -22,7 +22,6 @@
 # include <map>
 # include <sys/stat.h>
 # include <cerrno>
-
 # include <helperConfig.hpp>
 # include <Configuration.hpp>
 # include <errPages.hpp>
@@ -37,8 +36,6 @@ bool	validLocRoot(std::string& root);
 void	validReturns(std::map<int, std::string>& locReturn);
 void	validLimitExcept(std::set<std::string>& limitExcept);
 bool	validUploadPath(std::string& uploadPath);
-//cgi_params ? subject to deletion
-//cgi_pass ? subject to deletion
 void	validateLocation(s_location& locStruct);
 
 
@@ -47,6 +44,7 @@ void	validateLocation(s_location& locStruct);
 void	validServerName(std::string& serverName, int port);
 bool	validServerRoot(std::string& root);
 void	validIndex(std::vector<std::string>& index);
+bool	validCgiBins(std::map<std::string, std::string>& bins);
 void	validAccessLogs(std::string& accessLogs);
 void	validErrorLogs(std::string& errorLogs);
 bool	validClientMaxBodySize(unsigned int maxBodySize);

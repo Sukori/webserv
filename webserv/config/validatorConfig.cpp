@@ -171,9 +171,6 @@ bool	validUploadPath(std::string& uploadPath) {
 	return (S_ISDIR(buf.st_mode));
 }
 
-//cgi_params ? subject to deletion
-//cgi_pass ? subject to deletion
-
 /// @brief checks all fields of a location block
 /// @param locStruct 
 void	validateLocation(s_location& locStruct) {
@@ -248,6 +245,30 @@ void	validIndex(std::vector<std::string>& index) {
 		index.push_back("index.html");
 		index.push_back("index.php");
 	}
+}
+
+/// @brief checks for valid binaries paths
+/// @param bins 
+/// @return bool
+bool	validCgiBins(std::map<std::string, std::string>& bins) {
+	
+	struct stat	buf;
+	std::map<std::string, std::string>::iterator	it = bins.begin();
+	std::map<std::string, std::string>::iterator	end = bins.end();
+
+	while (it++ != end){
+		int status = stat(it->second.c_str(), &buf);
+
+		if (status == -1) {
+	
+			std::cerr << "stat: " << strerror(errno) << std::endl;
+			std::cerr << "from validCgiBins" << std::endl;
+			return (false);
+		}
+	}
+
+
+	return (S_ISREG(buf.st_mode));
 }
 
 /// @brief warns the admin if the accesLogs file is invalid or non-existant
@@ -336,10 +357,13 @@ void	validateServer(s_server& servStruct) {
 	}
 
 	validIndex(servStruct.index);
+	if (!servStruct.cgi_bins.empty() && !validCgiBins(servStruct.cgi_bins)) {
+		std::cerr << "cgi_bin: invalid cgi binaries for server " << servStruct.serverName << std::endl;
+	}
 	validAccessLogs(servStruct.access_logs);
 	validErrorLogs(servStruct.error_logs);
 	if (!validClientMaxBodySize(servStruct.client_max_body_size)) {
-		std::cerr << "client_max_body_size: not a valid max client body size for server " << servStruct.client_max_body_size << std::endl;
+		std::cerr << "client_max_body_size: not a valid max client body size for server " << servStruct.serverName << std::endl;
 		servStruct.valid = false;
 	}
 	validErrorPages(servStruct.error_pages);
