@@ -14,22 +14,23 @@
 	>> Besoin de rechercher la meilleure pratique
 	>> Décision, la route invalide n'est pas bloquante. Vérifier le flag `isValid()` dans req/resp
 - [x] Ne pas bloquer le parsing du serveur 2 si serveur 1 avait une erreur
-- [ ] Gérer les `req/res` à l'aide des fonctions `http` (merge effectué)
-	>> [x] Client doit seulement lire l'ensemble de la communication sans separer header et body (request complete quand recv() == 0)
-	>> [x] Handle request doit créer un Http(Bytestring)
-	>> [x] Handle request va ensuite build response et la stocker dans un ByteString
-	>> [x] Finalement, stocker dans Client::_responseOut
-	>> [x] main loop Client::writeResponse
+- [x] Gérer les `req/res` à l'aide des fonctions `http` (merge effectué)
+	- [x] Client doit seulement lire l'ensemble de la communication sans separer header et body (request complete quand recv() == 0)
+	- [x] Handle request doit créer un Http(Bytestring)
+	- [x] Handle request va ensuite build response et la stocker dans un ByteString
+	- [x] Finalement, stocker dans Client::_responseOut
+	- [x] main loop Client::writeResponse
 - [x] Si deux serveurs valides sont démarrés, l'un ne répond plus
 - [x] Segfault si tous les serveurs sont skip (tous invalides)
 - [x] Trouver la route pour handle request
 - [x] Segfault
 
 # CGI
-- [ ] Supprimer `cgi_pass` de la config ?
-	>> pas pour le moment
-- [ ] Supprimer `cgi_params` de la config ?
-	>> pas pour le moment
+- [x] Supprimer `cgi_pass` de la config ?
+	>> oui
+- [x] Supprimer `cgi_params` de la config ?
+	>> oui
+- [x] Remplacé par `cgi_bin` dans le serveur
 
 # Merge
 La branche `merge_buffer` regroupe tous les merges de toutes les branches en date du **18.03.2026 à 12:33**
