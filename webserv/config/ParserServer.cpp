@@ -6,7 +6,7 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 17:09:15 by pberset           #+#    #+#             */
-/*   Updated: 2026/04/07 15:40:18 by ylabussi         ###   ########.fr       */
+/*   Updated: 2026/04/07 19:02:12 by pberset          ###   Lausanne.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,6 +124,134 @@ std::vector<std::string>	Parser::parseIndex(void) {
 	return (output);
 }
 
+/// @brief parses the CGI bin
+/// @param token 
+/// @return pair of string - string, variable - value
+std::pair<std::string, std::string>	Parser::parseCgiBin(std::string& token) {
+	std::pair<std::string, std::string>	output;
+	std::string							varName = token;	
+	std::string							varVal;
+
+	_ss >> varVal;
+	if (varVal.empty() || !varVal.compare("}")) {
+		std::cerr << "parseCgiBin: closed CGI Bins block with an undefined page or end of file. Got " << varVal << std::endl;
+		output = std::make_pair(ERR_STR, ERR_STR);
+		return (output);
+	} else if (!varVal.compare(";")) {
+		std::cerr << "parseCgiBin: closed CGI Bins definition without a path. Got " << varVal << std::endl;
+		output = std::make_pair(ERR_STR, ERR_STR);
+		return (output);
+	}
+
+	_ss >> token;
+	if (token.compare(";")){
+		std::cerr << "parseCgiBin: expected \";\". Got " << token << std::endl;
+		output = std::make_pair(ERR_STR, ERR_STR);
+		return (output);
+	}
+	output = std::make_pair(varName, varVal);
+
+	return (output);
+}
+
+/// @brief parses the elements of the cgi_bin block
+/// @param token 
+/// @return map string string, all the variable - value pairs
+std::map<std::string, std::string>	Parser::parseCgiBins(std::string& token) {
+	std::map<std::string, std::string>	output;
+	
+	if (_ss.fail() || token.compare("{")) {
+		std::cerr << "parseCgiBins: unexpected opening of block. Got " << token << std::endl;
+		output.insert(std::make_pair(ERR_STR, ERR_STR));
+		return (output);
+	}
+
+	do {
+		_ss >> token;
+		if (token.empty() || _ss.fail() || _ss.eof()) {
+			std::cerr << "parseCgiBins: unexpected end of stream " << std::endl;
+			output.insert(std::make_pair(ERR_STR, ERR_STR));
+			return (output);
+		}
+		if (!token.compare("}")){
+			break ;
+		}
+		output.insert(parseCgiBin(token));
+
+		if (output.find(ERR_STR) != output.end() && !(output.find(ERR_STR)->first).compare(ERR_STR)) {
+			std::cerr << "from parseCgiBins"<< std::endl;
+			return (output);
+		}
+
+	} while(!_ss.fail() && token.compare("}"));
+	
+	return (output);
+}
+
+/// @brief parses the CGI bin
+/// @param token 
+/// @return pair of string - string, variable - value
+std::pair<std::string, std::string>	Parser::parseCgiBin(std::string& token) {
+	std::pair<std::string, std::string>	output;
+	std::string							varName = token;	
+	std::string							varVal;
+
+	_ss >> varVal;
+	if (varVal.empty() || !varVal.compare("}")) {
+		std::cerr << "parseCgiBin: closed CGI Bins block with an undefined page or end of file. Got " << varVal << std::endl;
+		output = std::make_pair(ERR_STR, ERR_STR);
+		return (output);
+	} else if (!varVal.compare(";")) {
+		std::cerr << "parseCgiBin: closed CGI Bins definition without a path. Got " << varVal << std::endl;
+		output = std::make_pair(ERR_STR, ERR_STR);
+		return (output);
+	}
+
+	_ss >> token;
+	if (token.compare(";")){
+		std::cerr << "parseCgiBin: expected \";\". Got " << token << std::endl;
+		output = std::make_pair(ERR_STR, ERR_STR);
+		return (output);
+	}
+	output = std::make_pair(varName, varVal);
+
+	return (output);
+}
+
+/// @brief parses the elements of the cgi_bin block
+/// @param token 
+/// @return map string string, all the variable - value pairs
+std::map<std::string, std::string>	Parser::parseCgiBins(std::string& token) {
+	std::map<std::string, std::string>	output;
+	
+	if (_ss.fail() || token.compare("{")) {
+		std::cerr << "parseCgiBins: unexpected opening of block. Got " << token << std::endl;
+		output.insert(std::make_pair(ERR_STR, ERR_STR));
+		return (output);
+	}
+
+	do {
+		_ss >> token;
+		if (token.empty() || _ss.fail() || _ss.eof()) {
+			std::cerr << "parseCgiBins: unexpected end of stream " << std::endl;
+			output.insert(std::make_pair(ERR_STR, ERR_STR));
+			return (output);
+		}
+		if (!token.compare("}")){
+			break ;
+		}
+		output.insert(parseCgiBin(token));
+
+		if (output.find(ERR_STR) != output.end() && !(output.find(ERR_STR)->first).compare(ERR_STR)) {
+			std::cerr << "from parseCgiBins"<< std::endl;
+			return (output);
+		}
+
+	} while(!_ss.fail() && token.compare("}"));
+	
+	return (output);
+}
+
 /// @brief parses tokens for the "listen" parameter
 /// @param token
 /// @return struct s_listen
@@ -152,7 +280,7 @@ Server	Parser::parseServer(void) {
 	struct s_server			servStruct;
 	std::vector<Location>	locs; //not initialized at 234 ...
 	std::string				token;
-	std::string				serverAllowed[] = {"server_name", "listen", "root", "index", "access_logs", "error_logs", "client_max_body_size", "error_pages", "location"};
+	std::string				serverAllowed[] = {"server_name", "listen", "root", "index", "access_logs", "error_logs", "client_max_body_size", "error_pages", "location", "cgi_bin"};
 
 	servStruct.valid = false;
 	_ss >> token;
@@ -222,6 +350,11 @@ Server	Parser::parseServer(void) {
 
 			case 8:
 				locs.push_back(parseLocation());
+				break;
+
+			case 9:
+				_ss >> token;
+				servStruct.cgi_bins = parseCgiBins(token);
 				break;
 
 			default:

@@ -41,8 +41,6 @@ class Location {
 		const std::set<std::string>&				getLimExcept(void) const;
 		const bool&									getAutoIndex(void) const;
 		const std::string&							getUploadPath(void) const;
-		const std::map<std::string, std::string>&	getCgiParams(void) const;
-		const std::string&							getCgiPass(void) const;
 		const bool&									isValid(void) const;
 
 	private:
@@ -54,8 +52,6 @@ class Location {
 		const std::set<std::string>					_limit_except;
 		const bool									_autoindex;
 		const std::string							_upload_path;
-		const std::map<std::string, std::string>	_cgi_param;
-		const std::string							_cgi_pass;
 };
 
 class Server {
@@ -65,30 +61,32 @@ class Server {
 		~Server(void);
 
 		//getters
-		const s_listen&						getListen(void) const;
-		const std::string&					getName(void) const;
-		const std::string&					getRoot(void) const;
-		const std::vector<std::string>&		getIndex(void) const;
-		const std::string&					getAccLogs(void) const;
-		const std::string&					getErrLogs(void) const;
-		const unsigned int&					getMaxBodySize(void) const;
-		const std::map<int, std::string>&	getErrPages(void) const;
-		const std::vector<Location>&		getLocations(void) const;
-		const Location&						getLocation(const std::string& route) const;
-		const bool&							isValid(void) const;
-		void								setNotValid(void);
+		const s_listen&								getListen(void) const;
+		const std::string&							getName(void) const;
+		const std::string&							getRoot(void) const;
+		const std::vector<std::string>&				getIndex(void) const;
+		const std::map<std::string, std::string>&	getCgiBins(void) const;
+		const std::string&							getAccLogs(void) const;
+		const std::string&							getErrLogs(void) const;
+		const unsigned int&							getMaxBodySize(void) const;
+		const std::map<int, std::string>&			getErrPages(void) const;
+		const std::vector<Location>&				getLocations(void) const;
+		const Location&								getLocation(const std::string& route) const;
+		const bool&									isValid(void) const;
+		void										setNotValid(void);
 
 	private:
-		bool								_valid;
-		s_listen							_listen;
-		const std::string					_serverName;
-		const std::string					_root;
-		const std::vector<std::string>		_index;
-		const std::string					_access_logs;
-		const std::string					_error_logs;
-		const unsigned int					_client_max_body_size;
-		const std::map<int, std::string>	_error_pages;
-		const std::vector<Location>			_locations;
+		bool										_valid;
+		s_listen									_listen;
+		const std::string							_serverName;
+		const std::string							_root;
+		const std::vector<std::string>				_index;
+		const std::map<std::string, std::string>	_cgi_bins;
+		const std::string							_access_logs;
+		const std::string							_error_logs;
+		const unsigned int							_client_max_body_size;
+		const std::map<int, std::string>			_error_pages;
+		const std::vector<Location>					_locations;
 };
 
 class Configuration {

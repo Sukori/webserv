@@ -6,7 +6,7 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 17:09:31 by pberset           #+#    #+#             */
-/*   Updated: 2026/04/07 15:44:04 by ylabussi         ###   ########.fr       */
+/*   Updated: 2026/04/07 18:59:57 by pberset          ###   Lausanne.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,70 +77,6 @@ std::map<int, std::string>	Parser::parseReturns(std::string& token) {
 	return (output);
 }
 
-/// @brief parses the CGI param
-/// @param token 
-/// @return pair of string - string, variable - value
-std::pair<std::string, std::string>	Parser::parseCgiParam(std::string& token) {
-	std::pair<std::string, std::string>	output;
-	std::string							varName = token;	
-	std::string							varVal;
-
-	_ss >> varVal;
-	if (varVal.empty() || !varVal.compare("}")) {
-		std::cerr << "parseCgiParam: closed CGI Params block with an undefined page or end of file. Got " << varVal << std::endl;
-		output = std::make_pair(ERR_STR, ERR_STR);
-		return (output);
-	} else if (!varVal.compare(";")) {
-		std::cerr << "parseCgiParam: closed CGI Params definition without a path. Got " << varVal << std::endl;
-		output = std::make_pair(ERR_STR, ERR_STR);
-		return (output);
-	}
-
-	_ss >> token;
-	if (token.compare(";")){
-		std::cerr << "parseCgiParam: expected \";\". Got " << token << std::endl;
-		output = std::make_pair(ERR_STR, ERR_STR);
-		return (output);
-	}
-	output = std::make_pair(varName, varVal);
-
-	return (output);
-}
-
-/// @brief parses the elements of the cgi_params block
-/// @param token 
-/// @return map string string, all the variable - value pairs
-std::map<std::string, std::string>	Parser::parseCgiParams(std::string& token) {
-	std::map<std::string, std::string>	output;
-	
-	if (_ss.fail() || token.compare("{")) {
-		std::cerr << "parseCgiParams: unexpected opening of block. Got " << token << std::endl;
-		output.insert(std::make_pair(ERR_STR, ERR_STR));
-		return (output);
-	}
-
-	do {
-		_ss >> token;
-		if (token.empty() || _ss.fail() || _ss.eof()) {
-			std::cerr << "parseCgiParams: unexpected end of stream " << std::endl;
-			output.insert(std::make_pair(ERR_STR, ERR_STR));
-			return (output);
-		}
-		if (!token.compare("}")){
-			break ;
-		}
-		output.insert(parseCgiParam(token));
-
-		if (output.find(ERR_STR) != output.end() && !(output.find(ERR_STR)->first).compare(ERR_STR)) {
-			std::cerr << "from parseCgiParams"<< std::endl;
-			return (output);
-		}
-
-	} while(!_ss.fail() && token.compare("}"));
-	
-	return (output);
-}
-
 /// @brief parses the limitExcept parameter list
 /// @param token 
 /// @return vector of string for allowed methods. Defaults to "GET" if no config
@@ -165,7 +101,7 @@ std::set<std::string>	Parser::parseLimitExcept(std::string token) {
 Location	Parser::parseLocation(void) {
 	struct s_location	locStruct;
 	std::string			token;
-	std::string			locationAllowed[] = {"return", "root", "alias", "limit_except", "autoindex", "upload_path", "cgi_param", "cgi_pass"};
+	std::string			locationAllowed[] = {"return", "root", "alias", "limit_except", "autoindex", "upload_path"};
 
 	locStruct.valid = false;
 	_ss >> token;
@@ -241,40 +177,11 @@ Location	Parser::parseLocation(void) {
 			locStruct.upload_path = "." + token;
 			break;
 
-		case 6:
-			_ss >> token;
-			locStruct.cgi_param = parseCgiParams(token);
-			break;
-
-		case 7:
-			_ss >> token;
-			locStruct.cgi_pass = token;
-			break;
-
 		default:
 			std::cerr << "parseLocation: unexpected token. Got " << token << std::endl;
 			Location	output(locStruct);
 			return (output);
 		}
-
-		/* Do we really invalidate a location if the cgi params are wrong ?
-
-		if (!locStruct.cgi_param.empty() && locStruct.cgi_param.find(ERR_STR) != locStruct.cgi_param.end() && !locStruct.cgi_param.find(ERR_STR)->first.compare(ERR_STR)) {
-			std::cerr << "from parseLocation" << std::endl;
-			locStruct.route = ERR_STR;
-			Location	output(locStruct);
-			return (output);
-		}*/
-
-		/* If we got no limit except, it defaults to GET in the validator
-		
-		if (!locStruct.limit_except.empty() && !locStruct.limit_except[0].compare(ERR_STR)) {
-			std::cerr << "from parseLocation" << std::endl;
-			locStruct.route = ERR_STR;
-			Location	output(locStruct);
-			return (output);
-		}*/
-
 	} while (!_ss.fail());
 
 	validateLocation(locStruct);

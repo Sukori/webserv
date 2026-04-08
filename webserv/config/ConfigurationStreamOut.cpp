@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   config/ConfigurationStreamOut.cpp                  :+:      :+:    :+:   */
+/*   ConfigurationStreamOut.cpp                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 17:05:39 by pberset           #+#    #+#             */
-/*   Updated: 2026/03/18 17:05:47 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/04/07 18:57:52 by pberset          ###   Lausanne.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,17 +43,6 @@ std::ostream&	operator<<(std::ostream& os, const std::vector<Location>& location
 		}
 
 		os << "\t\t\t- upload_path: " << loc.getUploadPath() << std::endl;
-
-		if (!loc.getCgiParams().empty()) {
-			const std::map<std::string, std::string>::const_iterator& start = loc.getCgiParams().begin();
-			const std::map<std::string, std::string>::const_iterator& end = loc.getCgiParams().end();
-			os << "\t\t\t- CGI params: " << std::endl;
-			for (std::map<std::string, std::string>::const_iterator cgip = start; cgip != end; ++cgip) {
-				os << "\t\t\t\t> " << cgip->first << " = " << cgip->second << std::endl;
-			}
-		}
-
-		os << "\t\t\t- CGI pass: " << loc.getCgiPass() << std::endl;
 	}
 
     return os;
@@ -73,6 +62,15 @@ std::ostream&	operator<<(std::ostream& os, const Configuration& config) {
         if (!srv.getIndex().empty()) {
             os << "\t- index: " << *srv.getIndex().begin() << std::endl;
         }
+
+		if (!srv.getCgiBins().empty()) {
+			const std::map<std::string, std::string>::const_iterator& start = srv.getCgiBins().begin();
+			const std::map<std::string, std::string>::const_iterator& end = srv.getCgiBins().end();
+			os << "\t\t\t- CGI bins: " << std::endl;
+			for (std::map<std::string, std::string>::const_iterator cgip = start; cgip != end; ++cgip) {
+				os << "\t\t\t\t> " << cgip->first << " = " << cgip->second << std::endl;
+			}
+		}
 
         os	<< "\t- access_logs: " << srv.getAccLogs() << std::endl
         	<< "\t- error_logs: "  << srv.getErrLogs() << std::endl

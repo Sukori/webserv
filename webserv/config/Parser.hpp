@@ -6,7 +6,7 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 14:36:55 by pberset           #+#    #+#             */
-/*   Updated: 2026/04/07 18:03:29 by ylabussi         ###   ########.fr       */
+/*   Updated: 2026/04/07 18:45:15 by pberset          ###   Lausanne.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@ public:
 	std::vector<Server>					initParser(void);
 	Server								parseServer(void);
 	std::vector<std::string>			parseIndex(void);
+	std::pair<std::string, std::string>	parseCgiBin(std::string& token);
+	std::map<std::string, std::string>	parseCgiBins(std::string& token);
 	unsigned int						parseBodySize(void);
 	std::pair<int, std::string>			parseErrorPage(std::string& token);
 	std::map<int, std::string>			parseErrorPages(std::string& token);
@@ -38,8 +40,6 @@ public:
 	std::pair<int, std::string>			parseReturn(std::string& token);
 	std::map<int, std::string>			parseReturns(std::string& token);
 	std::set<std::string>				parseLimitExcept(std::string token);
-	std::pair<std::string, std::string>	parseCgiParam(std::string& token);
-	std::map<std::string, std::string>	parseCgiParams(std::string& token);
 
 private:
 	Parser(void);

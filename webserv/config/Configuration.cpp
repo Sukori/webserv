@@ -6,7 +6,7 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/12 18:23:28 by pberset           #+#    #+#             */
-/*   Updated: 2026/04/07 16:28:42 by ylabussi         ###   ########.fr       */
+/*   Updated: 2026/04/07 18:51:15 by pberset          ###   Lausanne.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,23 @@
 
 Location::Location(void): _valid(false), _autoindex(true) {}
 
-Location::Location(const struct s_location location): _valid(location.valid), _route(location.route), _root_path(location.root_path), _alias(location.alias), _return(location.locReturn), _limit_except(location.limit_except), _autoindex(location.autoindex), _upload_path(location.upload_path), _cgi_param(location.cgi_param), _cgi_pass(location.cgi_pass) {}
+Location::Location(const struct s_location location): _valid(location.valid), 
+_route(location.route), 
+_root_path(location.root_path), 
+_alias(location.alias), 
+_return(location.locReturn), 
+_limit_except(location.limit_except), 
+_autoindex(location.autoindex), 
+_upload_path(location.upload_path) {}
 
-Location::Location(const Location& rhs): _valid(rhs._valid), _route(rhs._route), _root_path(rhs._root_path), _alias(rhs._alias), _return(rhs._return), _limit_except(rhs._limit_except), _autoindex(rhs._autoindex), _upload_path(rhs._upload_path), _cgi_param(rhs._cgi_param), _cgi_pass(rhs._cgi_pass) {}
+Location::Location(const Location& rhs): _valid(rhs._valid), 
+_route(rhs._route), 
+_root_path(rhs._root_path), 
+_alias(rhs._alias), 
+_return(rhs._return), 
+_limit_except(rhs._limit_except), 
+_autoindex(rhs._autoindex), 
+_upload_path(rhs._upload_path) {}
 
 Location::~Location(void) {}
 
@@ -49,22 +63,34 @@ const std::string&	Location::getUploadPath(void) const {
 	return (_upload_path);
 }
 
-const std::map<std::string, std::string>&	Location::getCgiParams(void) const {
-	return (_cgi_param);
-}
-
-const std::string&	Location::getCgiPass(void) const {
-	return (_cgi_pass);
-}
-
 const bool&	Location::isValid(void) const {
 	return (_valid);
 }
 
-Server::Server(const struct s_server server, const std::vector<Location> locations): _valid(server.valid), _listen(server.listen), _serverName(server.serverName), _root(server.root), _index(server.index), _access_logs(server.access_logs), _error_logs(server.error_logs), _client_max_body_size(server.client_max_body_size), _error_pages(server.error_pages), _locations(locations) {
+Server::Server(const struct s_server server, const std::vector<Location> locations): _valid(server.valid), 
+_listen(server.listen), 
+_serverName(server.serverName), 
+_root(server.root), 
+_index(server.index),
+_cgi_bins(server.cgi_bins), 
+_access_logs(server.access_logs), 
+_error_logs(server.error_logs), 
+_client_max_body_size(server.client_max_body_size), 
+_error_pages(server.error_pages), 
+_locations(locations) {
 }
 
-Server::Server(const Server& rhs): _valid(rhs._valid), _listen(rhs._listen), _serverName(rhs._serverName), _root(rhs._root), _index(rhs._index), _access_logs(rhs._access_logs), _error_logs(rhs._error_logs), _client_max_body_size(rhs._client_max_body_size), _error_pages(rhs._error_pages), _locations(rhs._locations) {}
+Server::Server(const Server& rhs): _valid(rhs._valid), 
+_listen(rhs._listen), 
+_serverName(rhs._serverName), 
+_root(rhs._root), 
+_index(rhs._index),
+_cgi_bins(rhs._cgi_bins),
+_access_logs(rhs._access_logs), 
+_error_logs(rhs._error_logs), 
+_client_max_body_size(rhs._client_max_body_size), 
+_error_pages(rhs._error_pages), 
+_locations(rhs._locations) {}
 
 Server::~Server(void) {}
 
@@ -82,6 +108,10 @@ const std::string&	Server::getRoot(void) const {
 
 const std::vector<std::string>&	Server::getIndex(void) const{
 	return (_index);
+}
+
+const std::map<std::string, std::string>&	Server::getCgiBins(void) const {
+	return (_cgi_bins);
 }
 
 const std::string&	Server::getAccLogs(void) const {
