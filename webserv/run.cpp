@@ -42,7 +42,7 @@ int	main(int argc, char *argv[]) {
 	Parser			parser(sureLine);
 
 	Configuration*	config = new Configuration(parser.initParser());
-	//std::cout << *config << std::endl;
+	std::cout << *config << std::endl;
 
 	if (config->getServers().empty()) {
 		std::cerr << "No valid server definition found.\nExit" << std::endl;
