@@ -184,6 +184,8 @@ Location	Parser::parseLocation(void) {
 		}
 	} while (!_ss.fail());
 
+	std::cout << "Parsed Location " << locStruct.route << "\n" << std::endl;
+
 	validateLocation(locStruct);
 
 	Location	output(locStruct);

@@ -150,71 +150,6 @@ std::pair<std::string, std::string>	Parser::parseCgiBin(std::string& token) {
 		return (output);
 	}
 	output = std::make_pair(varName, varVal);
-
-	return (output);
-}
-
-/// @brief parses the elements of the cgi_bin block
-/// @param token 
-/// @return map string string, all the variable - value pairs
-std::map<std::string, std::string>	Parser::parseCgiBins(std::string& token) {
-	std::map<std::string, std::string>	output;
-	
-	if (_ss.fail() || token.compare("{")) {
-		std::cerr << "parseCgiBins: unexpected opening of block. Got " << token << std::endl;
-		output.insert(std::make_pair(ERR_STR, ERR_STR));
-		return (output);
-	}
-
-	do {
-		_ss >> token;
-		if (token.empty() || _ss.fail() || _ss.eof()) {
-			std::cerr << "parseCgiBins: unexpected end of stream " << std::endl;
-			output.insert(std::make_pair(ERR_STR, ERR_STR));
-			return (output);
-		}
-		if (!token.compare("}")){
-			break ;
-		}
-		output.insert(parseCgiBin(token));
-
-		if (output.find(ERR_STR) != output.end() && !(output.find(ERR_STR)->first).compare(ERR_STR)) {
-			std::cerr << "from parseCgiBins"<< std::endl;
-			return (output);
-		}
-
-	} while(!_ss.fail() && token.compare("}"));
-	
-	return (output);
-}
-
-/// @brief parses the CGI bin
-/// @param token 
-/// @return pair of string - string, variable - value
-std::pair<std::string, std::string>	Parser::parseCgiBin(std::string& token) {
-	std::pair<std::string, std::string>	output;
-	std::string							varName = token;	
-	std::string							varVal;
-
-	_ss >> varVal;
-	if (varVal.empty() || !varVal.compare("}")) {
-		std::cerr << "parseCgiBin: closed CGI Bins block with an undefined page or end of file. Got " << varVal << std::endl;
-		output = std::make_pair(ERR_STR, ERR_STR);
-		return (output);
-	} else if (!varVal.compare(";")) {
-		std::cerr << "parseCgiBin: closed CGI Bins definition without a path. Got " << varVal << std::endl;
-		output = std::make_pair(ERR_STR, ERR_STR);
-		return (output);
-	}
-
-	_ss >> token;
-	if (token.compare(";")){
-		std::cerr << "parseCgiBin: expected \";\". Got " << token << std::endl;
-		output = std::make_pair(ERR_STR, ERR_STR);
-		return (output);
-	}
-	output = std::make_pair(varName, varVal);
-
 	return (output);
 }
 
@@ -365,6 +300,7 @@ Server	Parser::parseServer(void) {
 
 	} while (!_ss.fail());
 
+	std::cout << "Parsed server " << servStruct.serverName << "\n" << std::endl;
 	validateServer(servStruct);
 
 	Server	output(servStruct, locs);

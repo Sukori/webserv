@@ -195,6 +195,8 @@ void	validateLocation(s_location& locStruct) {
 		std::cerr << "uploadPath: not a valid uploadPath for location " <<  locStruct.upload_path << std::endl;
 		locStruct.valid = false;
 	}
+
+	std::cout << "Location " << locStruct.route << " validated with status " << locStruct.valid << "\n" << std::endl;
 }
 
 
@@ -255,8 +257,7 @@ bool	validCgiBins(std::map<std::string, std::string>& bins) {
 	struct stat	buf;
 	std::map<std::string, std::string>::iterator	it = bins.begin();
 	std::map<std::string, std::string>::iterator	end = bins.end();
-
-	while (it++ != end){
+	while (it != end){
 		int status = stat(it->second.c_str(), &buf);
 
 		if (status == -1) {
@@ -265,8 +266,8 @@ bool	validCgiBins(std::map<std::string, std::string>& bins) {
 			std::cerr << "from validCgiBins" << std::endl;
 			return (false);
 		}
+		++it;
 	}
-
 
 	return (S_ISREG(buf.st_mode));
 }
@@ -357,9 +358,11 @@ void	validateServer(s_server& servStruct) {
 	}
 
 	validIndex(servStruct.index);
+
 	if (!servStruct.cgi_bins.empty() && !validCgiBins(servStruct.cgi_bins)) {
 		std::cerr << "cgi_bin: invalid cgi binaries for server " << servStruct.serverName << std::endl;
 	}
+
 	validAccessLogs(servStruct.access_logs);
 	validErrorLogs(servStruct.error_logs);
 	if (!validClientMaxBodySize(servStruct.client_max_body_size)) {
@@ -367,4 +370,6 @@ void	validateServer(s_server& servStruct) {
 		servStruct.valid = false;
 	}
 	validErrorPages(servStruct.error_pages);
+
+	std::cout << "Validated server " << servStruct.serverName << " with status " << servStruct.valid << "\n" << std::endl;
 }
