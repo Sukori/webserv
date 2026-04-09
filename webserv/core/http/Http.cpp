@@ -144,11 +144,12 @@ static ByteString	read_all(int fd) {
 	return ret;
 }
 
-ByteString	Http::getResponseBody(const Location& loc, const std::map<std::string, std::string>& binaries, const Server& server, int& status) {
+ByteString	Http::getResponseBody(const Location& loc, const Server& server, int& status) {
 	std::string new_path (_startline.path);
 	new_path.replace(0, loc.getRoute().length(), loc.getRoot()); // replace the user route with the actual root
 	std::string root (server.getRoot());
 	std::string file_path (root + new_path);
+
 
 	if (_startline.method == "DELETE")
 	{
@@ -161,8 +162,9 @@ ByteString	Http::getResponseBody(const Location& loc, const std::map<std::string
 			throw 404;
 	}
 
-	if (loc.getReturn().begin()->second.length() > 0)
+	if (loc.getReturn().begin()->first != 0)
 	{
+		std::cout << loc.getReturn().begin()->second << '\n';
 		status = loc.getReturn().begin()->first;
 		return ByteString("location:").append(loc.getReturn().begin()->second.c_str()).append("\r\n");
 	}
@@ -190,11 +192,12 @@ ByteString	Http::getResponseBody(const Location& loc, const std::map<std::string
 	std::string bin_f;
 
 	try {
-		bin_f = binaries.at(ext);
+		bin_f = server.getCgiBins().at(ext);
 	} catch (const std::out_of_range& e) {
 		bin_f = "";
 	}
 
+	std::cout << "status set\n";
 	status = 200;
 	if (bin_f == "") {
 		/* hmtl */

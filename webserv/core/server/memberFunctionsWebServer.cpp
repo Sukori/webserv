@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   memberFunctionsWebServer.cpp                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: neon-05 <neon-05@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 17:46:35 by pberset           #+#    #+#             */
-/*   Updated: 2026/04/07 17:58:25 by ylabussi         ###   ########.fr       */
+/*   Updated: 2026/04/08 19:19:21 by neon-05          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,10 +79,7 @@ void	WebServer::_handleRequest(std::map<int, Client>::iterator& client, const Se
 		std::set<std::string>	methods = loc.getLimExcept();
 		req.verifyMethod(methods);
 		/* process normal */
-		std::map<std::string, std::string>	bin;
-		bin["py"] = "/usr/bin/python3";
-		bin["php"] = "/usr/bin/php-cgi";
-		out = req.getResponseBody(loc, bin, *server, status);
+		out = req.getResponseBody(loc, *server, status);
 	} catch (int s) {
 		status = s;
 		out = Http::buildErrorHtml(status, *server);

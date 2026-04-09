@@ -38,7 +38,7 @@ class Http {
 		const StartLine&	getStartLine(void) const;
 		const Header&		getHeader(void) const;
 		const ByteString&	getRequestBody(void) const;
-		ByteString			getResponseBody(const Location& route, const std::map<std::string, std::string>& binaries, const Server& server, int& status);
+		ByteString			getResponseBody(const Location& route, const Server& server, int& status);
 		void				verifyMethod(const std::set<std::string>& allowed_methods) const;
 
 		static ByteString	buildErrorHtml(int status, const Server &server);

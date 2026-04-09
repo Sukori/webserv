@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: neon-05 <neon-05@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 14:36:55 by pberset           #+#    #+#             */
-/*   Updated: 2026/04/07 18:45:15 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/04/08 19:13:09 by neon-05          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include <Configuration.hpp>
 # include <helperParser.hpp>
 # include <validatorConfig.hpp>
+# include <other.hpp>
 
 class Parser {
 public:

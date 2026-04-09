@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: neon-05 <neon-05@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 14:11:31 by pberset           #+#    #+#             */
-/*   Updated: 2026/04/07 15:54:59 by ylabussi         ###   ########.fr       */
+/*   Updated: 2026/04/08 20:24:21 by neon-05          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ bool	Client::writeResponse(int socket) {
 		std::cout << "client has closed the connection\n";
 	} else {
 		std::cout << "write " << bytes_sent << " bytes\n"; //debug
-		_response.clear();
+		_response = _response.substr(bytes_sent); // response may still contain bytes ot be sent
 	}
 	return (_response.empty());
 }
