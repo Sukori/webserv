@@ -6,7 +6,7 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 16:17:33 by pberset           #+#    #+#             */
-/*   Updated: 2026/04/07 16:33:51 by ylabussi         ###   ########.fr       */
+/*   Updated: 2026/04/09 16:46:08 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,26 +16,6 @@
 #define SERVER_SOFTWARE "weebserv"
 #define GATEWAY_INTERFACE "CGI/1"
 #define SERVER_PROTOCOL "HTTP/1.1"
-
-void add_cgi_env(std::map<std::string, std::string>& env, /*const Server& server,*/ const Http::StartLine& startLine, const std::string& path) {
-    env.insert(std::make_pair("SERVER_SOFTWARE", SERVER_SOFTWARE "/1"));                    /* SERVER_SOFTWARE   */
-    //env.insert(std::make_pair("SERVER_NAME", server.getName()));                            /* SERVER_NAME       */
-    env.insert(std::make_pair("GATEWAY_INTERFACE", GATEWAY_INTERFACE));                     /* GATEWAY_INTERFACE */
-    env.insert(std::make_pair("SERVER_PROTOCOL", SERVER_PROTOCOL));                         /* SERVER_PROTOCOL   */
-    //env.insert(std::make_pair("SERVER_PORT", ft_uint_to_string(server.getListen().port)));  /* SERVER_PORT       */
-    env.insert(std::make_pair("REQUEST_METHOD", startLine.method));                         /* REQUEST_METHOD    */
-    env.insert(std::make_pair("PATH_INFO", startLine.path));                                /* PATH_INFO         */
-    //env.insert(std::make_pair("PATH_TRANSLATED", ""));                                      /* PATH_TRANSLATED   */
-    env.insert(std::make_pair("SCRIPT_FILENAME", path));                                        /* SCRIPT_FILENAME       */
-    env.insert(std::make_pair("QUERY_STRING", startLine.query));                            /* QUERY_STRING      */
-    env.insert(std::make_pair("REMOTE_HOST", ""));                                          /* REMOTE_HOST       */
-    env.insert(std::make_pair("REMOTE_ADDR", ""));                                          /* REMOTE_ADDR       */
-    //env.insert(std::make_pair("AUTH_TYPE", "?"));                                           /* AUTH_TYPE         */
-    //env.insert(std::make_pair("REMOTE_USER", "?"));                                         /* REMOTE_USER       */
-    //env.insert(std::make_pair("REMOTE_IDENT", "?"));                                        /* REMOTE_IDENT      */
-    //env.insert(std::make_pair("CONTENT_TYPE", ""));                                         /* CONTENT_TYPE      */
-    //env.insert(std::make_pair("CONTENT_LENGTH", ""));                                       /* CONTENT_LENGTH    */
-}
 
 static std::string ft_uint_to_string(unsigned int i) {
 	if (i == 0)
@@ -66,6 +46,8 @@ void add_cgi_env(std::map<std::string, std::string>& env, const Server& server, 
 	env["REMOTE_ADDR"] = "127.0.0.1";									/* REMOTE_ADDR       */
 	env["SCRIPT_FILENAME"] = path;										/* for php-cgi       */
 	env["REDIRECT_STATUS"] = "true";									/* for php-cgi       */
+	env["PHP_INI_SCAN_DIR"] = server.getRoot();							/* for php-cgi       */
+	
 	// TODO; add upload path
 }
 
@@ -73,18 +55,29 @@ void add_cgi_env(std::map<std::string, std::string>& env, const Server& server, 
 returns pipe fd out
 make sure first field of all env is full UPPER_SNAKE_CASE instead of lower-kebab-case
 */
-int exec_cgi(const std::string& exe, const std::string& path, std::map<std::string, std::string> env, int fdIn) {
+int exec_cgi(const std::string& exe, const std::string& path, std::map<std::string, std::string> env, const ByteString& dataIn) {
 	typedef std::map<std::string, std::string> env_map;
-	int		pfds[2];
-	if (pipe(pfds))
+	int		inpfds[2];
+	int		outpfds[2];
+
+	if (pipe(outpfds))
 		return -1;
+	if (pipe(inpfds))
+	{
+		close(outpfds[0]);
+		close(outpfds[1]);
+		return -1;
+	}
+	
 	pid_t	cpid = fork();
 	if (cpid < 0)
-		return close(pfds[0]), close(pfds[1]), -1;
+		return close(outpfds[0]), close(outpfds[1]), -1;
 	else if (cpid > 0) {
 		/* parent */
-		close(pfds[1]);
-		return pfds[0];
+		write(inpfds[1], dataIn.data(), dataIn.length());
+		close(inpfds[1]);
+		close(outpfds[1]);
+		return outpfds[0];
 	} else {
 		/* child */
 		char *argv[] = {(char*)exe.c_str(), (char*)path.c_str(), NULL};
@@ -93,9 +86,9 @@ int exec_cgi(const std::string& exe, const std::string& path, std::map<std::stri
 		for (env_map::iterator it = env.begin(); it != env.end(); it++)
 			envp[std::distance(env.begin(), it)] = strdup((it->first + '=' + it->second).c_str());
 		std::cout << argv[0] << ' ' << argv[1] << '\n';
-		dup2(fdIn, 0);
-		dup2(pfds[1], 1);
-		close(pfds[0]);
+		dup2(inpfds[0], 0);
+		dup2(outpfds[1], 1);
+		close(outpfds[0]);
 		execve(argv[0], argv, envp);
 		exit(2);
 	}

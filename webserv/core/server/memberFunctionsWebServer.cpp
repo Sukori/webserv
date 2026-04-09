@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   memberFunctionsWebServer.cpp                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: neon-05 <neon-05@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 17:46:35 by pberset           #+#    #+#             */
-/*   Updated: 2026/04/08 19:19:21 by neon-05          ###   ########.fr       */
+/*   Updated: 2026/04/09 16:53:53 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,13 +69,12 @@ void	WebServer::_handleRequest(std::map<int, Client>::iterator& client, const Se
 
 	int status;
 	ByteString out;
-	std::cerr << client->second.getRequest() << '\n';
 	try {
 		Http					req(client->second.getRequest());
 		std::string				route(req.getStartLine().path);
 		Location				loc(server->getLocation(route));
 		if (req.getRequestBody().length() > server->getMaxBodySize())
-			throw 413;
+			throw 413; // Request Entity Too Large
 		std::set<std::string>	methods = loc.getLimExcept();
 		req.verifyMethod(methods);
 		/* process normal */

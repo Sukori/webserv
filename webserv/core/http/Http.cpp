@@ -206,12 +206,9 @@ ByteString	Http::getResponseBody(const Location& loc, const Server& server, int&
 	}
 	else {
 		/* cgi */
-		int pfds[2];
-		pipe(pfds);
-		write(pfds[1], _body.data(), _body.length());
-		close(pfds[1]);
+		std::cout << "starting cgi\n";
 		add_cgi_env(_header, server, _startline, file_path);
-		return read_all(exec_cgi(bin_f, file_path, _header, pfds[0]));
+		return read_all(exec_cgi(bin_f, file_path, _header, _body));
 	}
 }
 
@@ -288,4 +285,21 @@ ByteString Http::buildErrorHtml(int status, const Server &server) {
 		return ByteString();
 	else
 		return read_all(fd);
+}
+
+bool	Http::checkRequestComplete(const ByteString& request) {
+	if (request.find("POST") == 0)
+	{
+		size_t cur = request.find("Content-Length");
+		if (cur == request.npos)
+			return false;
+		cur = request.find_first_not_of(' ', cur + 15);
+		size_t len = std::atol((const char*) request.data() + cur);
+		cur = request.find("\r\n\r\n", cur);
+		return cur + len + 4 == request.length();
+	}
+	else
+	{
+		return request.find("\r\n", request.length() - 2) != request.npos;
+	}
 }

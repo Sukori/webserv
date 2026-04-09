@@ -41,6 +41,8 @@ class Http {
 		ByteString			getResponseBody(const Location& route, const Server& server, int& status);
 		void				verifyMethod(const std::set<std::string>& allowed_methods) const;
 
+		static bool			checkRequestComplete(const ByteString& request);
+
 		static ByteString	buildErrorHtml(int status, const Server &server);
 		static ByteString	buildResponse(const ByteString& body, int status, const std::string& server);
 	private:

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: neon-05 <neon-05@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 14:11:31 by pberset           #+#    #+#             */
-/*   Updated: 2026/04/08 20:24:21 by neon-05          ###   ########.fr       */
+/*   Updated: 2026/04/09 17:10:09 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ const ByteString&	Client::getResponse(void) const {
 
 bool    Client::isRequestComplete(void) const {
     return (_requestComplete);
-    return (_requestComplete);
 }
 
 void	Client::setResponse(const ByteString& response) {
@@ -43,6 +42,7 @@ std::size_t	Client::readRequest(int socket) {
 	ssize_t	bytesRead = 0;
 
     bytesRead = recv(socket, &temp_buffer, BUFFER_SIZE, 0);
+	std::cerr << "read " << bytesRead << " bytes\n";
     if (bytesRead < 0) {
         std::cerr << "recv read error" << std::endl;
     } else if (bytesRead == 0) {
@@ -50,8 +50,7 @@ std::size_t	Client::readRequest(int socket) {
         std::cerr << "client closed the connection" << std::endl;
     } else {
         _request.append(temp_buffer, bytesRead);
-		if (bytesRead < BUFFER_SIZE)
-			_requestComplete = true;
+		_requestComplete = Http::checkRequestComplete(_request);
     }
 
 	return (bytesRead);

@@ -38,52 +38,52 @@ La branche `merge_buffer` regroupe tous les merges de toutes les branches en dat
 # Conformité Sujet (audit 2026-04-06)
 
 ## CRITIQUE - Blocage soumission
-- [ ] **I/O CGI non pilotées par poll**: Les pipes d'exécution CGI sont lues/écrites HORS boucle poll
+- [ ] **I/O CGI non pilotées par poll**: Les pipes d'exécution CGI sont lues/écrites HORS boucle poll P
 	>> Http.cpp L.140, L.185-189: read_all() et exec_cgi() bloquent sans surveillance poll
 	>> **Impact**: Grade 0 selon sujet § I/O requirements
 	>> **Solution**: Intégrer les FDs de processus CGI au vecteur poll avant fork et lire les pipes via poll
 	
-- [ ] **DELETE non implémenté**: Méthode acceptée en config mais aucune logique de suppression de fichier
+- [x] **DELETE non implémenté**: Méthode acceptée en config mais aucune logique de suppression de fichier
 	>> validatorConfig.cpp L.97: "GET" || "POST" || "DELETE" validés
 	>> memberFunctionsWebServer.cpp L.83: getResponseBody() ne distingue pas DELETE pour unlink()
 	>> **Impact**: Évaluation échouera test DELETE
 	>> **Solution**: Ajouter branche DELETE dans _handleRequest(), appeler unlink(file_path) via open/unlink
 	
-- [ ] **Upload fichier non implémenté**: upload_path parsé mais non utilisé au runtime
+- [ ] **Upload fichier non implémenté**: upload_path parsé mais non utilisé au runtime Y
 	>> Configuration.cpp L.48-49: getUploadPath() exposé mais jamais appelé en réponse
 	>> **Impact**: POST vers location /uploads ne permiste aucun fichier
 	>> **Solution**: Dans getResponseBody(), si POST + upload_path, ouvrir file avec O_WRONLY|O_CREAT et écrire _body
 
 ## MOYEN - Impact test fonctionnel
-- [ ] **Redirections ignorées**: location return{...} parsées mais jamais appliquées en runtime
+- [x] **Redirections ignorées**: location return{...} parsées mais jamais appliquées en runtime
 	>> ParserLocation.cpp L.73: parseReturn() accumule dans locStruct.locReturn
 	>> memberFunctionsWebServer.cpp L.78-85: Aucune branche pour 301/302/303/307/308
 	>> **Solution**: Dans _handleRequest(), vérifier Location::getReturn(), envoyer 301/302 + Location header
 	
-- [ ] **Directory listing désactivé**: autoindex parsé, jamais utilisé avec opendir/readdir
+- [ ] **Directory listing désactivé**: autoindex parsé, jamais utilisé avec opendir/readdir Y
 	>> Configuration.cpp L.44-45: getAutoIndex() retourne bool mais pas appelé
 	>> **Solution**: Dans getResponseBody(), pour répertoire sans index, si autoindex=true, lister dossier HTML
 	
-- [ ] **client_max_body_size non contrôlé**: Limite parsée mais pas vérifiée à la réception
+- [x] **client_max_body_size non contrôlé**: Limite parsée mais pas vérifiée à la réception
 	>> ParserServer.cpp L.222: parseBodySize() OK
 	>> Client.cpp L.45-53: readRequest() accumule sans limite
 	>> **Solution**: Dans readRequest(), comparer _request.length() vs server.getMaxBodySize(), throw 413
 	
-- [ ] **Chunked transfer encoding absent**: Transfer-Encoding: chunked non décodé
+- [ ] **Chunked transfer encoding absent**: Transfer-Encoding: chunked non décodé Y
 	>> Http.cpp L.122-124: _parseBody() n'accepte que Content-Length
 	>> **Impact**: POST chunké échoue ou corrompt le body
 	>> **Solution**: Détecter Transfer-Encoding header, unchunker le body avant traitement CGI
 
 ## MINEURE - Design/robustesse
-- [ ] **Route matching naïf**: Location::getLocation() utilise rfind() simple sans hiérarchie
+- [x] **Route matching naïf**: Location::getLocation() utilise rfind() simple sans hiérarchie
 	>> Configuration.cpp L.114-115: TODO "implement a proper route check ABSOLUTELY"
 	>> Exemple: /uploads vs /upload peuvent matcher anomalement
 	>> **Solution**: Implémenter longest-prefix match ou trier locations par longueur
 	
-- [ ] **Errno check interdit**: Le code peut checker errno après read/write (sujet l'interdit)
+- [ ] **Errno check interdit**: Le code peut checker errno après read/write (sujet l'interdit) P
 	>> À vérifier: rechercher errno usage après I/O pour confirmation
 	
-- [ ] **Signalisation hangup client**: Pas de détection fermeture volontaire client mid-requête
+- [ ] **Signalisation hangup client**: Pas de détection fermeture volontaire client mid-requête P
 	>> Client.cpp L.45-52: bytesRead == 0 ferme mais pas d'état intermediate
 	>> Solution: timeout inactivité sur poll(), cleanup FD client
 
