@@ -6,7 +6,7 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 17:46:35 by pberset           #+#    #+#             */
-/*   Updated: 2026/04/09 16:53:53 by ylabussi         ###   ########.fr       */
+/*   Updated: 2026/04/09 18:17:29 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,8 @@ void	WebServer::_handleRequest(std::map<int, Client>::iterator& client, const Se
 		std::set<std::string>	methods = loc.getLimExcept();
 		req.verifyMethod(methods);
 		/* process normal */
+		if (req.getHeader().count("TRANSFER_ENCODING") > 0 && req.getHeader().at("TRANSFER_ENCODING").find("chunked") != std::string::npos)
+			req.dechunk();
 		out = req.getResponseBody(loc, *server, status);
 	} catch (int s) {
 		status = s;

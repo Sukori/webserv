@@ -49,7 +49,7 @@ La branche `merge_buffer` regroupe tous les merges de toutes les branches en dat
 	>> **Impact**: Évaluation échouera test DELETE
 	>> **Solution**: Ajouter branche DELETE dans _handleRequest(), appeler unlink(file_path) via open/unlink
 	
-- [ ] **Upload fichier non implémenté**: upload_path parsé mais non utilisé au runtime Y
+- [x] **Upload fichier non implémenté**: upload_path parsé mais non utilisé au runtime Y
 	>> Configuration.cpp L.48-49: getUploadPath() exposé mais jamais appelé en réponse
 	>> **Impact**: POST vers location /uploads ne permiste aucun fichier
 	>> **Solution**: Dans getResponseBody(), si POST + upload_path, ouvrir file avec O_WRONLY|O_CREAT et écrire _body
@@ -69,7 +69,7 @@ La branche `merge_buffer` regroupe tous les merges de toutes les branches en dat
 	>> Client.cpp L.45-53: readRequest() accumule sans limite
 	>> **Solution**: Dans readRequest(), comparer _request.length() vs server.getMaxBodySize(), throw 413
 	
-- [ ] **Chunked transfer encoding absent**: Transfer-Encoding: chunked non décodé Y
+- [x] **Chunked transfer encoding absent**: Transfer-Encoding: chunked non décodé Y
 	>> Http.cpp L.122-124: _parseBody() n'accepte que Content-Length
 	>> **Impact**: POST chunké échoue ou corrompt le body
 	>> **Solution**: Détecter Transfer-Encoding header, unchunker le body avant traitement CGI

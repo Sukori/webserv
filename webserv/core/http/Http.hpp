@@ -40,6 +40,7 @@ class Http {
 		const ByteString&	getRequestBody(void) const;
 		ByteString			getResponseBody(const Location& route, const Server& server, int& status);
 		void				verifyMethod(const std::set<std::string>& allowed_methods) const;
+		void				dechunk(void);
 
 		static bool			checkRequestComplete(const ByteString& request);
 

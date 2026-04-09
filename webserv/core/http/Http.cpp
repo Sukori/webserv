@@ -303,3 +303,37 @@ bool	Http::checkRequestComplete(const ByteString& request) {
 		return request.find("\r\n", request.length() - 2) != request.npos;
 	}
 }
+
+static char	hexToInt(byte b) {
+	if ('0' <= b && b <= '9')
+		return b - '0';
+	else if ('A' <= b && b <= 'F')
+		return b - 'A' + 10;
+	else
+		return -1;
+}
+
+static ByteString	parseChunk(const ByteString& s, size_t& cur) {
+	size_t chunk_len = 0;
+	while (cur < s.find("\r\n", cur))
+	{
+		chunk_len <<= 4;
+		chunk_len |= hexToInt(s[cur]);
+		cur++;
+	}
+	cur += 2;
+	ByteString ret (s.substr(cur, chunk_len));
+	cur += 2 + chunk_len;
+	return ret;
+}
+
+void	Http::dechunk(void) {
+	ByteString newbody, tmp;
+	size_t cur = 0;
+	do {
+		tmp = parseChunk(_body, cur);
+		newbody.append(tmp);
+	} while (tmp.length() > 0);
+	_body = newbody;
+	_header["CONTENT_LENGTH"] = ft_uint_to_string(_body.length());
+}
