@@ -32,6 +32,7 @@ HDRS		= $(WEBDIR)WebServer \
 			$(CGIDIR)Cgi \
 			$(UTIDIR)ByteString \
 			$(UTIDIR)other \
+			$(UTIDIR)autoindex \
 
 SRCS		= $(WEBDIR)WebServer \
 			$(WEBDIR)helperWebServer \
@@ -52,6 +53,7 @@ SRCS		= $(WEBDIR)WebServer \
 			$(CGIDIR)Cgi \
 			$(UTIDIR)ByteString \
 			$(UTIDIR)other \
+			$(UTIDIR)autoindex \
 			run
 
 HDR			= $(addsuffix .hpp, $(HDRS))

@@ -17,6 +17,7 @@
 #include <cctype>
 #include <ByteString.hpp>
 #include <Configuration.hpp>
+#include <autoindex.hpp>
 
 class Http {
 	public:

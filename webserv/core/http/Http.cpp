@@ -180,8 +180,16 @@ ByteString	Http::getResponseBody(const Location& loc, const Server& server, int&
 			if (found)
 				break;
 		}
-		if (!found && !loc.getAutoIndex())
-			throw 404; // Not Found
+		if (!found)
+		{
+			if (loc.getAutoIndex())
+			{
+				status = 200;
+				return autoindex(_startline.path, root + new_path);
+			}
+			else
+				throw 404; // Not Found
+		}
 	}
 	else if (access(file_path.c_str(), R_OK) == -1)
 			throw 404; // Not Found
