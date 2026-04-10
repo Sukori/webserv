@@ -60,7 +60,7 @@ La branche `merge_buffer` regroupe tous les merges de toutes les branches en dat
 	>> memberFunctionsWebServer.cpp L.78-85: Aucune branche pour 301/302/303/307/308
 	>> **Solution**: Dans _handleRequest(), vérifier Location::getReturn(), envoyer 301/302 + Location header
 	
-- [ ] **Directory listing désactivé**: autoindex parsé, jamais utilisé avec opendir/readdir Y
+- [x] **Directory listing désactivé**: autoindex parsé, jamais utilisé avec opendir/readdir Y
 	>> Configuration.cpp L.44-45: getAutoIndex() retourne bool mais pas appelé
 	>> **Solution**: Dans getResponseBody(), pour répertoire sans index, si autoindex=true, lister dossier HTML
 	
