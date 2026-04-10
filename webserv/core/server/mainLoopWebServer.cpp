@@ -105,11 +105,12 @@ void	WebServer::run(void) {
 						} 
 					}
 					if (time(NULL) - it->second.getLastActivityTime() > CLIENT_TIMEOUT_S) {
-						_fds[i].revents = POLLHUP;
+						_closeClient(it, _fds[i].fd, i);
+						putLog("client timeout"); //error 408
 					}
 					if (_fds[i].revents & POLLHUP) {
 						_closeClient(it, _fds[i].fd, i);
-						putLog("client timeout"); //error 408
+						putLog("client hangup"); //error 408
 					}
 				}
 			}

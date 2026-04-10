@@ -12,7 +12,7 @@
 
 #include <Client.hpp>
 
-Client::Client(void): _requestComplete(false), _requestFailed(false) {
+Client::Client(void): _requestComplete(false), _requestFailed(false), _lastActivityTime(time(NULL)) {
 }
 
 Client::~Client(void) {
