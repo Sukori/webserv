@@ -110,3 +110,15 @@ int	WebServer::_acceptConnection(int fd) {
 	}
 	return (newSocket);
 }
+
+/// @brief closes a client that had errors or hangup or finished
+/// @param it
+/// @param fd 
+/// @param i 
+void	WebServer::_closeClient(std::map<int, Client>::iterator& it, int fd, size_t& i) {
+	close(_fds[i].fd);
+	_clients.erase(it);
+	_clientsServers.erase(_fds[i].fd);
+	_fds.erase(_fds.begin() + i);
+	i--;
+}

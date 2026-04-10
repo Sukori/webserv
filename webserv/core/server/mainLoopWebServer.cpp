@@ -44,7 +44,7 @@ void	WebServer::run(void) {
 	//Main loop
 	while (!_stopRequested) {
     std::cout << "===== Listening =====" << std::endl;
-		ctrlno = poll(&_fds[0], _fds.size(), -1);
+		ctrlno = poll(&_fds[0], _fds.size(), CLIENT_TIMEOUT_MS);
 		if (ctrlno < 0) {
 			if (errno == EINTR) {
 				continue ;
@@ -89,11 +89,7 @@ void	WebServer::run(void) {
 						}
 	
 						if (readBytes < 0) {
-							close(_fds[i].fd);
-							_clients.erase(it);
-							_clientsServers.erase(_fds[i].fd);
-							_fds.erase(_fds.begin() + i);
-							i--;
+							_closeClient(it, _fds[i].fd, i);
 							continue ;
 						}
 
@@ -112,7 +108,14 @@ void	WebServer::run(void) {
 							/*personal assumption
 							 * it->second.events = POLLIN;
 							 * clear the read write containers*/
-						}
+						} 
+					}
+					if (time(NULL) - it->second.getLastActivityTime() > CLIENT_TIMEOUT_S) {
+						_fds[i].revents = POLLHUP;
+					}
+					if (_fds[i].revents & POLLHUP) {
+						_closeClient(it, _fds[i].fd, i);
+						putLog("client timeout"); //error 408
 					}
 				}
 			}

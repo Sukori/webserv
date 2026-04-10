@@ -16,6 +16,7 @@
 
 # include <iostream>
 # include <string>
+# include <map>
 # include <poll.h>
 # include <cstdlib>
 # include <unistd.h>
