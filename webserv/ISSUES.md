@@ -87,5 +87,7 @@ La branche `merge_buffer` regroupe tous les merges de toutes les branches en dat
 	>> Client.cpp L.45-52: bytesRead == 0 ferme mais pas d'état intermediate
 	>> Solution: timeout inactivité sur poll(), cleanup FD client
 
+- [x] **Client keep alive**: Petit plus, garder le client alive tant qu'il n'a pas fermé ou crash.
+
 # README.md
 - [ ] aligner le `README.md` selon sujet (à la fin)

@@ -99,15 +99,9 @@ void	WebServer::run(void) {
 						}
 
 					} else if (_fds[i].revents & POLLOUT) {
-						if (it->second.writeResponse(_fds[i].fd)) { //for now, we close
-							close(_fds[i].fd);
-							_clients.erase(it);
-							_clientsServers.erase(_fds[i].fd);
-							_fds.erase(_fds.begin() + i);
-							i--;
-							/*personal assumption
-							 * it->second.events = POLLIN;
-							 * clear the read write containers*/
+						if (it->second.writeResponse(_fds[i].fd)) {
+							_fds[i].events = POLLIN;
+							it->second.reset();
 						} 
 					}
 					if (time(NULL) - it->second.getLastActivityTime() > CLIENT_TIMEOUT_S) {

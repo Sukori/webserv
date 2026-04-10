@@ -41,6 +41,7 @@ class Client {
 		time_t				getLastActivityTime(void) const;
 
 		void				setResponse(const ByteString& response);
+		void				reset(void);
 
 	private:
 		ByteString	_request;

@@ -88,3 +88,10 @@ bool	Client::writeResponse(int socket) {
 	}
 	return (_response.empty());
 }
+
+void	Client::reset(void) {
+	_requestComplete = false;
+	_requestFailed = false;
+	_request.clear();
+	_response.clear();
+}
