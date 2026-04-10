@@ -66,7 +66,7 @@ class WebServer {
 		void					_closeServer(void);
 		int						_acceptConnection(int fd);
 		void					_handleRequest(std::map<int, Client>::iterator& client, const Server* server);
-		void					_closeClient(std::map<int, Client>::iterator& it, int fd, size_t& i);
+		void					_closeClient(std::map<int, Client>::iterator& it, size_t& i);
 };
 
 #endif

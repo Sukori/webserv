@@ -24,6 +24,7 @@
 - [x] Segfault si tous les serveurs sont skip (tous invalides)
 - [x] Trouver la route pour handle request
 - [x] Segfault
+- [ ] Client closed the connection, mais pas de clear de fd
 
 # CGI
 - [x] Supprimer `cgi_pass` de la config ?

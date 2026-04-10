@@ -115,7 +115,7 @@ int	WebServer::_acceptConnection(int fd) {
 /// @param it
 /// @param fd 
 /// @param i 
-void	WebServer::_closeClient(std::map<int, Client>::iterator& it, int fd, size_t& i) {
+void	WebServer::_closeClient(std::map<int, Client>::iterator& it, size_t& i) {
 	close(_fds[i].fd);
 	_clients.erase(it);
 	_clientsServers.erase(_fds[i].fd);

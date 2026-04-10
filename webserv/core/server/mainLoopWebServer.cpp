@@ -89,7 +89,7 @@ void	WebServer::run(void) {
 						}
 	
 						if (readBytes < 0) {
-							_closeClient(it, _fds[i].fd, i);
+							_closeClient(it, i);
 							continue ;
 						}
 
@@ -105,11 +105,11 @@ void	WebServer::run(void) {
 						} 
 					}
 					if (time(NULL) - it->second.getLastActivityTime() > CLIENT_TIMEOUT_S) {
-						_closeClient(it, _fds[i].fd, i);
+						_closeClient(it, i);
 						putLog("client timeout"); //error 408
 					}
 					if (_fds[i].revents & POLLHUP) {
-						_closeClient(it, _fds[i].fd, i);
+						_closeClient(it, i);
 						putLog("client hangup"); //error 408
 					}
 				}
