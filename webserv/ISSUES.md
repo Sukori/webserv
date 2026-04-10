@@ -80,12 +80,14 @@ La branche `merge_buffer` regroupe tous les merges de toutes les branches en dat
 	>> Exemple: /uploads vs /upload peuvent matcher anomalement
 	>> **Solution**: Implémenter longest-prefix match ou trier locations par longueur
 	
-- [ ] **Errno check interdit**: Le code peut checker errno après read/write (sujet l'interdit) P
+- [x] **Errno check interdit**: Le code peut checker errno après read/write (sujet l'interdit)
 	>> À vérifier: rechercher errno usage après I/O pour confirmation
 	
-- [ ] **Signalisation hangup client**: Pas de détection fermeture volontaire client mid-requête P
+- [x] **Signalisation hangup client**: Pas de détection fermeture volontaire client mid-requête
 	>> Client.cpp L.45-52: bytesRead == 0 ferme mais pas d'état intermediate
 	>> Solution: timeout inactivité sur poll(), cleanup FD client
+
+- [x] **Client keep alive**: Petit plus, garder le client alive tant qu'il n'a pas fermé ou crash.
 
 # README.md
 - [ ] aligner le `README.md` selon sujet (à la fin)

@@ -18,6 +18,7 @@
 # include <cstring>
 # include <sys/socket.h>
 # include <arpa/inet.h>
+# include <time.h>
 # include <Http.hpp>
 # include <helperParser.hpp>
 # include <ByteString.hpp>
@@ -36,13 +37,18 @@ class Client {
 		const ByteString&	getResponse(void) const;
 
 		bool				isRequestComplete(void) const;
+		bool				isRequestFailed(void) const;
+		time_t				getLastActivityTime(void) const;
 
 		void				setResponse(const ByteString& response);
+		void				reset(void);
 
 	private:
 		ByteString	_request;
 		ByteString	_response;
 		bool		_requestComplete;
+		bool		_requestFailed;
+		time_t		_lastActivityTime;
 };
 
 

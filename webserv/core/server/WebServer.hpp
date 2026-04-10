@@ -31,13 +31,16 @@
 # include <arpa/inet.h>
 # include <unistd.h>
 # include <signal.h>
+# include <time.h>
 # include <Configuration.hpp>
 # include <Parser.hpp>
 # include <Client.hpp>
 # include <helperWebServer.hpp>
 # include <Http.hpp>
 
-# define BACKLOG 1024
+# define BACKLOG 1024 //concurrent clients
+# define CLIENT_TIMEOUT_MS 15000
+# define CLIENT_TIMEOUT_S (CLIENT_TIMEOUT_MS / 1000)
 
 class WebServer {
 	public:
@@ -63,6 +66,7 @@ class WebServer {
 		void					_closeServer(void);
 		int						_acceptConnection(int fd);
 		void					_handleRequest(std::map<int, Client>::iterator& client, const Server* server);
+		void					_closeClient(std::map<int, Client>::iterator& it, int fd, size_t& i);
 };
 
 #endif
