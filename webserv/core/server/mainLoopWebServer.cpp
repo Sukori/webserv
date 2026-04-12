@@ -86,9 +86,10 @@ void	WebServer::run(void) {
 							readBytes = it->second.readRequest(_fds[i].fd);
 						} catch (int status) {
 							std::cerr << "log temporaire: " << status << std::endl;
+							_closeClient(it, i);
 						}
 	
-						if (readBytes < 0) {
+						if (readBytes <= 0) {
 							_closeClient(it, i);
 							continue ;
 						}
