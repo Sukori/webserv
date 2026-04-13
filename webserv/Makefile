@@ -31,6 +31,7 @@ HDRS		= $(WEBDIR)WebServer \
 			$(HTTDIR)Http \
 			$(CGIDIR)Cgi \
 			$(UTIDIR)ByteString \
+			$(UTIDIR)Resource \
 			$(UTIDIR)other \
 			$(UTIDIR)autoindex \
 
@@ -52,6 +53,7 @@ SRCS		= $(WEBDIR)WebServer \
 			$(HTTDIR)Http \
 			$(CGIDIR)Cgi \
 			$(UTIDIR)ByteString \
+			$(UTIDIR)Resource \
 			$(UTIDIR)other \
 			$(UTIDIR)autoindex \
 			run

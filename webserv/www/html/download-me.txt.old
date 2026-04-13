@@ -1,0 +1,14 @@
+Ceci est un fichier texte destiné à être téléchargé via GET et supprimé via DELETE.
+
+Commandes de test:
+  # GET (télécharger le fichier)
+  curl http://localhost:8081/download-me.txt
+
+  # DELETE (supprimer le fichier)
+  curl -X DELETE http://localhost:8081/download-me.txt
+
+  # Vérifier que le fichier est supprimé
+  curl http://localhost:8081/download-me.txt  # Doit retourner 404
+
+Fichier créé: 2026-04-06
+Prêt à être supprimé pour tester la méthode DELETE.

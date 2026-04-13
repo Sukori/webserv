@@ -133,7 +133,7 @@ static std::string get_ext(const std::string& path) {
 		return path.substr(sep + 1);
 }
 
-/* reads all data on fd and closes it */
+/* reads all data on fd and closes it *
 static ByteString	read_all(int fd) {
 	byte	buf[BUFFER_SIZE];
 	size_t				bytes;
@@ -142,9 +142,9 @@ static ByteString	read_all(int fd) {
 		ret.append(buf, bytes);
 	close(fd);
 	return ret;
-}
+}*/
 
-ByteString	Http::getResponseBody(const Location& loc, const Server& server, int& status) {
+Resource	Http::getResponseBody(const Location& loc, const Server& server, int& status) {
 	std::string new_path (_startline.path);
 	new_path.replace(0, loc.getRoute().length(), loc.getRoot()); // replace the user route with the actual root
 	std::string root (server.getRoot());
@@ -166,7 +166,7 @@ ByteString	Http::getResponseBody(const Location& loc, const Server& server, int&
 	{
 		std::cout << loc.getReturn().begin()->second << '\n';
 		status = loc.getReturn().begin()->first;
-		return ByteString("location:").append(loc.getReturn().begin()->second.c_str()).append("\r\n");
+		return Resource(ByteString("location:").append(loc.getReturn().begin()->second.c_str()).append("\r\n"));
 	}
 
 	if (new_path.find('.') == new_path.npos)
@@ -175,7 +175,7 @@ ByteString	Http::getResponseBody(const Location& loc, const Server& server, int&
 		const std::vector<std::string> &indexes = server.getIndex();
 		for (std::vector<std::string>::const_iterator it = indexes.begin(); it != indexes.end(); it++)
 		{
-			file_path = root + new_path + '/' + *it;
+			file_path = root + new_path + *it;
 			found = access(file_path.c_str(), R_OK) != -1;
 			if (found)
 				break;
@@ -185,7 +185,7 @@ ByteString	Http::getResponseBody(const Location& loc, const Server& server, int&
 			if (loc.getAutoIndex())
 			{
 				status = 200;
-				return autoindex(_startline.path, root + new_path);
+				return Resource(autoindex(_startline.path, root + new_path));
 			}
 			else
 				throw 404; // Not Found
@@ -210,13 +210,13 @@ ByteString	Http::getResponseBody(const Location& loc, const Server& server, int&
 	if (bin_f == "") {
 		/* hmtl */
 		int	fd = open(file_path.c_str(), O_RDONLY);
-		return read_all(fd);
+		return Resource(fd, "\r\n"); // added CRLF to account for added header fileds in cgi output
 	}
 	else {
 		/* cgi */
 		std::cout << "starting cgi\n";
 		add_cgi_env(_header, server, _startline, file_path);
-		return read_all(exec_cgi(bin_f, file_path, _header, _body));
+		return Resource(exec_cgi(bin_f, file_path, _header, _body));
 	}
 }
 
@@ -248,7 +248,7 @@ static std::string	reasonPhrase(int status) {
 	}
 }
 
-ByteString	Http::buildResponse(const ByteString& body, int status, const std::string& server) {
+ByteString	Http::buildResponse(const ByteString& body, int status, const std::string& server_name) {
 	/**
 	 * startline: HTTP/1.1 status ~status-desc(optional)~
 	 * headers:
@@ -261,7 +261,6 @@ ByteString	Http::buildResponse(const ByteString& body, int status, const std::st
 	 */
 
 	//std::string	body = reasonPhrase(status);
-
 	ByteString res;
 	res.append("HTTP/1.1 "); //https://http.dev/1.1
 	res.append(ft_uint_to_string(status).c_str());
@@ -277,22 +276,22 @@ ByteString	Http::buildResponse(const ByteString& body, int status, const std::st
 			d.erase(d[d.size() - 1]);
 		res.append(d.c_str());
 	}
-	res.append(("\r\nServer: " + server).c_str());
-	res.append("\r\n\r\n");
+	res.append(std::string("\r\nServer: ").append(server_name).c_str());
+	res.append("\r\n");
 	res.append(body);
 
 	return res;
 }
 
-ByteString Http::buildErrorHtml(int status, const Server &server) {
+Resource Http::buildErrorHtml(int status, const Server &server) {
 	std::string path;
 	std::cout << server.getRoot();
 	path = server.getRoot() + server.getErrPages().at(status);
 	int fd = open(path.c_str(), O_RDONLY);
 	if (fd < 0)
-		return ByteString();
+		return Resource();
 	else
-		return read_all(fd);
+		return Resource(fd);
 }
 
 bool	Http::checkRequestComplete(const ByteString& request) {
@@ -344,4 +343,8 @@ void	Http::dechunk(void) {
 	} while (tmp.length() > 0);
 	_body = newbody;
 	_header["CONTENT_LENGTH"] = ft_uint_to_string(_body.length());
+}
+
+bool	Http::isChunked(void) const {
+	return _header.count("TRANSFER_ENCODING") > 0 && _header.at("TRANSFER_ENCODING").find("chunked") != std::string::npos;
 }

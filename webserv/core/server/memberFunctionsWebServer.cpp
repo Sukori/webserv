@@ -6,7 +6,7 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 17:46:35 by pberset           #+#    #+#             */
-/*   Updated: 2026/04/09 18:17:29 by ylabussi         ###   ########.fr       */
+/*   Updated: 2026/04/13 18:45:41 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,32 +63,34 @@ void	WebServer::_closeServer(void) {
 	}
 }
 
-/// @brief handle a client request and prepares a response
-/// @param client 
-void	WebServer::_handleRequest(std::map<int, Client>::iterator& client, const Server* server) {
-
-	int status;
-	ByteString out;
+/// @brief handle a client request and gets the resource
+/// @param client
+/// @param server
+Resource	WebServer::_handleRequest(Client& client, const Server& server) {
+	int			status;
+	Resource	out;
 	try {
-		Http					req(client->second.getRequest());
-		std::string				route(req.getStartLine().path);
-		Location				loc(server->getLocation(route));
-		if (req.getRequestBody().length() > server->getMaxBodySize())
+		Http				req(client.getRequest());
+		const std::string&	route = req.getStartLine().path;
+		const Location&		loc = server.getLocation(route);
+		if (req.getRequestBody().length() > server.getMaxBodySize())
 			throw 413; // Request Entity Too Large
-		std::set<std::string>	methods = loc.getLimExcept();
-		req.verifyMethod(methods);
-		/* process normal */
-		if (req.getHeader().count("TRANSFER_ENCODING") > 0 && req.getHeader().at("TRANSFER_ENCODING").find("chunked") != std::string::npos)
+		req.verifyMethod(loc.getLimExcept()); // check for 405 Method Not Allowed
+		if (req.isChunked())
 			req.dechunk();
-		out = req.getResponseBody(loc, *server, status);
+		out = req.getResponseBody(loc, server, status);
 	} catch (int s) {
 		status = s;
-		out = Http::buildErrorHtml(status, *server);
+		out = Http::buildErrorHtml(status, server);
 	}
-	std::cout << "status " << status << std::endl;
-	//ici il faut encore verifier le status. puis rebuild le header a append a la response
+	client.setResponseStatus(status);
+	return out;
+}
 
-	client->second.setResponse(Http::buildResponse(out, status, server->getName()));
+void		WebServer::_handleResponse(Client& client, const Server& server) {
+	//std::cout << "server name " << server->getName() << '\n';
+	client.setResponse(Http::buildResponse(client.getResource().getContent(), client.getResponseStatus(), "temporary_name"));
+	(void)server;
 }
 
 /// @brief accepts a new connexion from a client
@@ -115,7 +117,7 @@ int	WebServer::_acceptConnection(int fd) {
 /// @param it
 /// @param fd 
 /// @param i 
-void	WebServer::_closeClient(std::map<int, Client>::iterator& it, size_t& i) {
+void	WebServer::_closeClient(std::map<int, Client*>::iterator& it, size_t& i) {
 	close(_fds[i].fd);
 	_clients.erase(it);
 	_clientsServers.erase(_fds[i].fd);

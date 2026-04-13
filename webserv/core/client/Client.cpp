@@ -6,7 +6,7 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 14:11:31 by pberset           #+#    #+#             */
-/*   Updated: 2026/04/09 17:10:09 by ylabussi         ###   ########.fr       */
+/*   Updated: 2026/04/13 18:27:27 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,14 @@ const ByteString&	Client::getResponse(void) const {
     return (_response);
 }
 
+int					Client::getResponseStatus(void) const {
+	return (_resp_status);
+}
+
+Resource&			Client::getResource(void) {
+	return (_resource);
+}
+
 bool    Client::isRequestComplete(void) const {
     return (_requestComplete);
 }
@@ -42,6 +50,14 @@ void	Client::setResponse(const ByteString& response) {
 	_response = response;
 }
 
+void	Client::setResponseStatus(int status) {
+	_resp_status = status;
+}
+
+void	Client::setResource(const Resource& resource) {
+	_resource = resource;
+}
+
 /// @brief reads a request until recv is empty from a client and stores it . RFC 7230 § 6.6
 /// @param  none
 /// @return bytes read
@@ -54,11 +70,11 @@ std::size_t	Client::readRequest(int socket) {
     if (bytesRead < 0) {
         std::cerr << "recv read error" << std::endl;
 		_requestFailed = true;
-		throw 400;
+		throw 400; // Invalid Request
     } else if (bytesRead == 0) {
         std::cerr << "client closed the connection" << std::endl;
 		_requestFailed = true;
-		throw 410;
+		throw 410; // Gone
     } else {
         _request.append(temp_buffer, bytesRead);
 		_requestComplete = Http::checkRequestComplete(_request);
@@ -67,6 +83,8 @@ std::size_t	Client::readRequest(int socket) {
 
 	return (bytesRead);
 }
+
+bool			Client::readResource(void) {return _resource.readChunk();}
 
 /// @brief writes a server response to a client
 /// @param  none
