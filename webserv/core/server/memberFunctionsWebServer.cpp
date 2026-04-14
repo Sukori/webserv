@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   memberFunctionsWebServer.cpp                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: neon-05 <neon-05@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 17:46:35 by pberset           #+#    #+#             */
-/*   Updated: 2026/04/13 18:45:41 by ylabussi         ###   ########.fr       */
+/*   Updated: 2026/04/14 16:48:28 by neon-05          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,9 +117,9 @@ int	WebServer::_acceptConnection(int fd) {
 /// @param it
 /// @param fd 
 /// @param i 
-void	WebServer::_closeClient(std::map<int, Client*>::iterator& it, size_t& i) {
+void	WebServer::_closeClient(std::map<int, Client>::iterator& it, size_t& i) {
 	close(_fds[i].fd);
-	_clients.erase(it);
+	_clientSockets.erase(it);
 	_clientsServers.erase(_fds[i].fd);
 	_fds.erase(_fds.begin() + i);
 	i--;

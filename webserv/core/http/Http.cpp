@@ -261,12 +261,18 @@ ByteString	Http::buildResponse(const ByteString& body, int status, const std::st
 	 */
 
 	//std::string	body = reasonPhrase(status);
+
+	size_t len;
+	{
+		size_t tmp = body.find("\r\n\r\n");
+		len = body.length() - ((tmp != body.npos) ? tmp + 4 : 2);
+	}
 	ByteString res;
 	res.append("HTTP/1.1 "); //https://http.dev/1.1
 	res.append(ft_uint_to_string(status).c_str());
 	res.append(reasonPhrase(status).c_str());
 	res.append("\r\nContent-Length: ");
-	res.append(ft_uint_to_string(body.length()).c_str());
+	res.append(ft_uint_to_string(len).c_str());
 	/* res.append("\r\nContent-Type: text/html; charset=UTF-8"); */ // we don't necessarily pass html
 	res.append("\r\nDate: ");
 	{

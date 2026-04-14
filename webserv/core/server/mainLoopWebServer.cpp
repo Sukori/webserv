@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mainLoopWebServer.cpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: neon-05 <neon-05@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 17:44:30 by pberset           #+#    #+#             */
-/*   Updated: 2026/04/13 18:55:13 by ylabussi         ###   ########.fr       */
+/*   Updated: 2026/04/14 17:03:30 by neon-05          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ void	WebServer::run(void) {
 				int newSocket = _acceptConnection(_fds[i].fd);
 				if (newSocket > 0) {
 					const Server*	serv = _serverSockets.find(_fds[i].fd)->second;
-					_clients[newSocket]; // can't default constructr this. either make a vector in config for example or new Client;
+					_clientSockets[newSocket]; // can't default constructr this. either make a vector in config for example or new Client;
 					_clientsServers.insert(std::make_pair(newSocket, serv));
 					struct pollfd	npfd;
 					npfd.fd = newSocket;
@@ -77,57 +77,58 @@ void	WebServer::run(void) {
 					continue ;
 				}
 			} else {
-				std::map<int, Client*>::iterator	it = _clients.find(_fds[i].fd);
-				std::cout << "fd " << it->first << " active\n";
-				if (it != _clients.end()) {
+				std::map<int, Client>::iterator	it = _clientSockets.find(_fds[i].fd);
+				if (it != _clientSockets.end()) {
+					std::cout << "socket " << it->first << " active\n";
 					if (_fds[i].revents & POLLIN) {
 							std::cout << "ffff\n";
-						if (!it->second->isRequestComplete()) {
+						if (!it->second.isRequestComplete()) {
 							std::cout << "reading request\n";
-							ssize_t readBytes;
 							
 							try {
-								readBytes = it->second->readRequest(_fds[i].fd);
+								it->second.readRequest(_fds[i].fd);
 							} catch (int status) {
 								std::cerr << "log temporaire: " << status << std::endl;
 								_closeClient(it, i);
 								continue ;
 							}
-							if (it->second->isRequestComplete()) {
-								Resource res (_handleRequest(*it->second, *_clientsServers.find(_fds[i].fd)->second));
+							if (it->second.isRequestComplete()) {
+								Resource res (_handleRequest(it->second, *_clientsServers.find(_fds[i].fd)->second));
 								std::cout << "resource initialized on fd " << res.getFd() << '\n';
 
 								_fds[i].events = POLLOUT;
-								it->second->setResource(res);
+								it->second.setResource(res);
 								struct pollfd	npfd;
 								npfd.fd = res.getFd(); //-> fd ressource exec 1 fois
 								npfd.events = POLLIN;
 								npfd.revents = 0;
 								_fds.push_back(npfd);
-								_clients[npfd.fd] = it->second;
-							}
-						} else {
-							std::cout << "reading resource\n";
-							if (it->second->readResource()) { //-> lit fd jusqu'a EOF exec boucle
-								std::cout << "resource fully read\n";
-								_handleResponse(*it->second, *_clientsServers.find(_fds[i].fd)->second); //-> build response et append to client._response exec 1 fois
-								_fds.erase(_fds.begin() + i);
+								_clientRfds[npfd.fd] = &it->second;
 							}
 						}
 					} else if (_fds[i].revents & POLLOUT) {
 						std::cout << "POLLOUT\n";
-						if (!it->second->getResponse().empty() && it->second->writeResponse(_fds[i].fd)) {
+						if (it->second.writeResponse(_fds[i].fd)) {
 							_fds[i].events = POLLIN;
-							it->second->reset();
+							it->second.reset();
 						}
 					}
-					if (time(NULL) - it->second->getLastActivityTime() > CLIENT_TIMEOUT_S) {
+					if (time(NULL) - it->second.getLastActivityTime() > CLIENT_TIMEOUT_S) {
 						_closeClient(it, i);
 						putLog("client timeout"); //error 408
 					}
 					if (_fds[i].revents & POLLHUP) {
 						_closeClient(it, i);
 						putLog("client hangup"); //error 408
+					}
+				} else {
+					std::map<int, Client*>::iterator	itt = _clientRfds.find(_fds[i].fd);
+					std::cout << "reading resource\n";
+					if (itt->second->readResource()) { //-> lit fd jusqu'a EOF exec boucle
+						std::cout << "resource fully read\n";
+						_handleResponse(*itt->second, *_clientsServers.find(_fds[i].fd)->second); //-> build response et append to client._response exec 1 fois
+						_fds.erase(_fds.begin() + i);
+						_clientRfds.erase(itt);
 					}
 				}
 			}
