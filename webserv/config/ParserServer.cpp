@@ -192,18 +192,27 @@ std::map<std::string, std::string>	Parser::parseCgiBins(std::string& token) {
 /// @return struct s_listen
 struct s_listen	Parser::parseListen(std::string token) {
 	struct s_listen	output;
-	unsigned int	port;
-
-	output.ip = "127.0.0.1";
+	size_t			separatorPos = 0;
+	
 	output.protocol = "HTML";
 	_ss >> token;
+	if ((separatorPos = token.find(':')) == std::string::npos) {
+		std::cerr << "parseListen: No separator found between interface and port. expected \':\'" << std::endl;
+		std::cerr << "\tcritical error in config, set -127. Please review your config!!!" << std::endl;
+		output.ip = "-127.0.0.1";
+	} else {
+		output.ip = token.substr(0, separatorPos);
+	}
 
-	if (!ft_isNUM(token)) {
+	std::string s_port = token.substr(separatorPos + 1);
+	
+	if (!ft_isNUM(s_port)) {
 		std::cerr << "from parseListen" << std::endl;
 		output.port = -1;
 		return (output);
 	}
-	port = ft_stoui(token);
+	
+	unsigned int port = ft_stoui(s_port);
 	output.port = port;
 	return (output);
 }

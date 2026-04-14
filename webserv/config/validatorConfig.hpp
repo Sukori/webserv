@@ -41,6 +41,7 @@ void	validateLocation(s_location& locStruct);
 
 //validate server
 
+bool	validListen(s_listen& listen);
 void	validServerName(std::string& serverName, int port);
 bool	validServerRoot(std::string& root);
 void	validIndex(std::vector<std::string>& index);

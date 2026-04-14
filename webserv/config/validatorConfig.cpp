@@ -11,6 +11,8 @@
 /* ************************************************************************** */
 
 #include <validatorConfig.hpp>
+#include <helperParser.hpp>
+#include <stdexcept>
 
 //validate location
 
@@ -24,21 +26,6 @@ bool	validLocRoute(std::string& route) {
 		return (false);
 	}
 	return (true);
-
-	/* Actually, need to test root, but not route
-	 * Not necessarily an existing folder
-	struct stat	buf;
-	int status = stat(route.c_str(), &buf);
-
-	if (status == -1) {
-
-		std::cerr << "stat: " << strerror(errno) << std::endl;
-		std::cerr << "from validLocRoute" << std::endl;
-		return (false);
-	}
-
-	return (S_ISDIR(buf.st_mode) || S_ISREG(buf.st_mode));
-	*/
 }
 
 /// @brief checks if the giver root is valid. Directory only
@@ -202,6 +189,59 @@ void	validateLocation(s_location& locStruct) {
 
 //validate server
 
+static void	replacePointsbySpaces(std::string& ip) {
+
+	for (size_t i = 0; i < ip.length(); i++){
+		if (ip[i] == '.')
+			ip[i] = ' ';
+	}
+}
+
+/// @brief checks ip format
+/// @param ip 
+/// @return bool
+static bool	validIP(std::string ip) {
+	
+	replacePointsbySpaces(ip);
+
+	std::istringstream	os(ip);
+	std::string			byte;
+	
+		for (int i = 1; i < 5; i++) {
+		os >> byte;
+		if (byte.empty()) {
+			std::cerr << "validIP: not enough parameters in ip address. expected 4, got " << i << std::endl;
+			return (false);
+		}
+		if (!ft_isNUM(byte)) {
+			std::cerr << "from validIP" << std::endl;
+			return (false);
+		}
+		byte.clear();
+	}
+	return (true);
+}
+
+/// @brief validates ip format and port value
+/// @param listen 
+/// @return bool
+bool	validListen(s_listen& listen) {
+
+	if (!listen.ip.compare("localhost")) {
+		listen.ip = "127.0.0.1";
+		std::cout << "validListen: replaced \'localhost\' with \'127.0.0.1\'" << std::endl;
+	} else if (!validIP(listen.ip)) {
+		std::cerr << "from validListen" << std::endl;
+		return (false);
+	}
+
+	if (listen.port == (unsigned int) -1) {
+		std::cerr << "validListen: invalid port number (c.f. parser error)" << std::endl;
+		return (false);
+	}
+	return (true);
+}
+
 /// @brief chcecks if the server has a name. Sets "serverPORT" if empty
 /// @param serverName 
 /// @param port 
@@ -350,6 +390,11 @@ void	validErrorPages(std::map<int, std::string>& errorPages) {
 void	validateServer(s_server& servStruct) {
 
 	servStruct.valid = true;
+
+	if (!validListen(servStruct.listen)) {
+		std::cerr << "Listen: not a valid <interface:port> got " << servStruct.listen.ip << ":" << servStruct.listen.port << std::endl;
+		servStruct.valid = false;
+	}
 
 	validServerName(servStruct.serverName, servStruct.listen.port);
 	if (!validServerRoot(servStruct.root)) {
