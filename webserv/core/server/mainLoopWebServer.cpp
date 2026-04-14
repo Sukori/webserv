@@ -6,7 +6,7 @@
 /*   By: neon-05 <neon-05@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 17:44:30 by pberset           #+#    #+#             */
-/*   Updated: 2026/04/14 17:03:30 by neon-05          ###   ########.fr       */
+/*   Updated: 2026/04/14 17:37:28 by neon-05          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,11 +79,8 @@ void	WebServer::run(void) {
 			} else {
 				std::map<int, Client>::iterator	it = _clientSockets.find(_fds[i].fd);
 				if (it != _clientSockets.end()) {
-					std::cout << "socket " << it->first << " active\n";
 					if (_fds[i].revents & POLLIN) {
-							std::cout << "ffff\n";
 						if (!it->second.isRequestComplete()) {
-							std::cout << "reading request\n";
 							
 							try {
 								it->second.readRequest(_fds[i].fd);
@@ -107,7 +104,6 @@ void	WebServer::run(void) {
 							}
 						}
 					} else if (_fds[i].revents & POLLOUT) {
-						std::cout << "POLLOUT\n";
 						if (it->second.writeResponse(_fds[i].fd)) {
 							_fds[i].events = POLLIN;
 							it->second.reset();

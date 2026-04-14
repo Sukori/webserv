@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServer.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: neon-05 <neon-05@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 14:11:12 by pberset           #+#    #+#             */
-/*   Updated: 2026/03/31 17:50:39 by ylabussi         ###   ########.fr       */
+/*   Updated: 2026/04/14 17:36:35 by neon-05          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ volatile sig_atomic_t	WebServer::_stopRequested = 0;
 void	WebServer::_handleSignal(int sig) {
 	if (sig == SIGINT || sig == SIGTERM) {
 		_stopRequested = 1;
+	} else if (sig == SIGPIPE) {
+		std::cout << "send(): Connection closed\n";
 	}
 }
 
@@ -30,6 +32,7 @@ void	WebServer::installSignalHandlers(void) {
 
 	sigaction(SIGINT, &sa, NULL);
 	sigaction(SIGTERM, &sa, NULL);
+	sigaction(SIGPIPE, &sa, NULL);
 }
 
 WebServer::WebServer(const Configuration& config) : _config(config) {
