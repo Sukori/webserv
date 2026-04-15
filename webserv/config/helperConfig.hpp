@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   helperConfig.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
+/*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/17 17:55:02 by pberset           #+#    #+#             */
-/*   Updated: 2026/04/07 18:20:37 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/04/15 14:57:00 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 # include <cctype>
 
 struct s_location {
+	std::string							servRoot;
 	std::string							route; // location "/dir/"     for instance
 	bool								valid;
 	std::string							root_path; // root "/var/www"; for instance
@@ -36,9 +37,9 @@ struct s_location {
 
 
 struct s_listen {
-	std::string		ip; //allways broadcast for this project
-	unsigned int	port; // 8080++ for this project
-	std::string		protocol; //HTTP, TCP, SSL, SSH ...
+	std::string							ip; //allways broadcast for this project
+	unsigned int						port; // 8080++ for this project
+	std::string							protocol; //HTTP, TCP, SSL, SSH ...
 };
 
 struct s_server {

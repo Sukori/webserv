@@ -6,7 +6,7 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 17:09:15 by pberset           #+#    #+#             */
-/*   Updated: 2026/04/07 19:02:12 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/04/15 16:01:58 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -266,7 +266,7 @@ Server	Parser::parseServer(void) {
 
 			case 2:
 				_ss >> token;
-				servStruct.root = "." + trimLastSlash(token); // need to remove trailing '/' if there is one
+				servStruct.root = "." + token; // need to remove trailing '/' if there is one
 				break;
 
 			case 3:
@@ -293,7 +293,7 @@ Server	Parser::parseServer(void) {
 				break;
 
 			case 8:
-				locs.push_back(parseLocation());
+				locs.push_back(parseLocation(servStruct.root));
 				break;
 
 			case 9:
@@ -311,6 +311,7 @@ Server	Parser::parseServer(void) {
 
 	std::cout << "Parsed server " << servStruct.serverName << "\n" << std::endl;
 	validateServer(servStruct);
+	trimLastSlash(servStruct.root);
 
 	Server	output(servStruct, locs);
 

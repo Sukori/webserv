@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   errPages.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
+/*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 14:44:44 by pberset           #+#    #+#             */
-/*   Updated: 2026/03/17 14:45:07 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/04/15 16:18:06 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@
 401 Unauthorized
 403 Forbidden
 404 Not Found
+405 method not allowed
+408 timeout
 500 Internal Server Error
 502 Bad Gateway
 503 Service Unavailable

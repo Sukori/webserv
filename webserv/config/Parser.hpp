@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: neon-05 <neon-05@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 14:36:55 by pberset           #+#    #+#             */
-/*   Updated: 2026/04/08 19:13:09 by neon-05          ###   ########.fr       */
+/*   Updated: 2026/04/15 14:54:37 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ public:
 	unsigned int						parseBodySize(void);
 	std::pair<int, std::string>			parseErrorPage(std::string& token);
 	std::map<int, std::string>			parseErrorPages(std::string& token);
-	Location							parseLocation(void);
+	Location							parseLocation(const std::string& servRoot);
 	struct s_listen						parseListen(std::string token);
 	std::pair<int, std::string>			parseReturn(std::string& token);
 	std::map<int, std::string>			parseReturns(std::string& token);

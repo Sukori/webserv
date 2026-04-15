@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   validatorConfig.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
+/*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/13 14:05:52 by pberset           #+#    #+#             */
-/*   Updated: 2026/03/13 14:05:59 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/04/15 15:03:02 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,6 +150,7 @@ bool	validUploadPath(std::string& uploadPath) {
 
 	if (status == -1) {
 
+		std::cerr << "path: " << uploadPath << '\n';
 		std::cerr << "stat: " << strerror(errno) << std::endl;
 		std::cerr << "from validLocuploadPath" << std::endl;
 		return (false);
@@ -164,26 +165,32 @@ void	validateLocation(s_location& locStruct) {
 
 	locStruct.valid = true;
 	
-	if (!validLocRoute(locStruct.route)) {
+	/*if (!validLocRoute(locStruct.route)) {
 		std::cerr << "Route: not a valid route for location " << locStruct.route << std::endl;
 		locStruct.valid = false;
+	}*/
+	
+	{
+		std::string path (locStruct.servRoot + locStruct.root_path);
+		if (!validLocRoot(path)) {
+			std::cerr << "Root: not a valid root for location " <<  locStruct.root_path << std::endl;
+			locStruct.valid = false;
+		}
 	}
 	
-	if (!validLocRoot(locStruct.root_path)) {
-		std::cerr << "Root: not a valid root for location " <<  locStruct.root_path << std::endl;
-		locStruct.valid = false;
-	}
-
 	validReturns(locStruct.locReturn);
 	
 	validLimitExcept(locStruct.limit_except);
 	
-	if (!validUploadPath(locStruct.upload_path)) {
-		std::cerr << "uploadPath: not a valid uploadPath for location " <<  locStruct.upload_path << std::endl;
-		locStruct.valid = false;
+	{
+		std::string path (locStruct.servRoot + locStruct.upload_path);
+		if (!validUploadPath(path)) {
+			std::cerr << "uploadPath: not a valid uploadPath for location " <<  locStruct.upload_path << std::endl;
+			locStruct.valid = false;
+		}
 	}
 
-	std::cout << "Location " << locStruct.route << " validated with status " << locStruct.valid << "\n" << std::endl;
+	std::cout << "Location " << locStruct.route << "/ validated with status " << locStruct.valid << "\n" << std::endl;
 }
 
 

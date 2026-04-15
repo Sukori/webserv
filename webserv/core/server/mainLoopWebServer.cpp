@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mainLoopWebServer.cpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: neon-05 <neon-05@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 17:44:30 by pberset           #+#    #+#             */
-/*   Updated: 2026/04/14 17:37:28 by neon-05          ###   ########.fr       */
+/*   Updated: 2026/04/15 15:36:51 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ void	WebServer::run(void) {
 							}
 							if (it->second.isRequestComplete()) {
 								Resource res (_handleRequest(it->second, *_clientsServers.find(_fds[i].fd)->second));
-								std::cout << "resource initialized on fd " << res.getFd() << '\n';
+								std::cerr << "resource initialized on fd " << res.getFd() << '\n';
 
 								_fds[i].events = POLLOUT;
 								it->second.setResource(res);
@@ -104,12 +104,15 @@ void	WebServer::run(void) {
 							}
 						}
 					} else if (_fds[i].revents & POLLOUT) {
+						_handleResponse(it->second, *_clientsServers.find(_fds[i].fd)->second); //-> build response et append to client._response exec 1 fois
 						if (it->second.writeResponse(_fds[i].fd)) {
 							_fds[i].events = POLLIN;
 							it->second.reset();
 						}
 					}
 					if (time(NULL) - it->second.getLastActivityTime() > CLIENT_TIMEOUT_S) {
+						it->second.setResponse(Http::buildResponse("\r\ntimeout", 408, _clientsServers.find(_fds[i].fd)->second->getName()));
+						it->second.writeResponse(_fds[i].fd);
 						_closeClient(it, i);
 						putLog("client timeout"); //error 408
 					}
@@ -122,7 +125,6 @@ void	WebServer::run(void) {
 					std::cout << "reading resource\n";
 					if (itt->second->readResource()) { //-> lit fd jusqu'a EOF exec boucle
 						std::cout << "resource fully read\n";
-						_handleResponse(*itt->second, *_clientsServers.find(_fds[i].fd)->second); //-> build response et append to client._response exec 1 fois
 						_fds.erase(_fds.begin() + i);
 						_clientRfds.erase(itt);
 					}

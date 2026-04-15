@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
+/*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 14:36:34 by pberset           #+#    #+#             */
-/*   Updated: 2026/02/18 12:00:21 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/04/15 16:03:29 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,12 @@ std::vector<Server> Parser::initParser(void) {
 			if (tmp.isValid()) {
 				output.push_back(tmp);
 			}
-		} else {
-			std::cerr << "initParser: unexpected token at root level. Got " << token << std::endl;
+			
+		} /*else {
+			//std::cerr << "initParser: unexpected token at root level. Got " << token << std::endl;
 			//set a custom errno and return?
-			break ;
-		}
+			//break ;
+		}*/
 	} while (!_ss.fail());
 
 
