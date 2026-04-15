@@ -71,8 +71,11 @@ void	WebServer::run(void) {
 					npfd.events = POLLIN;
 					npfd.revents = 0;
 					_fds.push_back(npfd);
-
-					putLog("New client");
+					{
+						std::ostringstream os;
+						os << "New client connected on socket " << newSocket;
+						serv->getAccStream()->log(os.str());
+					}
 				} else {
 					continue ;
 				}

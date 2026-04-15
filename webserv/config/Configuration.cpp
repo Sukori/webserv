@@ -126,7 +126,7 @@ const std::string&	Server::getAccLogs(void) const {
 	return (_access_logs);
 }
 
-Logger*&	Server::getAccStream(void) {
+Logger*&	Server::getAccStream(void) const {
 	return (_accessStream);
 }
 
@@ -134,7 +134,7 @@ const std::string&	Server::getErrLogs(void) const {
 	return (_error_logs);
 }
 
-Logger*&	Server::getErrStream(void) {
+Logger*&	Server::getErrStream(void) const {
 	return (_errorStream);
 }
 

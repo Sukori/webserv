@@ -326,7 +326,7 @@ void	validAccessLogs(std::string& accessLogs) {
 	if (accessLogs.empty())
 		return ;
 	if (access(accessLogs.c_str(), W_OK) < 0) {
-		std::cerr << "validAccessLogs: " << strerror(errno) << std::endl;
+		std::cerr << "validAccessLogs: " << strerror(errno) << accessLogs.c_str() << std::endl;
 		std::cerr << "won't log access!" << std::endl;
 		return ;
 	}

@@ -69,9 +69,9 @@ class Server {
 		const std::vector<std::string>&				getIndex(void) const;
 		const std::map<std::string, std::string>&	getCgiBins(void) const;
 		const std::string&							getAccLogs(void) const;
-		Logger*&									getAccStream(void);
+		Logger*&									getAccStream(void) const;
 		const std::string&							getErrLogs(void) const;
-		Logger*&									getErrStream(void);
+		Logger*&									getErrStream(void) const;
 		const unsigned int&							getMaxBodySize(void) const;
 		const std::map<int, std::string>&			getErrPages(void) const;
 		const std::vector<Location>&				getLocations(void) const;
@@ -86,9 +86,9 @@ class Server {
 		const std::vector<std::string>				_index;
 		const std::map<std::string, std::string>	_cgi_bins;
 		const std::string							_access_logs;
-		Logger*										_accessStream;
+		mutable Logger*								_accessStream;
 		const std::string							_error_logs;
-		Logger*										_errorStream;
+		mutable Logger*								_errorStream;
 		const unsigned int							_client_max_body_size;
 		const std::map<int, std::string>			_error_pages;
 		const std::vector<Location>					_locations;

@@ -275,12 +275,12 @@ Server	Parser::parseServer(void) {
 
 			case 4:
 				_ss >> token;
-				servStruct.access_logs = "." + token;
+				servStruct.access_logs = token;
 				break;
 
 			case 5:
 				_ss >> token;
-				servStruct.error_logs = "." + token;
+				servStruct.error_logs = token;
 				break;
 
 			case 6:
@@ -309,10 +309,11 @@ Server	Parser::parseServer(void) {
 
 	} while (!_ss.fail());
 
-	std::cout << "Parsed server " << servStruct.serverName << "\n" << std::endl;
-	validateServer(servStruct);
 	trimLastSlash(servStruct.root);
-
+	std::cout << "Parsed server " << servStruct.serverName << "\n" << std::endl;
+	servStruct.access_logs = servStruct.root + servStruct.access_logs;
+	servStruct.error_logs = servStruct.root + servStruct.error_logs;
+	validateServer(servStruct);
 	Server	output(servStruct, locs);
 
 	return (output);
