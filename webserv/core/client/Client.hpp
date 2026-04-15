@@ -18,7 +18,7 @@
 # include <cstring>
 # include <sys/socket.h>
 # include <arpa/inet.h>
-# include <time.h>
+# include <ctime>
 # include <Http.hpp>
 # include <helperParser.hpp>
 # include <ByteString.hpp>
