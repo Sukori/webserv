@@ -34,10 +34,10 @@ static ByteString	makeLink(struct dirent *ent, const std::string& path) {
 
 ByteString autoindex(const std::string& requestPath, const std::string& filePath)
 {
-	ByteString ret;
+	ByteString ret ("\r\n");
 	DIR *dir;
 	struct dirent *ent;
-	std::cout << "trying to open " << filePath << '\n';
+	std::cerr << "autoindex: trying to open " << filePath << '\n';
 	if ((dir = opendir(filePath.c_str())) != NULL) {
 		ret.append(htmlHeader(requestPath));
 		/* print all the files and directories within directory */
@@ -47,7 +47,7 @@ ByteString autoindex(const std::string& requestPath, const std::string& filePath
 		ret.append(htmlFooter());
 		closedir(dir);
 	} else {
-		std::cout << "could not open file\n";
+		std::cerr << "could not open file\n";
 		return "";
 	}
 	return ret;

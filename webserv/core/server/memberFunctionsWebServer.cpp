@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   memberFunctionsWebServer.cpp                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: neon-05 <neon-05@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 17:46:35 by pberset           #+#    #+#             */
-/*   Updated: 2026/04/14 16:48:28 by neon-05          ###   ########.fr       */
+/*   Updated: 2026/04/15 16:07:21 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ Resource	WebServer::_handleRequest(Client& client, const Server& server) {
 		Http				req(client.getRequest());
 		const std::string&	route = req.getStartLine().path;
 		const Location&		loc = server.getLocation(route);
-		if (req.getRequestBody().length() > server.getMaxBodySize())
+		if (server.getMaxBodySize() > 0 && req.getRequestBody().length() > server.getMaxBodySize())
 			throw 413; // Request Entity Too Large
 		req.verifyMethod(loc.getLimExcept()); // check for 405 Method Not Allowed
 		if (req.isChunked())
@@ -88,9 +88,11 @@ Resource	WebServer::_handleRequest(Client& client, const Server& server) {
 }
 
 void		WebServer::_handleResponse(Client& client, const Server& server) {
-	//std::cout << "server name " << server->getName() << '\n';
-	client.setResponse(Http::buildResponse(client.getResource().getContent(), client.getResponseStatus(), "temporary_name"));
-	(void)server;
+	if (client.getResource().done())
+	{
+		std::cerr << "Resource done reading\n";
+		client.setResponse(Http::buildResponse(client.getResource().getContent(), client.getResponseStatus(), server.getName()));
+	}
 }
 
 /// @brief accepts a new connexion from a client

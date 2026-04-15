@@ -146,11 +146,12 @@ static ByteString	read_all(int fd) {
 
 Resource	Http::getResponseBody(const Location& loc, const Server& server, int& status) {
 	std::string new_path (_startline.path);
-	new_path.replace(0, loc.getRoute().length(), loc.getRoot()); // replace the user route with the actual root
+	trimLastSlash(new_path.replace(0, loc.getRoute().length(), loc.getRoot())); // replace the user route with the actual root
 	std::string root (server.getRoot());
 	std::string file_path (root + new_path);
 
 
+	std::cerr << "path: " << new_path << '\n';
 	if (_startline.method == "DELETE")
 	{
 		if (access(file_path.c_str(), W_OK) != -1)
@@ -175,7 +176,8 @@ Resource	Http::getResponseBody(const Location& loc, const Server& server, int& s
 		const std::vector<std::string> &indexes = server.getIndex();
 		for (std::vector<std::string>::const_iterator it = indexes.begin(); it != indexes.end(); it++)
 		{
-			file_path = root + new_path + *it;
+			file_path = root + new_path + '/' + *it;
+			std::cerr << "no index, trying: " << file_path << '\n';
 			found = access(file_path.c_str(), R_OK) != -1;
 			if (found)
 				break;
@@ -291,16 +293,18 @@ ByteString	Http::buildResponse(const ByteString& body, int status, const std::st
 
 Resource Http::buildErrorHtml(int status, const Server &server) {
 	std::string path;
-	std::cout << server.getRoot();
-	path = server.getRoot() + server.getErrPages().at(status);
+	path = server.getErrPages().at(status);
+	if (path[0] == '/')
+		path = server.getRoot() + path;
+	std::cout << "error: " << path << '\n';
 	int fd = open(path.c_str(), O_RDONLY);
 	if (fd < 0)
 		return Resource();
 	else
-		return Resource(fd);
+		return Resource(fd, "\r\n");
 }
 
-bool	Http::checkRequestComplete(const ByteString& request) {
+bool	Http::checkRequestComplete(ByteString& request) {
 	if (request.find("POST") == 0)
 	{
 		size_t cur = request.find("Content-Length");
@@ -309,6 +313,9 @@ bool	Http::checkRequestComplete(const ByteString& request) {
 		cur = request.find_first_not_of(' ', cur + 15);
 		size_t len = std::atol((const char*) request.data() + cur);
 		cur = request.find("\r\n\r\n", cur);
+
+		if (cur != request.npos && request.capacity() < cur + len + 4)
+			request.reserve(cur + len + 4);
 		return cur + len + 4 == request.length();
 	}
 	else

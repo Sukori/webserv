@@ -19,6 +19,7 @@
 #include <Configuration.hpp>
 #include <autoindex.hpp>
 #include <Resource.hpp>
+#include <other.hpp>
 
 class Http {
 	public:
@@ -45,7 +46,7 @@ class Http {
 		void				dechunk(void);
 		bool				isChunked(void) const;
 
-		static bool			checkRequestComplete(const ByteString& request);
+		static bool			checkRequestComplete(ByteString& request);
 
 		static Resource		buildErrorHtml(int status, const Server &server);
 		static ByteString	buildResponse(const ByteString& body, int status, const std::string& server_name);

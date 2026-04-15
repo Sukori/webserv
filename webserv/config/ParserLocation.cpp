@@ -6,7 +6,7 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 17:09:31 by pberset           #+#    #+#             */
-/*   Updated: 2026/04/07 18:59:57 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/04/15 14:55:49 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,11 +98,12 @@ std::set<std::string>	Parser::parseLimitExcept(std::string token) {
 /// @brief parses a location block
 /// @param  none
 /// @return Location object
-Location	Parser::parseLocation(void) {
+Location	Parser::parseLocation(const std::string& servRoot) {
 	struct s_location	locStruct;
 	std::string			token;
 	std::string			locationAllowed[] = {"return", "root", "alias", "limit_except", "autoindex", "upload_path"};
 
+	locStruct.servRoot = servRoot;
 	locStruct.valid = false;
 	_ss >> token;
 	if (token.empty()) {
@@ -119,7 +120,7 @@ Location	Parser::parseLocation(void) {
 		return (error);
 	}
 
-	locStruct.route = trimLastSlash(token);
+	locStruct.route = token;
 	_ss >> token;
 	
 	if (token.empty() || token.at(0) != '{') {
@@ -154,7 +155,7 @@ Location	Parser::parseLocation(void) {
 
 		case 1:
 			_ss >> token;
-			locStruct.root_path = trimLastSlash(token); // no need to prepend '.' here
+			locStruct.root_path = token; // no need to prepend '.' here
 			break;
 
 		case 2:
@@ -174,7 +175,7 @@ Location	Parser::parseLocation(void) {
 
 		case 5:
 			_ss >> token;
-			locStruct.upload_path = "." + token;
+			locStruct.upload_path = token;
 			break;
 
 		default:
@@ -186,6 +187,9 @@ Location	Parser::parseLocation(void) {
 
 	std::cout << "Parsed Location " << locStruct.route << "\n" << std::endl;
 
+	trimLastSlash(locStruct.root_path);
+	trimLastSlash(locStruct.route);
+	trimLastSlash(locStruct.upload_path);
 	validateLocation(locStruct);
 
 	Location	output(locStruct);
