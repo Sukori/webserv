@@ -39,7 +39,7 @@ WebServer::WebServer(const Configuration& config) : _config(config) {
     std::cout << "Config WebServer constructor" << std::endl;
 	int							errnum;
 	std::ostringstream			service;
-	const std::vector<Server>&	servers = _config.getServers();
+	std::vector<Server>&		servers = _config.getServers();
 	
 	struct addrinfo hints;
 	hints.ai_family = AF_INET;
@@ -65,7 +65,17 @@ WebServer::WebServer(const Configuration& config) : _config(config) {
 			<< "skipped " << servers[i].getName() << std::endl;
 			continue ;
 		}
-		std::cout << "Initialized server with IP: " <<servers[i].getListen().ip << " | PORT: " << servers[i].getListen().port << std::endl;
+		std::ostringstream os;
+		time_t	log = time(NULL);
+		std::string	date = ctime(&log);
+		os << '[' << date.erase(date.size() - 1) << "] ";
+		os << "Initialized server with IP: " << servers[i].getListen().ip << " | PORT: " << servers[i].getListen().port << std::endl;
+		std::cout << os.str();
+		servers[i].getAccStream() = new Logger;
+		servers[i].getAccStream()->init(servers[i].getAccLogs());
+		servers[i].getAccStream()->log(os.str());
+		servers[i].getErrStream() = new Logger;
+		servers[i].getErrStream()->init(servers[i].getErrLogs());
 		freeaddrinfo(addrinfo);
 	}
 }

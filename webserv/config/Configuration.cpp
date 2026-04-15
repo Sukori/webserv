@@ -68,31 +68,39 @@ const bool&	Location::isValid(void) const {
 }
 
 Server::Server(const struct s_server server, const std::vector<Location> locations): _valid(server.valid), 
-_listen(server.listen), 
-_serverName(server.serverName), 
-_root(server.root), 
-_index(server.index),
-_cgi_bins(server.cgi_bins), 
-_access_logs(server.access_logs), 
-_error_logs(server.error_logs), 
-_client_max_body_size(server.client_max_body_size), 
-_error_pages(server.error_pages), 
-_locations(locations) {
-}
+																					_listen(server.listen), 
+																					_serverName(server.serverName), 
+																					_root(server.root), 
+																					_index(server.index),
+																					_cgi_bins(server.cgi_bins), 
+																					_access_logs(server.access_logs),
+																					_accessStream(NULL),
+																					_error_logs(server.error_logs),
+																					_errorStream(NULL),
+																					_client_max_body_size(server.client_max_body_size), 
+																					_error_pages(server.error_pages), 
+																					_locations(locations) {}
 
 Server::Server(const Server& rhs): _valid(rhs._valid), 
-_listen(rhs._listen), 
-_serverName(rhs._serverName), 
-_root(rhs._root), 
-_index(rhs._index),
-_cgi_bins(rhs._cgi_bins),
-_access_logs(rhs._access_logs), 
-_error_logs(rhs._error_logs), 
-_client_max_body_size(rhs._client_max_body_size), 
-_error_pages(rhs._error_pages), 
-_locations(rhs._locations) {}
+									_listen(rhs._listen), 
+									_serverName(rhs._serverName), 
+									_root(rhs._root), 
+									_index(rhs._index),
+									_cgi_bins(rhs._cgi_bins),
+									_access_logs(rhs._access_logs),
+									_accessStream(rhs._accessStream),
+									_error_logs(rhs._error_logs),
+									_errorStream(rhs._errorStream),
+									_client_max_body_size(rhs._client_max_body_size), 
+									_error_pages(rhs._error_pages), 
+									_locations(rhs._locations) {}
 
-Server::~Server(void) {}
+Server::~Server(void) {
+	if (_valid) {
+		delete (_accessStream);
+		delete (_errorStream);
+	}
+}
 
 const s_listen&	Server::getListen(void) const{
 	return (_listen);
@@ -118,8 +126,16 @@ const std::string&	Server::getAccLogs(void) const {
 	return (_access_logs);
 }
 
+Logger*&	Server::getAccStream(void) {
+	return (_accessStream);
+}
+
 const std::string&	Server::getErrLogs(void) const {
 	return (_error_logs);
+}
+
+Logger*&	Server::getErrStream(void) {
+	return (_errorStream);
 }
 
 const unsigned int&	Server::getMaxBodySize(void) const {
@@ -164,15 +180,11 @@ const bool&	Server::isValid(void) const {
 	return (_valid);
 }
 
-void	Server::setNotValid(void) {
-	_valid = false;
-}
-
 Configuration::Configuration(const std::vector<Server> servers): _servers(servers) {
 }
 
 Configuration::~Configuration(void) {}
 
-const std::vector<Server>&	Configuration::getServers(void) const {
+std::vector<Server>&	Configuration::getServers(void) const {
 	return (_servers);
 }

@@ -26,12 +26,12 @@
 # include <poll.h>
 # include <sys/socket.h>
 # include <sys/types.h>
-# include <sys/time.h>
+# include <ctime>
 # include <netdb.h>
 # include <arpa/inet.h>
 # include <unistd.h>
 # include <signal.h>
-# include <time.h>
+# include <ctime>
 # include <Configuration.hpp>
 # include <Parser.hpp>
 # include <Client.hpp>
