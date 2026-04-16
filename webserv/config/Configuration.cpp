@@ -87,12 +87,7 @@ Server::Server(const Server& rhs): _valid(rhs._valid),
 									_error_pages(rhs._error_pages), 
 									_locations(rhs._locations) {}
 
-Server::~Server(void) {
-	if (_valid) {
-		delete (_accessStream);
-		delete (_errorStream);
-	}
-}
+Server::~Server(void) {}
 
 const s_listen&	Server::getListen(void) const{
 	return (_listen);

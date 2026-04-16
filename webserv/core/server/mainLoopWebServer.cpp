@@ -42,8 +42,8 @@ void	WebServer::run(void) {
 	}
 
 	//Main loop
+	std::cout << "===== Listening =====" << std::endl;
 	while (!_stopRequested) {
-		std::cout << "===== Listening =====" << std::endl;
 		ctrlno = poll(&_fds[0], _fds.size(), CLIENT_TIMEOUT_MS);
 		if (ctrlno < 0) {
 			if (errno == EINTR) {

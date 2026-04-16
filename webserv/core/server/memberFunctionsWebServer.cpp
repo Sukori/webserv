@@ -73,8 +73,10 @@ Resource	WebServer::_handleRequest(Client& client, const Server& server) {
 		Http				req(client.getRequest());
 		const std::string&	route = req.getStartLine().path;
 		const Location&		loc = server.getLocation(route);
-		if (server.getMaxBodySize() > 0 && req.getRequestBody().length() > server.getMaxBodySize())
+		if (server.getMaxBodySize() > 0 && req.getRequestBody().length() > server.getMaxBodySize()) {
+			std:: cerr << "body size: " << req.getRequestBody().length() << '\n';
 			throw 413; // Request Entity Too Large
+		}
 		req.verifyMethod(loc.getLimExcept()); // check for 405 Method Not Allowed
 		if (req.isChunked())
 			req.dechunk();
