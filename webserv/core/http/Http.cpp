@@ -267,7 +267,8 @@ ByteString	Http::buildResponse(const ByteString& body, int status, const std::st
 	size_t len;
 	{
 		size_t tmp = body.find("\r\n\r\n");
-		len = body.length() - ((tmp != body.npos) ? tmp + 4 : 2);
+
+		len = body.length() - ((body.find("\r\n") != 0) ? tmp + 4 : 2);
 	}
 	ByteString res;
 	res.append("HTTP/1.1 "); //https://http.dev/1.1

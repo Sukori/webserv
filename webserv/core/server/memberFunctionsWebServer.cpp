@@ -6,7 +6,7 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 17:46:35 by pberset           #+#    #+#             */
-/*   Updated: 2026/04/15 16:07:21 by ylabussi         ###   ########.fr       */
+/*   Updated: 2026/04/16 18:39:48 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ Resource	WebServer::_handleRequest(Client& client, const Server& server) {
 }
 
 void		WebServer::_handleResponse(Client& client, const Server& server) {
-	if (client.getResource().done())
+	if (client.getResource().done() && client.getResponse().empty())
 	{
 		std::cerr << "Resource done reading\n";
 		client.setResponse(Http::buildResponse(client.getResource().getContent(), client.getResponseStatus(), server.getName()));
