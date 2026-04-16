@@ -319,57 +319,6 @@ bool	validCgiBins(std::map<std::string, std::string>& bins) {
 	return (S_ISREG(buf.st_mode));
 }
 
-/// @brief warns the admin if the accesLogs file is invalid or non-existant
-/// @param accessLogs 
-void	validAccessLogs(std::string& accessLogs) {
-
-	if (accessLogs.empty())
-		return ;
-	if (access(accessLogs.c_str(), W_OK) < 0) {
-		std::cerr << "validAccessLogs: " << strerror(errno) << accessLogs.c_str() << std::endl;
-		std::cerr << "won't log access!" << std::endl;
-		return ;
-	}
-
-	struct stat	buf;
-	int status = stat(accessLogs.c_str(), &buf);
-
-	if (status == -1) {
-		std::cerr << "stat: " << strerror(errno) << std::endl;
-		std::cerr << "from validAccessLogs" << std::endl;
-		std::cerr << "won't log access!" << std::endl;
-	} else if (!S_ISREG(buf.st_mode)) {
-		std::cerr << "validAccessLogs: not a text file " << accessLogs << std::endl;
-		std::cerr << "won't log access!" << std::endl;
-	}
-}
-
-/// @brief warns the admin if the accesLogs file is invalid or non-existant
-/// @param errorLogs 
-void	validErrorLogs(std::string& errorLogs) {
-
-	if (errorLogs.empty())
-		return ;
-	if (access(errorLogs.c_str(), W_OK) < 0) {
-		std::cerr << "validErrorLogs: " << strerror(errno) << std::endl;
-		std::cerr << "won't log errors!" << std::endl;
-		return ;
-	}
-
-	struct stat	buf;
-	int status = stat(errorLogs.c_str(), &buf);
-
-	if (status == -1) {
-		std::cerr << "stat: " << strerror(errno) << std::endl;
-		std::cerr << "from validErrorLogs" << std::endl;
-		std::cerr << "won't log errors!" << std::endl;
-	} else if (!S_ISREG(buf.st_mode)) {
-		std::cerr << "validErrorLogs: not a text file " << errorLogs << std::endl;
-		std::cerr << "won't log errors!" << std::endl;
-	}
-
-}
-
 /// @brief checks client_max_body_sive value. warns the admin if 0. false if the value is too large
 /// @param maxBodySize 
 /// @return bool
@@ -415,8 +364,6 @@ void	validateServer(s_server& servStruct) {
 		std::cerr << "cgi_bin: invalid cgi binaries for server " << servStruct.serverName << std::endl;
 	}
 
-	validAccessLogs(servStruct.access_logs);
-	validErrorLogs(servStruct.error_logs);
 	if (!validClientMaxBodySize(servStruct.client_max_body_size)) {
 		std::cerr << "client_max_body_size: not a valid max client body size for server " << servStruct.serverName << std::endl;
 		servStruct.valid = false;

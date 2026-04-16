@@ -71,11 +71,6 @@ WebServer::WebServer(const Configuration& config) : _config(config) {
 		os << '[' << date.erase(date.size() - 1) << "] ";
 		os << "Initialized server with IP: " << servers[i].getListen().ip << " | PORT: " << servers[i].getListen().port << std::endl;
 		std::cout << os.str();
-		servers[i].getAccStream() = new Logger;
-		servers[i].getAccStream()->init(servers[i].getAccLogs());
-		servers[i].getAccStream()->log(os.str());
-		servers[i].getErrStream() = new Logger;
-		servers[i].getErrStream()->init(servers[i].getErrLogs());
 		freeaddrinfo(addrinfo);
 	}
 }

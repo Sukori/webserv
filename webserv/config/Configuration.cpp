@@ -72,11 +72,7 @@ Server::Server(const struct s_server server, const std::vector<Location> locatio
 																					_serverName(server.serverName), 
 																					_root(server.root), 
 																					_index(server.index),
-																					_cgi_bins(server.cgi_bins), 
-																					_access_logs(server.access_logs),
-																					_accessStream(NULL),
-																					_error_logs(server.error_logs),
-																					_errorStream(NULL),
+																					_cgi_bins(server.cgi_bins),
 																					_client_max_body_size(server.client_max_body_size), 
 																					_error_pages(server.error_pages), 
 																					_locations(locations) {}
@@ -87,10 +83,6 @@ Server::Server(const Server& rhs): _valid(rhs._valid),
 									_root(rhs._root), 
 									_index(rhs._index),
 									_cgi_bins(rhs._cgi_bins),
-									_access_logs(rhs._access_logs),
-									_accessStream(rhs._accessStream),
-									_error_logs(rhs._error_logs),
-									_errorStream(rhs._errorStream),
 									_client_max_body_size(rhs._client_max_body_size), 
 									_error_pages(rhs._error_pages), 
 									_locations(rhs._locations) {}
@@ -120,22 +112,6 @@ const std::vector<std::string>&	Server::getIndex(void) const{
 
 const std::map<std::string, std::string>&	Server::getCgiBins(void) const {
 	return (_cgi_bins);
-}
-
-const std::string&	Server::getAccLogs(void) const {
-	return (_access_logs);
-}
-
-Logger*&	Server::getAccStream(void) const {
-	return (_accessStream);
-}
-
-const std::string&	Server::getErrLogs(void) const {
-	return (_error_logs);
-}
-
-Logger*&	Server::getErrStream(void) const {
-	return (_errorStream);
 }
 
 const unsigned int&	Server::getMaxBodySize(void) const {

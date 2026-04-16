@@ -72,9 +72,7 @@ std::ostream&	operator<<(std::ostream& os, const Configuration& config) {
 			}
 		}
 
-        os	<< "\t- access_logs: " << srv.getAccLogs() << std::endl
-        	<< "\t- error_logs: "  << srv.getErrLogs() << std::endl
-        	<< "\t- client max body size: " << srv.getMaxBodySize() << std::endl;
+        os	<< "\t- client max body size: " << srv.getMaxBodySize() << std::endl;
 
 		std::map<int, std::string>	errPages = srv.getErrPages();
         if (!errPages.empty()) {

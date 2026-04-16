@@ -74,7 +74,7 @@ void	WebServer::run(void) {
 					{
 						std::ostringstream os;
 						os << "New client connected on socket " << newSocket;
-						serv->getAccStream()->log(os.str());
+						std::cout << os.str() << '\n';
 					}
 				} else {
 					continue ;

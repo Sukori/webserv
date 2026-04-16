@@ -15,7 +15,7 @@ CGIDIR		= core/cgi/
 UTIDIR		= core/utils/
 LOGDIR		= logs/
 
-INCLUDES	= -I$(WEBDIR) -I$(CNFDIR) -I$(CLIDIR) -I$(HTTDIR) -I$(CGIDIR) -I$(UTIDIR) -I$(LOGDIR)
+INCLUDES	= -I$(WEBDIR) -I$(CNFDIR) -I$(CLIDIR) -I$(HTTDIR) -I$(CGIDIR) -I$(UTIDIR)
 
 CXXFLAGS	+= $(INCLUDES)
 
@@ -34,8 +34,7 @@ HDRS		= $(WEBDIR)WebServer \
 			$(UTIDIR)ByteString \
 			$(UTIDIR)Resource \
 			$(UTIDIR)other \
-			$(UTIDIR)autoindex \
-			$(LOGDIR)Logger
+			$(UTIDIR)autoindex
 
 SRCS		= $(WEBDIR)WebServer \
 			$(WEBDIR)helperWebServer \
@@ -58,7 +57,6 @@ SRCS		= $(WEBDIR)WebServer \
 			$(UTIDIR)Resource \
 			$(UTIDIR)other \
 			$(UTIDIR)autoindex \
-			$(LOGDIR)Logger \
 			run
 
 HDR			= $(addsuffix .hpp, $(HDRS))
@@ -89,9 +87,6 @@ $(ODIR)%.o: $(CGIDIR)%.cpp $(HDR) | $(ODIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(ODIR)%.o: $(UTIDIR)%.cpp $(HDR) | $(ODIR)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-$(ODIR)%.o: $(LOGDIR)%.cpp $(HDR) | $(ODIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(ODIR)%.o: %.cpp $(HDR) | $(ODIR)

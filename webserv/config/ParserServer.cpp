@@ -224,7 +224,7 @@ Server	Parser::parseServer(void) {
 	struct s_server			servStruct;
 	std::vector<Location>	locs; //not initialized at 234 ...
 	std::string				token;
-	std::string				serverAllowed[] = {"server_name", "listen", "root", "index", "access_logs", "error_logs", "client_max_body_size", "error_pages", "location", "cgi_bin"};
+	std::string				serverAllowed[] = {"server_name", "listen", "root", "index", "client_max_body_size", "error_pages", "location", "cgi_bin"};
 
 	servStruct.valid = false;
 	_ss >> token;
@@ -274,29 +274,19 @@ Server	Parser::parseServer(void) {
 				break;
 
 			case 4:
-				_ss >> token;
-				servStruct.access_logs = token;
+				servStruct.client_max_body_size = parseBodySize();
 				break;
 
 			case 5:
 				_ss >> token;
-				servStruct.error_logs = token;
-				break;
-
-			case 6:
-				servStruct.client_max_body_size = parseBodySize();
-				break;
-
-			case 7:
-				_ss >> token;
 				servStruct.error_pages = parseErrorPages(token);
 				break;
 
-			case 8:
+			case 6:
 				locs.push_back(parseLocation(servStruct.root));
 				break;
 
-			case 9:
+			case 7:
 				_ss >> token;
 				servStruct.cgi_bins = parseCgiBins(token);
 				break;
