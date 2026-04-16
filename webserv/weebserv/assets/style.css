@@ -1,0 +1,53 @@
+:root {
+	--palette-0: #fafafa;
+	--palette-1: #f48db4;
+	--palette-2: #ff347f;
+	--palette-3: #c9356c;
+	--palette-text: #141010;
+}
+/*
+:root {
+	--palette-0: #f70776;
+	--palette-1: #c3195d;
+	--palette-2: #680747;
+	--palette-3: #141010;
+	--palette-text: #fafafa;
+}*/
+
+html body {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: larger;
+	font-weight: bolder;
+	color: var(--palette-text);
+	margin: 0;
+	height: 100%;
+	/*background-color: var(--palette-2);*/
+	background: url("data:image/svg+xml,/assets/heart.svg") repeat;
+}
+
+header {
+	top: 0;
+	position: sticky;
+	background-color: var(--palette-1);
+	padding: 30px;
+}
+
+footer {
+	bottom: 0;
+	position: sticky;
+	background-color: var(--palette-1);
+	padding: 30px;
+	text-align: center;
+}
+
+#footer-hover:hover::after {
+	content: ", blood, sweat and tears";
+}
+
+.content {
+	width: 60%;
+	margin: auto;
+	text-align: justify;
+	background-color: var(--palette-0);
+	padding: 30px;
+}

@@ -1,8 +1,0 @@
-Second fichier de test dans le dossier /files/.
-
-Ce fichier documente les éléments à tester pour le répertoire listing:
-  1. Autoindex doit afficher une liste HTML ou texte
-  2. Les fichiers doivent être téléchargeables
-  3. Les répertoires doivent être navigables (si implémenté)
-
-Test: curl -L http://localhost:8081/files/test2.txt
