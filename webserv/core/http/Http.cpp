@@ -29,7 +29,7 @@ const ByteString&		Http::getRequestBody(void) const {return _body;}
 
 Http::StartLine	Http::_parseStartLine(const ByteString& message) {
 	StartLine	ret;
-	size_t		lineEnd = message.find("\r\n", _pos);
+	size_t		lineEnd = message.find("\r", _pos);
 	if (lineEnd == message.npos)
 		throw 400; // Bad Request
 	
@@ -61,13 +61,13 @@ static int toUPPER_SNAKE_CASE(int c) {
 
 Http::Header	Http::_parseHeaders(const ByteString& message) {
 	Header	ret;
-	size_t	lineEnd = message.find("\r\n", _pos);
+	size_t	lineEnd = message.find("\r", _pos);
 
 	if (lineEnd == message.npos)
 		throw 400; // Bad Request
 	
 	while (_pos < message.length()) {
-		lineEnd = message.find("\r\n", _pos);
+		lineEnd = message.find("\r", _pos);
 		if (lineEnd == message.npos)
 			throw 400; // Bad Request
 		
@@ -151,7 +151,7 @@ Resource	Http::getResponseBody(const Location& loc, const Server& server, int& s
 	std::string file_path (root + new_path);
 
 
-	std::cerr << "path: " << new_path << '\n';
+	server.getAccStream()->log("path: " + new_path);
 	if (_startline.method == "DELETE")
 	{
 		if (access(file_path.c_str(), W_OK) != -1)
@@ -165,9 +165,9 @@ Resource	Http::getResponseBody(const Location& loc, const Server& server, int& s
 
 	if (loc.getReturn().begin()->first != 0)
 	{
-		std::cout << loc.getReturn().begin()->second << '\n';
+		server.getAccStream()->log(loc.getReturn().begin()->second);
 		status = loc.getReturn().begin()->first;
-		return Resource(ByteString("location:").append(loc.getReturn().begin()->second.c_str()).append("\r\n"));
+		return Resource(ByteString("location:").append(loc.getReturn().begin()->second.c_str()).append("\r"));
 	}
 
 	if (new_path.find('.') == new_path.npos)
@@ -177,7 +177,7 @@ Resource	Http::getResponseBody(const Location& loc, const Server& server, int& s
 		for (std::vector<std::string>::const_iterator it = indexes.begin(); it != indexes.end(); it++)
 		{
 			file_path = root + new_path + '/' + *it;
-			std::cerr << "no index, trying: " << file_path << '\n';
+			server.getErrStream()->log("no index, trying: " + file_path);
 			found = access(file_path.c_str(), R_OK) != -1;
 			if (found)
 				break;
@@ -187,7 +187,7 @@ Resource	Http::getResponseBody(const Location& loc, const Server& server, int& s
 			if (loc.getAutoIndex())
 			{
 				status = 200;
-				return Resource(autoindex(_startline.path, root + new_path));
+				return Resource(autoindex(_startline.path, root + new_path, server));
 			}
 			else
 				throw 404; // Not Found
@@ -196,7 +196,7 @@ Resource	Http::getResponseBody(const Location& loc, const Server& server, int& s
 	else if (access(file_path.c_str(), R_OK) == -1)
 			throw 404; // Not Found
 
-	std::cout << "getting file " << file_path << '\n';
+	server.getAccStream()->log("getting file " + file_path);
 
 	std::string ext (get_ext(file_path));
 	std::string bin_f;
@@ -207,18 +207,18 @@ Resource	Http::getResponseBody(const Location& loc, const Server& server, int& s
 		bin_f = "";
 	}
 
-	std::cout << "status set\n";
+	server.getAccStream()->log("status set");
 	status = 200;
 	if (bin_f == "") {
 		/* hmtl */
 		int	fd = open(file_path.c_str(), O_RDONLY);
-		return Resource(fd, "\r\n"); // added CRLF to account for added header fileds in cgi output
+		return Resource(fd, "\r"); // added CRLF to account for added header fileds in cgi output
 	}
 	else {
 		/* cgi */
-		std::cout << "starting cgi\n";
+		server.getAccStream()->log("starting cgi");
 		add_cgi_env(_header, server, _startline, file_path);
-		return Resource(exec_cgi(bin_f, file_path, _header, _body));
+		return Resource(exec_cgi(bin_f, file_path, _header, _body, server.getAccStream()));
 	}
 }
 
@@ -266,17 +266,17 @@ ByteString	Http::buildResponse(const ByteString& body, int status, const std::st
 
 	size_t len;
 	{
-		size_t tmp = body.find("\r\n\r\n");
+		size_t tmp = body.find("\r\r");
 		len = body.length() - ((tmp != body.npos) ? tmp + 4 : 2);
 	}
 	ByteString res;
 	res.append("HTTP/1.1 "); //https://http.dev/1.1
 	res.append(ft_uint_to_string(status).c_str());
 	res.append(reasonPhrase(status).c_str());
-	res.append("\r\nContent-Length: ");
+	res.append("\rContent-Length: ");
 	res.append(ft_uint_to_string(len).c_str());
-	/* res.append("\r\nContent-Type: text/html; charset=UTF-8"); */ // we don't necessarily pass html
-	res.append("\r\nDate: ");
+	/* res.append("\rContent-Type: text/html; charset=UTF-8"); */ // we don't necessarily pass html
+	res.append("\rDate: ");
 	{
 		time_t t = time(NULL);
 		std::string	d = ctime(&t); //appends a '\n' we do not want
@@ -284,8 +284,8 @@ ByteString	Http::buildResponse(const ByteString& body, int status, const std::st
 			d.erase(d[d.size() - 1]);
 		res.append(d.c_str());
 	}
-	res.append(std::string("\r\nServer: ").append(server_name).c_str());
-	res.append("\r\n");
+	res.append(std::string("\rServer: ").append(server_name).c_str());
+	res.append("\r");
 	res.append(body);
 
 	return res;
@@ -296,12 +296,12 @@ Resource Http::buildErrorHtml(int status, const Server &server) {
 	path = server.getErrPages().at(status);
 	if (path[0] == '/')
 		path = server.getRoot() + path;
-	std::cout << "error: " << path << '\n';
+	server.getErrStream()->log("error: " + path);
 	int fd = open(path.c_str(), O_RDONLY);
 	if (fd < 0)
 		return Resource();
 	else
-		return Resource(fd, "\r\n");
+		return Resource(fd, "\r");
 }
 
 bool	Http::checkRequestComplete(ByteString& request) {
@@ -312,7 +312,7 @@ bool	Http::checkRequestComplete(ByteString& request) {
 			return false;
 		cur = request.find_first_not_of(' ', cur + 15);
 		size_t len = std::atol((const char*) request.data() + cur);
-		cur = request.find("\r\n\r\n", cur);
+		cur = request.find("\r\r", cur);
 
 		if (cur != request.npos && request.capacity() < cur + len + 4)
 			request.reserve(cur + len + 4);
@@ -320,7 +320,7 @@ bool	Http::checkRequestComplete(ByteString& request) {
 	}
 	else
 	{
-		return request.find("\r\n", request.length() - 2) != request.npos;
+		return request.find("\r", request.length() - 2) != request.npos;
 	}
 }
 
@@ -335,7 +335,7 @@ static char	hexToInt(byte b) {
 
 static ByteString	parseChunk(const ByteString& s, size_t& cur) {
 	size_t chunk_len = 0;
-	while (cur < s.find("\r\n", cur))
+	while (cur < s.find("\r", cur))
 	{
 		chunk_len <<= 4;
 		chunk_len |= hexToInt(s[cur]);

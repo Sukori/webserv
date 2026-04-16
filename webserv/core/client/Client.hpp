@@ -23,6 +23,7 @@
 # include <helperParser.hpp>
 # include <ByteString.hpp>
 # include <Resource.hpp>
+# include <Logger.hpp>
 
 # define BUFFER_SIZE 1048576 //1MB
 
@@ -31,9 +32,9 @@ class Client {
 		Client(void);
 		~Client(void);
 
-		std::size_t			readRequest(int socket);
-		bool				readResource(void);
-		bool				writeResponse(int socket);
+		std::size_t			readRequest(int socket, const Server* serv);
+		bool				readResource(Logger*& logger);
+		bool				writeResponse(int socket, Logger*& logger);
 
 		const ByteString&	getRequest(void) const;
 		const ByteString&	getResponse(void) const;

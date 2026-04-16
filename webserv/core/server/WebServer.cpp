@@ -18,7 +18,7 @@ void	WebServer::_handleSignal(int sig) {
 	if (sig == SIGINT || sig == SIGTERM) {
 		_stopRequested = 1;
 	} else if (sig == SIGPIPE) {
-		std::cout << "send(): Connection closed\n";
+		std::cout << "send(): Connection closed";
 	}
 }
 
@@ -48,7 +48,7 @@ WebServer::WebServer(const Configuration& config) : _config(config) {
 	hints.ai_protocol = IPPROTO_TCP;
 	
 	struct addrinfo*	addrinfo;
-	
+	std::ostringstream	os;
 	for (size_t i = 0; i < servers.size(); i++) {
 		service << servers[i].getListen().port;
 		errnum = getaddrinfo(servers[i].getListen().ip.c_str(), service.str().c_str(), &hints, &addrinfo);
@@ -65,17 +65,16 @@ WebServer::WebServer(const Configuration& config) : _config(config) {
 			<< "skipped " << servers[i].getName() << std::endl;
 			continue ;
 		}
-		std::ostringstream os;
-		time_t	log = time(NULL);
-		std::string	date = ctime(&log);
-		os << '[' << date.erase(date.size() - 1) << "] ";
+
+		
 		os << "Initialized server with IP: " << servers[i].getListen().ip << " | PORT: " << servers[i].getListen().port << std::endl;
-		std::cout << os.str();
+		//std::cout << os.str();
 		servers[i].getAccStream() = new Logger;
 		servers[i].getAccStream()->init(servers[i].getAccLogs());
 		servers[i].getAccStream()->log(os.str());
 		servers[i].getErrStream() = new Logger;
 		servers[i].getErrStream()->init(servers[i].getErrLogs());
+		os.str() = "";
 		freeaddrinfo(addrinfo);
 	}
 }

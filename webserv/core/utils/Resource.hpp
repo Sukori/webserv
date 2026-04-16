@@ -1,6 +1,7 @@
 #ifndef RESOURCE_HPP
 #define RESOURCE_HPP
 #include <ByteString.hpp>
+#include <Logger.hpp>
 
 class Resource
 {
@@ -13,7 +14,7 @@ public:
 	Resource& operator=(const Resource& o);
 
 
-	bool				readChunk(void);
+	bool				readChunk(Logger*& logger);
 
 	int					getFd(void) const;
 	bool				done(void) const;

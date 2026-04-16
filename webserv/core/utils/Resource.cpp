@@ -6,14 +6,14 @@
 	Resource::Resource(const Resource& o): _fd(o._fd), _done(o._done), _content(o._content) {}
 	Resource::~Resource(void) {}
 
-	Resource&			Resource::operator=(const Resource& o) {
+	Resource&	Resource::operator=(const Resource& o) {
 		_fd = o._fd;
 		_done = o._done;
 		_content = o._content;
 		return *this;
 	}
 
-	bool				Resource::readChunk(void) {
+	bool	Resource::readChunk(Logger*& logger) {
 		if (_done)
 			return true;
 		byte	buffer[BUFFER_SIZE];
@@ -27,7 +27,7 @@
 				_fd = -1;
 			}
 		} else {
-			std::cout << "reading error\n";
+			logger->log("Resource::readChunk: reading error");
 		}
 		return _done;
 	}

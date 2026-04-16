@@ -22,6 +22,7 @@
 # include <map>
 # include <algorithm>
 
+#include <Logger.hpp>
 #include <Http.hpp>
 
 class Cgi {
@@ -37,6 +38,6 @@ class Cgi {
 
 void add_cgi_env(std::map<std::string, std::string>& env, const Server& server, const Http::StartLine& startLine, const std::string& path);
 /* forks, executes the specified binary with the specified env and returns the message-body of the reponse */
-int exec_cgi(const std::string& exe, const std::string& path, std::map<std::string, std::string> env, const ByteString& dataIn);
+int exec_cgi(const std::string& exe, const std::string& path, std::map<std::string, std::string> env, const ByteString& dataIn, Logger*& logger);
 
 #endif

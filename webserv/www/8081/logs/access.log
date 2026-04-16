@@ -1,9 +1,64 @@
-[Wed Apr 15 17:43:52 2026] Initialized server with IP: 0.0.0.0 | PORT: 8081
+[Thu Apr 16 16:07:07 2026] Initialized server with IP: 127.0.0.1 | PORT: 8080
+Initialized server with IP: 0.0.0.0 | PORT: 8081
 
+[Thu Apr 16 16:07:25 2026] New client connected on socket 8
+[Thu Apr 16 16:07:25 2026] read 85 bytes
+[Thu Apr 16 16:07:25 2026] New client connected on socket 8resource initialized on fd 9
+[Thu Apr 16 16:07:25 2026] reading resource
+[Thu Apr 16 16:07:25 2026] resource fully read
+[Thu Apr 16 16:07:25 2026] Resource done reading
+[Thu Apr 16 16:07:25 2026] write 325 bytes
+[Thu Apr 16 16:07:48 2026] read 0 bytes
+[Thu Apr 16 16:07:58 2026] New client connected on socket 8resource initialized on fd 9closing socket 8closing socket 8closing socket 8closing client with status: 410New client connected on socket 8
+[Thu Apr 16 16:07:58 2026] read 82 bytes
+[Thu Apr 16 16:07:58 2026] path: /site/html
+[Thu Apr 16 16:07:58 2026] getting file ./www/8081/site/html/index.html
+[Thu Apr 16 16:07:58 2026] status set
+[Thu Apr 16 16:07:58 2026] New client connected on socket 8resource initialized on fd 9closing socket 8closing socket 8closing socket 8closing client with status: 410New client connected on socket 8resource initialized on fd 9
+[Thu Apr 16 16:07:58 2026] reading resource
+[Thu Apr 16 16:07:58 2026] resource fully read
+[Thu Apr 16 16:07:58 2026] Resource done reading
+[Thu Apr 16 16:07:58 2026] write 4076 bytes
+[Thu Apr 16 16:08:08 2026] read 0 bytes
+[Thu Apr 16 16:08:12 2026] server closed
+[Thu Apr 16 16:10:28 2026] Initialized server with IP: 127.0.0.1 | PORT: 8080
+Initialized server with IP: 0.0.0.0 | PORT: 8081
 
-[Wed Apr 15 17:58:44 2026] Initialized server with IP: 0.0.0.0 | PORT: 8081
+[Thu Apr 16 16:10:30 2026] New client connected on socket 8
+[Thu Apr 16 16:10:30 2026] read 82 bytes
+[Thu Apr 16 16:10:30 2026] path: /site/html
+[Thu Apr 16 16:10:30 2026] getting file ./www/8081/site/html/index.html
+[Thu Apr 16 16:10:30 2026] status set
+[Thu Apr 16 16:10:30 2026] New client connected on socket 8resource initialized on fd 9
+[Thu Apr 16 16:10:30 2026] reading resource
+[Thu Apr 16 16:10:30 2026] resource fully read
+[Thu Apr 16 16:10:30 2026] Resource done reading
+[Thu Apr 16 16:10:30 2026] write 4076 bytes
+[Thu Apr 16 16:10:36 2026] read 0 bytes
+[Thu Apr 16 16:10:38 2026] server closed
+[Thu Apr 16 16:10:59 2026] Initialized server with IP: 127.0.0.1 | PORT: 8080
+Initialized server with IP: 0.0.0.0 | PORT: 8081
 
-New client connected on socket 8
-New client connected on socket 8
-New client connected on socket 8
-New client connected on socket 8
+[Thu Apr 16 16:11:03 2026] New client connected on socket 8
+[Thu Apr 16 16:11:03 2026] read 82 bytes
+[Thu Apr 16 16:11:03 2026] path: /site/html
+[Thu Apr 16 16:11:03 2026] getting file ./www/8081/site/html/index.html
+[Thu Apr 16 16:11:03 2026] status set
+[Thu Apr 16 16:11:03 2026] New client connected on socket 8resource initialized on fd 9
+[Thu Apr 16 16:11:03 2026] reading resource
+[Thu Apr 16 16:11:03 2026] resource fully read
+[Thu Apr 16 16:11:03 2026] Resource done reading
+[Thu Apr 16 16:11:03 2026] write 4076 bytes
+[Thu Apr 16 16:11:14 2026] read 0 bytes
+[Thu Apr 16 16:11:17 2026] New client connected on socket 8resource initialized on fd 9closing socket 8closing socket 8closing socket 8closing client with status: 410New client connected on socket 8
+[Thu Apr 16 16:11:17 2026] read 82 bytes
+[Thu Apr 16 16:11:17 2026] path: /site/html
+[Thu Apr 16 16:11:17 2026] getting file ./www/8081/site/html/index.html
+[Thu Apr 16 16:11:17 2026] status set
+[Thu Apr 16 16:11:17 2026] New client connected on socket 8resource initialized on fd 9closing socket 8closing socket 8closing socket 8closing client with status: 410New client connected on socket 8resource initialized on fd 9
+[Thu Apr 16 16:11:17 2026] reading resource
+[Thu Apr 16 16:11:17 2026] resource fully read
+[Thu Apr 16 16:11:17 2026] Resource done reading
+[Thu Apr 16 16:11:17 2026] write 4076 bytes
+[Thu Apr 16 16:11:31 2026] read 0 bytes
+[Thu Apr 16 16:11:51 2026] server closed

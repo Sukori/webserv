@@ -15,23 +15,18 @@
 Logger::Logger(void){}
 
 Logger::~Logger() {
-	if (_logs.is_open()) {
-		_logs.flush();
-		_logs.close();
-	}
-	if (_logs.is_open()) {
-		_logs.flush();
-		_logs.close();
-	}
 }
 
 void	Logger::init(const std::string& fileName) {
-	if (!fileName.empty()) {
-    	_logs.open(fileName.c_str(), std::ios::app);
-	}
+	(void)fileName; // unused
 }
 
 void Logger::log(const std::string& message) {
-    _logs << message << "\n";
-    _logs.flush();
+	std::ostringstream os;
+	time_t	log = time(NULL);
+	std::string	date = ctime(&log);
+	if (date.at(date.size() - 1) == '\n')
+		date = date.erase(date.size() - 1);
+	os << '[' << date << "] " << message << '\n';
+	std::cout << os.str();
 }

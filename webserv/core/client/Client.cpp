@@ -61,18 +61,21 @@ void	Client::setResource(const Resource& resource) {
 /// @brief reads a request until recv is empty from a client and stores it . RFC 7230 § 6.6
 /// @param  none
 /// @return bytes read
-std::size_t	Client::readRequest(int socket) {
+std::size_t	Client::readRequest(int socket, const Server* serv) {
 	byte	temp_buffer[BUFFER_SIZE];
 	ssize_t	bytesRead = 0;
 
     bytesRead = recv(socket, &temp_buffer, BUFFER_SIZE, 0);
-	std::cerr << "read " << bytesRead << " bytes\n";
+	std::ostringstream os;
+	os << "read " << bytesRead << " bytes";
+	serv->getAccStream()->log(os.str());
+	os.str() = "";
     if (bytesRead < 0) {
-        std::cerr << "recv read error" << std::endl;
+        serv->getErrStream()->log("recv: read error");
 		_requestFailed = true;
 		throw 400; // Invalid Request
     } else if (bytesRead == 0) {
-        std::cerr << "client closed the connection" << std::endl;
+        serv->getErrStream()->log("readRequest: client closed the connection");
 		_requestFailed = true;
 		throw 410; // Gone
     } else {
@@ -84,23 +87,25 @@ std::size_t	Client::readRequest(int socket) {
 	return (bytesRead);
 }
 
-bool			Client::readResource(void) {return _resource.readChunk();}
+bool	Client::readResource(Logger*& logger) {return _resource.readChunk(logger);}
 
 /// @brief writes a server response to a client
 /// @param  none
 /// @return bool. True if response was successfully sent
-bool	Client::writeResponse(int socket) {
+bool	Client::writeResponse(int socket, Logger*& logger) {
 	if (_response.empty()) {
 		return (false);
 	}
 
 	ssize_t	bytes_sent = send(socket, _response.data(), _response.length(), 0);
 	if (bytes_sent < 0 ) {
-		std::cout << "send error\n";
+		logger->log("send error");
 	} else if (bytes_sent == 0) {
-		std::cout << "client has closed the connection\n";
+		logger->log("client has closed the connection");
 	} else {
-		std::cout << "write " << bytes_sent << " bytes\n"; //debug
+		std::ostringstream	os;
+		os << "write " << bytes_sent << " bytes";
+		logger->log(os.str()); //debug
 		_response = _response.substr(bytes_sent); // response may still contain bytes to be sent
 		_lastActivityTime = time(NULL);
 	}

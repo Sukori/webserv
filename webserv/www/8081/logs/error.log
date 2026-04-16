@@ -1,0 +1,15 @@
+[Thu Apr 16 16:07:25 2026] error: ./www/default_error_pages/405.html
+[Thu Apr 16 16:07:48 2026] readRequest: client closed the connection
+[Thu Apr 16 16:07:48 2026] New client connected on socket 8resource initialized on fd 9closing socket 8closing socket 8closing socket 8closing client with status: 410
+[Thu Apr 16 16:07:58 2026] no index, trying: ./www/8081/site/html/index.html
+[Thu Apr 16 16:08:08 2026] readRequest: client closed the connection
+[Thu Apr 16 16:08:08 2026] New client connected on socket 8resource initialized on fd 9closing socket 8closing socket 8closing socket 8closing client with status: 410New client connected on socket 8resource initialized on fd 9closing socket 8closing socket 8closing socket 8closing client with status: 410
+[Thu Apr 16 16:10:30 2026] no index, trying: ./www/8081/site/html/index.html
+[Thu Apr 16 16:10:36 2026] readRequest: client closed the connection
+[Thu Apr 16 16:10:36 2026] New client connected on socket 8resource initialized on fd 9closing socket 8closing socket 8closing socket 8closing client with status: 410
+[Thu Apr 16 16:11:03 2026] no index, trying: ./www/8081/site/html/index.html
+[Thu Apr 16 16:11:14 2026] readRequest: client closed the connection
+[Thu Apr 16 16:11:14 2026] New client connected on socket 8resource initialized on fd 9closing socket 8closing socket 8closing socket 8closing client with status: 410
+[Thu Apr 16 16:11:17 2026] no index, trying: ./www/8081/site/html/index.html
+[Thu Apr 16 16:11:31 2026] readRequest: client closed the connection
+[Thu Apr 16 16:11:31 2026] New client connected on socket 8resource initialized on fd 9closing socket 8closing socket 8closing socket 8closing client with status: 410New client connected on socket 8resource initialized on fd 9closing socket 8closing socket 8closing socket 8closing client with status: 410

@@ -60,6 +60,7 @@ int	WebServer::_initServer(const struct addrinfo* addrinfo, const Server* server
 void	WebServer::_closeServer(void) {
 	for (std::map<int, const Server*>::iterator it = _serverSockets.begin(); it != _serverSockets.end(); ++it) {
 		close(it->first);
+		it->second->getAccStream()->log("server closed");
 	}
 }
 
@@ -90,7 +91,7 @@ Resource	WebServer::_handleRequest(Client& client, const Server& server) {
 void		WebServer::_handleResponse(Client& client, const Server& server) {
 	if (client.getResource().done())
 	{
-		std::cerr << "Resource done reading\n";
+		server.getAccStream()->log("Resource done reading");
 		client.setResponse(Http::buildResponse(client.getResource().getContent(), client.getResponseStatus(), server.getName()));
 	}
 }

@@ -10,7 +10,7 @@ import os
 import sys
 
 # Print HTTP headers
-print("Content-Type: text/html\n")
+print("Content-Type: text/html")
 
 # HTML Output
 print("<!DOCTYPE html>")

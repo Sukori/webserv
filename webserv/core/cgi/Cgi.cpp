@@ -55,7 +55,7 @@ void add_cgi_env(std::map<std::string, std::string>& env, const Server& server, 
 returns pipe fd out
 make sure first field of all env is full UPPER_SNAKE_CASE instead of lower-kebab-case
 */
-int exec_cgi(const std::string& exe, const std::string& path, std::map<std::string, std::string> env, const ByteString& dataIn) {
+int exec_cgi(const std::string& exe, const std::string& path, std::map<std::string, std::string> env, const ByteString& dataIn, Logger*& logger) {
 	typedef std::map<std::string, std::string> env_map;
 	int		inpfds[2];
 	int		outpfds[2];
@@ -85,7 +85,9 @@ int exec_cgi(const std::string& exe, const std::string& path, std::map<std::stri
 		envp[env.size()] = NULL;
 		for (env_map::iterator it = env.begin(); it != env.end(); it++)
 			envp[std::distance(env.begin(), it)] = strdup((it->first + '=' + it->second).c_str());
-		std::cout << argv[0] << ' ' << argv[1] << '\n';
+		std::ostringstream os;
+		os << argv[0]  << argv[1];
+		logger->log(os.str());
 		dup2(inpfds[0], 0);
 		dup2(outpfds[1], 1);
 		close(outpfds[0]);
