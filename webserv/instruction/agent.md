@@ -26,4 +26,3 @@ Si C++98 n'offre pas de moyen de résoudre une tâche aisément, alors l'utilisa
 En règle générale, le code doit être POSIX-compliant au maximum, sauf impossibilité technique.
 Le système d'exécution cible est Linux Ubuntu.
 Les environnements de développements peuvent également inclure d'autres distributions linux (Debian, Fedora, Arch, ...) ainsi que MacOS.
-

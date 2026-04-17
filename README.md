@@ -1,7 +1,23 @@
-# webserv
-42 webserv
+*This Project has been created as part of the 42 curriculum by pberset and ylabussi*
 
-## Objectives
+# WebServ
+This project is about writing your own HTTP server.
+You will be able to test it with an actual browser.
+HTTP is one of the most widely used protocols on the internet.
+Understanding its intricacies will be useful, even if you won’t be working on a website.
+
+## Description
+
+### The project
+This project is a single threaded program listening simultaneously on multiple interfaces, if specified in the congiguration file.
+As a result, there is only one main process that handles connections and communication on all the sockets and responds to the appropriate client.
+The server shall not mix the outputs out. Each client must receive exactly what it requested.
+There is only one `poll()` function that orchestrates the connections and ensures that the non-blocking `recv()` and `send()` run till the end of their respective tasks.
+`errno` shall not be checked after the read/write operations. It is allowed in other parts of the code.
+The web server has been successfully tested with gecko-based browsers (firefox and forks) and chromium-based browsers (chrome, brave, ...).
+The server shall never crash, even under pressure from `siege -c255 -b -d1 http://127.0.0.1:8080`. Availability must remain 100% and no packets shall be lost.
+
+### Lerning objectives
 * Build a webserver in C++98
 	* Implement Client / Server model
 	* Implement sockets
@@ -9,37 +25,49 @@
 		* POST, GET, DELETE
 		* Request / Response
 	* Implement a CGI
-* Debugging and validation
-	* Ensure modular tests for each class to verify correctness independently in sandboxed environments
-* Learn what is modular design and implement it properly
 
-## Design
-Looking for a modular approach to simplify functionality and avoid single points breaking the whole app.
+### Design
+To build this project, we looked for a modular approach. The goal was to be abl to build the server functionalities in separate containers with little interdependance. This was indeed possible at th beginning of the project, allowing us to progress without fear to break the whole application with a single change. 
+Corrections and adjustments proved to be doable with reasonable efforts. We found limitations in this design around the end of the development. As students, we are satisfied with the result and we already seek to progress in architecturing complex applications with improved modularity.
+We recognize that we have much to learn in this area.
+
 
 ### Directory structure
-Each module has its own `main` and `Makefile` in order to run "sandboxed" tests with hypothetical inputs.
+Each module had its own `main` and `Makefile` in order to run "sandboxed" tests with hypothetical inputs.
 Only the Makefile at the root of the project is intended for the full compilation of the final project.
 
 View full work tree [here](directory_tree.md)
 
-### Overview
-How modules interact with each other
-
-## Production
-Documenting the progression and next steps here in addition from the Issues / Kanban from github
-- PBE server start + config parsing
-
-## Usage
+## Instructions
 ```bash
+$ git clone https://github.com/Sukori/webserv.git
+$ cd webserv
 $ make
-$ ./webserv "config file here"
+$ ./webserv #this will automatically start the server with a default config file
+$ ./webserv config/config_files/config1.conf # this will start the server with a custom config file
 ```
 
-## Self-evaluation
-Post-mortem
+The minimal valid configuration is as such:
+```bash
+server { # mandatory server block
+	listen 127.0.0.1:8081 # interface:port
+	root /www/8081 # root directory for the server (relative to the executable directory)
+	client_max_body_size 1m # a maximum of 64M is allowed for compilation reasons.
+	# Accepts:
+	#	*int
+	#	*<int>k 'k' upper- or lower-case stands for "kilo" (x1'000)
+	#	*<int>m 'm' upper- or lower-case stands for "mega" (x1'000'000)
+	location / { # a location is not necessary to let a server start, but it will only reply with 404 not found
+		root / # relative to server root
+	}
+}
+```
 
-## Resources
-assets, if need be
+A more complete valid configuration can be consulted at [default.conf](webserv/config/config_files/default.conf)
+
+## AI instructions
+AI has served as a consultant and mentor to discuss parts of the project. It has not written code on our behalf. The instruction set to command the interaction can be found in [instruction](instruction).
+The AI agent was alway requested to check this directory before any interaction. The conversation history was regularily flushed to limit the token usage and allow for focus on very specific parts of the project, making the AI less prone to "hallucination" and providing simpler answers that let us reflect.
 
 ## Bibliography
 Helpful documentation we used
