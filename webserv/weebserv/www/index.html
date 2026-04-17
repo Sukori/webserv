@@ -14,15 +14,14 @@
 		<a href="/php/">php cgi</a>
 		<a href="/upload-form/">file upload</a>
 		<a href="/big-file/">page with a big file</a>
+		<a href="/autoindex/">autoindex</a>
 		<a href="/github/" target="_blank">github</a>
 	</header>
 	<div class="content">
 		<h1>Hello and welcome to the demo page for our webserver</h1>
 		simple ping: <span class="command">curl localhost:8080</span><br>
-		simple ping: <span class="command">curl localhost:8080</span><br>
-		simple ping: <span class="command">curl localhost:8080</span><br>
-		simple ping: <span class="command">curl localhost:8080</span><br>
-
+		simple ping: <span class="command">siege -c255 -b -t1m http://127.0.0.1:8080</span><br>
+		simple ping: <span class="command">curl -X DELETE http://127.0.0.1:8080/uploads/file-to-delete.txt</span>
 	</div>
 	<footer>
 		made with <span id="footer-hover"><span>love</span></span> by <a class="new-tab" href="https://github.com/Sukori" target="_blank">pberset(Sukori)</a> and <a class="new-tab" href="https://github.com/neon-05" target="_blank">ylabussi(neon-05)</a>
