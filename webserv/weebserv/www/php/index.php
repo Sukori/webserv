@@ -4,11 +4,10 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="/assets/style.css">
-	<title>weebServer starter page</title>
+	<title>weebServer big file</title>
 </head>
 <body>
 	<header>
-		<h1>Welcome to the weebServer starter page</h1>
 		<a href="/">home</a>
 		<a href="/python/">python cgi</a>
 		<a href="/php/">php cgi</a>
@@ -17,12 +16,10 @@
 		<a href="/github/" target="_blank">github</a>
 	</header>
 	<div class="content">
-		<h1>Hello and welcome to the demo page for our webserver</h1>
-		simple ping: <span class="command">curl localhost:8080</span><br>
-		simple ping: <span class="command">curl localhost:8080</span><br>
-		simple ping: <span class="command">curl localhost:8080</span><br>
-		simple ping: <span class="command">curl localhost:8080</span><br>
-
+		<?php
+			echo "current time is " . date(DATE_ATOM) . " generated my pgp cgi<br>";
+		?>
+		<a href="/">home</a>
 	</div>
 	<footer>
 		made with <span id="footer-hover"><span>love</span></span> by <a class="new-tab" href="https://github.com/Sukori" target="_blank">pberset(Sukori)</a> and <a class="new-tab" href="https://github.com/neon-05" target="_blank">ylabussi(neon-05)</a>

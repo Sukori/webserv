@@ -167,7 +167,7 @@ Resource	Http::getResponseBody(const Location& loc, const Server& server, int& s
 	{
 		std::cout << loc.getReturn().begin()->second << '\n';
 		status = loc.getReturn().begin()->first;
-		return Resource(ByteString("location:").append(loc.getReturn().begin()->second.c_str()).append("\r\n"));
+		return Resource(ByteString("location:").append(loc.getReturn().begin()->second.c_str()).append("\r\n\r\nredirected"));
 	}
 
 	if (new_path.find('.') == new_path.npos)
@@ -267,7 +267,6 @@ ByteString	Http::buildResponse(const ByteString& body, int status, const std::st
 	size_t len;
 	{
 		size_t tmp = body.find("\r\n\r\n");
-
 		len = body.length() - ((body.find("\r\n") != 0) ? tmp + 4 : 2);
 	}
 	ByteString res;
@@ -288,6 +287,8 @@ ByteString	Http::buildResponse(const ByteString& body, int status, const std::st
 	res.append(std::string("\r\nServer: ").append(server_name).c_str());
 	res.append("\r\n");
 	res.append(body);
+
+	std::cerr << "generated response of length " << res.length() << '\n';
 
 	return res;
 }
