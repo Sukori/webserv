@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="/assets/style.css">
+	<title>weebServer file upload form</title>
+</head>
+<body>
+	<header>
+		<a href="/">home</a>
+		<a href="/python/">python cgi</a>
+		<a href="/php/">php cgi</a>
+		<a href="/upload-form/">file upload</a>
+		<a href="/big-file/">page with a big file</a>
+	</header>
+	<div class="content">
+		<?php
+			if (defined($_FILES["file"]["tmp_name"])) {
+				file_put_contents($_FILES['file']['name'], file_get_contents($_FILES['file']['tmp_name']));
+				echo "file saved under the name " . $_FILES['file']['name'];
+			} else {
+				echo "file has not been saved";
+			}
+		?>
+		<a href="/">home</a>
+	</div>
+	<footer>
+		made with <span id="footer-hover"><span>love</span></span> by <a class="new-tab" href="https://github.com/Sukori" target="_blank">pberset(Sukori)</a> and <a class="new-tab" href="https://github.com/neon-05" target="_blank">ylabussi(neon-05)</a>
+	</footer>
+</body>
+</html>

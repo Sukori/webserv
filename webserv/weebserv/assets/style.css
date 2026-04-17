@@ -1,0 +1,149 @@
+@media (prefers-color-scheme: light) {
+	:root {
+		--palette-0: #fafafa;
+		--palette-1: #f48db4;
+		--palette-2: #ff347f;
+		--palette-3: #c9356c;
+		--palette-text: #141010;
+	}
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--palette-0: #927fbf;
+		--palette-1: #363b4e;
+		--palette-2: #4f3b78;
+		--palette-3: #c4bbf0;
+		--palette-text: #141010;
+	}
+}
+
+html {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: larger;
+	font-weight: bolder;
+	color: var(--palette-text);
+	background-color: var(--palette-2);
+}
+
+@keyframes bg-slide {
+	0% {
+		mask-position: 0px 0px;
+	}
+	
+	100% {
+		mask-position: 200px 100px;
+	}
+}
+
+html {
+	height: 100%;
+}
+
+body {
+	margin: 0;
+	position: relative;
+	min-height: 100%;
+	z-index: 0;
+}
+
+body::before {
+	z-index: -1;
+	content: "";
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 100%;
+	position: absolute;
+	mask-image: url('data:image/svg+xml,%3Csvg%20width%3D%22800px%22%20height%3D%22800px%22%20viewBox%3D%220%200%2064%2064%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20clip-rule%3D%22evenodd%22%20d%3D%22M8.55284%203.00012C7.93598%203.00012%207.23841%203.06514%206.57209%203.29224C2.55494%204.60387%201.26341%208.894%202.39877%2012.43L2.40354%2012.4448L2.40877%2012.4595C3.03435%2014.2174%204.04226%2015.8127%205.35336%2017.1249L5.36091%2017.1324L5.36862%2017.1398C7.23782%2018.9323%209.27254%2020.4953%2011.4756%2021.8515L11.9934%2022.1703L12.5147%2021.8573C14.7226%2020.5315%2016.7964%2018.9254%2018.6432%2017.1474L18.649%2017.1419L18.6547%2017.1362C19.9771%2015.8215%2020.9851%2014.2144%2021.6015%2012.4549L21.6066%2012.4402L21.6113%2012.4253C22.7251%208.89703%2021.4401%204.60176%2017.4507%203.30948C16.7976%203.09221%2016.1236%203.00012%2015.4648%203.00012C13.9828%203.00011%2012.8858%203.62064%2012.0004%204.25309C11.1219%203.62545%2010.0176%203.00012%208.55284%203.00012Z%22%20fill%3D%22%23FFFFFF%22%2F%3E%3C%2Fsvg%3E'),
+	linear-gradient(#000 0 0);
+	background-color: var(--palette-1);
+	mask-size: 100px;
+	mask-composite: exclude;
+	animation: infinite linear bg-slide 3s;
+}
+
+header {
+	top: 0;
+	position: sticky;
+	background-color: var(--palette-3);
+	padding: 30px;
+}
+
+footer {
+	bottom: 0;
+	position: fixed;
+
+	width: 100%;
+	background-color: var(--palette-3);
+	padding: 30px;
+	text-align: center;
+}
+
+#footer-hover:hover:before {
+	content: "blood, sweat and tears";
+}
+
+#footer-hover:hover span {
+  display: none
+}
+
+#footer-hover {
+  color:var(--palette-0);
+}
+
+.content {
+	height: 100%;
+	width: 60%;
+	margin:  50px auto ;
+	text-align: justify;
+	background-color: var(--palette-0);
+	padding: 30px;
+}
+
+header>a {
+	margin-right: 70px;
+}
+
+a {
+	color: var(--palette-text);
+	text-decoration: underline dotted;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+img {
+	width: 100%;
+}
+
+input[type=file] {
+	border: 1px solid var(--palette-2);
+	background-color: var(--palette-1);
+	cursor: pointer;
+	padding: 15px;
+	font: inherit;
+}
+
+input[type=file]::file-selector-button {
+	display: none;
+}
+
+input[type=submit] {
+	margin-top: 10px;
+	border: 1px solid var(--palette-2);
+	background-color: var(--palette-1);
+	cursor: pointer;
+	padding: 5px 15px;
+	font: inherit;
+}
+
+.command {
+	display: inline-block;
+	margin-top: 10px;
+	background-color: var(--palette-3);
+	padding: 10px;
+	font-family: 'Courier New', Courier, monospace;
+	font-weight: normal;
+}
