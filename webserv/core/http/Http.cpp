@@ -146,7 +146,8 @@ Resource	Http::getResponseBody(const Location& loc, const Server& server, int& s
 		if (access(file_path.c_str(), W_OK) != -1)
 		{
 			std::remove(file_path.c_str());
-			throw 204;
+			status = 204;
+			return Resource("\r\ndeleted");
 		}
 		else
 			throw 404;

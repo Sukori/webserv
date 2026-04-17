@@ -16,7 +16,7 @@
 	</header>
 	<div class="content">
 		<?php
-			if (defined($_FILES["file"]["tmp_name"])) {
+			if (isset($_FILES["file"]["tmp_name"])) {
 				file_put_contents($_FILES['file']['name'], file_get_contents($_FILES['file']['tmp_name']));
 				echo "file saved under the name " . $_FILES['file']['name'];
 			} else {
