@@ -84,7 +84,7 @@ A more complete valid configuration can be consulted at [default.conf](webserv/c
 ## AI instructions
 AI has served as a consultant and mentor to discuss parts of the project. It has not written code on our behalf.
 
-The instruction set to command the interaction can be found in [instruction](instruction).
+The instruction set to command the interaction can be found in [instruction](webserv/instruction).
 
 The AI agent was alway requested to check this directory before any interaction.
 
