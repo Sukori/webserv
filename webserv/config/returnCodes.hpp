@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   returnCodes.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pberset <pberset@student.42lausanne.ch>    +#+  +:+       +#+        */
+/*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/24 18:22:06 by pberset           #+#    #+#             */
-/*   Updated: 2026/03/24 18:22:19 by pberset          ###   Lausanne.ch       */
+/*   Updated: 2026/04/17 15:20:03 by ylabussi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ bool	standaloneCode(int code);
 500:	Internal Server Error
 501:	Not Implemented
 502:	Bad Gateway ou Proxy Error
-503:	Service Unavailable 
+503:	Service Unavailable
 504:	Gateway Time-out
 505:	HTTP Version not supported
 506:	Variant Also Negotiates
