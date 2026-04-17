@@ -24,7 +24,7 @@ There is only one `poll()` function that orchestrates the connections and ensure
 
 The web server has been successfully tested with gecko-based browsers (firefox and forks) and chromium-based browsers (chrome, brave, ...).
 
-The server shall never crash, even under pressure from `siege -c255 -b -d1 http://127.0.0.1:8080`. Availability must remain 100% and no packets shall be lost.
+The server shall never crash, even under pressure from `siege -c255 -b -t1m http://127.0.0.1:8080`. Availability must remain 100% and no packets shall be lost.
 
 ### Lerning objectives
 * Build a webserver in C++98
