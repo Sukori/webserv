@@ -155,7 +155,7 @@ Location	Parser::parseLocation(const std::string& servRoot) {
 
 		case 1:
 			_ss >> token;
-			locStruct.root_path = token; // no need to prepend '.' here
+			locStruct.root_path = token;
 			break;
 
 		case 2:

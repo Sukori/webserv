@@ -16,7 +16,6 @@ ByteString&	ByteString::operator=(const ByteString& o) {
 		return *this;
 	_cap = o._cap;
 	_len = o._len;
-	/* _data = o._data; */
 	delete[] _data;
 	_data = new byte[_cap];
 	std::memmove(_data, o._data, _len);

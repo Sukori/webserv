@@ -222,7 +222,7 @@ struct s_listen	Parser::parseListen(std::string token) {
 /// @return Server object
 Server	Parser::parseServer(void) {
 	struct s_server			servStruct;
-	std::vector<Location>	locs; //not initialized at 234 ...
+	std::vector<Location>	locs;
 	std::string				token;
 	std::string				serverAllowed[] = {"server_name", "listen", "root", "index", "client_max_body_size", "error_pages", "location", "cgi_bin"};
 
@@ -266,7 +266,7 @@ Server	Parser::parseServer(void) {
 
 			case 2:
 				_ss >> token;
-				servStruct.root = "." + token; // need to remove trailing '/' if there is one
+				servStruct.root = "." + token;
 				break;
 
 			case 3:

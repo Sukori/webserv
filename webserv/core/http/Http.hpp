@@ -53,16 +53,12 @@ class Http {
 	private:
 		Http(void);
 		
-		//static StartLine	_parseStartLine(int fd);
 		StartLine			_parseStartLine(const ByteString& message);
-		//static Header		_parseHeaders(int fd);
 		Header				_parseHeaders(const ByteString& message);
-		//static std::string	_parseNextLine(int fd);
 		static void			_splitPath(const ByteString& path, StartLine& sl);
 
 		ByteString			_parseBody(const ByteString& message);
 
-		//const int	_socket;
 		size_t		_pos;
 		StartLine	_startline;
 		Header		_header;

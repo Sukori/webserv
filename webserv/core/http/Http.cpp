@@ -133,17 +133,6 @@ static std::string get_ext(const std::string& path) {
 		return path.substr(sep + 1);
 }
 
-/* reads all data on fd and closes it *
-static ByteString	read_all(int fd) {
-	byte	buf[BUFFER_SIZE];
-	size_t				bytes;
-	ByteString			ret;
-	while ((bytes = read(fd, buf, BUFFER_SIZE)) > 0)
-		ret.append(buf, bytes);
-	close(fd);
-	return ret;
-}*/
-
 Resource	Http::getResponseBody(const Location& loc, const Server& server, int& status) {
 	std::string new_path (_startline.path);
 	trimLastSlash(new_path.replace(0, loc.getRoute().length(), loc.getRoot())); // replace the user route with the actual root
@@ -262,8 +251,6 @@ ByteString	Http::buildResponse(const ByteString& body, int status, const std::st
 	 * body: ez, just paste
 	 */
 
-	//std::string	body = reasonPhrase(status);
-
 	size_t len;
 	{
 		size_t tmp = body.find("\r\n\r\n");
@@ -275,7 +262,6 @@ ByteString	Http::buildResponse(const ByteString& body, int status, const std::st
 	res.append(reasonPhrase(status).c_str());
 	res.append("\r\nContent-Length: ");
 	res.append(ft_uint_to_string(len).c_str());
-	/* res.append("\r\nContent-Type: text/html; charset=UTF-8"); */ // we don't necessarily pass html
 	res.append("\r\nDate: ");
 	{
 		time_t t = time(NULL);

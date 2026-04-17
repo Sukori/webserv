@@ -127,10 +127,6 @@ const Location&	Server::getLocation(const std::string& route) const {
 	const Location* ret = NULL;
 	size_t length = 0;
 	while (it != _locations.end()) {
-		/*if ((*it).getRoute().compare(route) == 0) {
-			return (*it);
-		}*/
-		/* TODO implement a proper route check ABSOLUTELY */
 		if ((route + '/').rfind(it->getRoute() + '/', 0) == 0 && it->getRoute().length() >= length) // check if route starts with the location's route
 		{
 			ret = &*it;

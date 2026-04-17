@@ -165,11 +165,6 @@ void	validateLocation(s_location& locStruct) {
 
 	locStruct.valid = true;
 	
-	/*if (!validLocRoute(locStruct.route)) {
-		std::cerr << "Route: not a valid route for location " << locStruct.route << std::endl;
-		locStruct.valid = false;
-	}*/
-	
 	{
 		std::string path (locStruct.servRoot + locStruct.root_path);
 		if (!validLocRoot(path)) {
@@ -217,7 +212,7 @@ static bool	validIP(std::string ip) {
 		for (int i = 1; i < 5; i++) {
 		os >> byte;
 		if (byte.empty()) {
-			std::cerr << "validIP: not enough parameters in ip address. expected 4, got " << i << std::endl;
+			std::cerr << "validIP: not enough parameters in ip address. expected 4, got " << i - 1 << std::endl;
 			return (false);
 		}
 		if (!ft_isNUM(byte)) {

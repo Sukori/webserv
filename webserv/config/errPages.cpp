@@ -18,14 +18,14 @@
 std::map<int, std::string>	defaultErrorPages(void) {
 
 	std::map<int, std::string> m;
-    m[400] = "./www/default_error_pages/400.html"; //
+    m[400] = "./www/default_error_pages/400.html";
     m[401] = "./www/default_error_pages/401.html";
     m[403] = "./www/default_error_pages/403.html";
-    m[404] = "./www/default_error_pages/404.html"; //
-    m[405] = "./www/default_error_pages/405.html"; //
-    m[408] = "./www/default_error_pages/408.html"; //
-    m[411] = "./www/default_error_pages/411.html"; //
-    m[413] = "./www/default_error_pages/413.html"; //
+    m[404] = "./www/default_error_pages/404.html";
+    m[405] = "./www/default_error_pages/405.html";
+    m[408] = "./www/default_error_pages/408.html";
+    m[411] = "./www/default_error_pages/411.html";
+    m[413] = "./www/default_error_pages/413.html";
     m[500] = "./www/default_error_pages/500.html";
     m[502] = "./www/default_error_pages/502.html";
     m[503] = "./www/default_error_pages/503.html";

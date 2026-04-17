@@ -64,7 +64,7 @@ void	WebServer::run(void) {
 				int newSocket = _acceptConnection(_fds[i].fd);
 				if (newSocket > 0) {
 					const Server*	serv = _serverSockets.find(_fds[i].fd)->second;
-					_clientSockets[newSocket]; // can't default constructr this. either make a vector in config for example or new Client;
+					_clientSockets[newSocket];
 					_clientsServers.insert(std::make_pair(newSocket, serv));
 					struct pollfd	npfd;
 					npfd.fd = newSocket;
@@ -88,7 +88,7 @@ void	WebServer::run(void) {
 							try {
 								it->second.readRequest(_fds[i].fd);
 							} catch (int status) {
-								std::cerr << "log temporaire: " << status << std::endl;
+								std::cerr << "closing client with status: " << status << std::endl;
 								_closeClient(it, i);
 								continue ;
 							}

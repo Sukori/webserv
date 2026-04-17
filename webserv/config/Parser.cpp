@@ -33,11 +33,7 @@ std::vector<Server> Parser::initParser(void) {
 				output.push_back(tmp);
 			}
 			
-		} /*else {
-			//std::cerr << "initParser: unexpected token at root level. Got " << token << std::endl;
-			//set a custom errno and return?
-			//break ;
-		}*/
+		}
 	} while (!_ss.fail());
 
 
