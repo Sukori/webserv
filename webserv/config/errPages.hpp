@@ -24,6 +24,8 @@
 404 Not Found
 405 method not allowed
 408 timeout
+411 Length Required
+413 Request Entity Too Large
 500 Internal Server Error
 502 Bad Gateway
 503 Service Unavailable
