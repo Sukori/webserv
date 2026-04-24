@@ -6,7 +6,7 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/13 14:05:52 by pberset           #+#    #+#             */
-/*   Updated: 2026/04/15 15:03:02 by ylabussi         ###   ########.fr       */
+/*   Updated: 2026/04/24 19:59:51 by pberset          ###   Lausanne.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -237,7 +237,7 @@ bool	validListen(s_listen& listen) {
 		return (false);
 	}
 
-	if (listen.port == (unsigned int) -1) {
+	if (listen.port == (unsigned int) -1 || listen.port > 65535) {
 		std::cerr << "validListen: invalid port number (c.f. parser error)" << std::endl;
 		return (false);
 	}

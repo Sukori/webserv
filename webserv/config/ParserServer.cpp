@@ -6,7 +6,7 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 17:09:15 by pberset           #+#    #+#             */
-/*   Updated: 2026/04/15 16:01:58 by ylabussi         ###   ########.fr       */
+/*   Updated: 2026/04/24 20:03:05 by pberset          ###   Lausanne.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -213,6 +213,12 @@ struct s_listen	Parser::parseListen(std::string token) {
 	}
 	
 	unsigned int port = ft_stoui(s_port);
+	if (port > 65535) {
+		std::cerr << "parseListen: port value is out of range. got " << port << std::endl;
+		output.port = -1;
+		return (output);
+	}
+
 	output.port = port;
 	return (output);
 }

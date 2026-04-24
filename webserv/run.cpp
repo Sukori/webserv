@@ -6,7 +6,7 @@
 /*   By: ylabussi <ylabussi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 17:28:07 by pberset           #+#    #+#             */
-/*   Updated: 2026/04/02 17:59:30 by ylabussi         ###   ########.fr       */
+/*   Updated: 2026/04/24 19:57:39 by pberset          ###   Lausanne.ch       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ int	main(int argc, char *argv[]) {
 
 	if (config->getServers().empty()) {
 		std::cerr << "No valid server definition found.\nExit" << std::endl;
+		delete(config);
 		return (4);
 	}
 	
